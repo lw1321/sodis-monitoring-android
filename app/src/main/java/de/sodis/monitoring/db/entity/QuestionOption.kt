@@ -20,5 +20,6 @@ import androidx.room.PrimaryKey
 )
 data class QuestionOption(
     @PrimaryKey val id: Int,
-    val questionId: Int
+    val questionId: Int,
+    val optionChoiceId: Int
 )

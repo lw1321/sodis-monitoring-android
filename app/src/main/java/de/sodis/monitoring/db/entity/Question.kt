@@ -29,5 +29,6 @@ data class Question(
     val inputTypeId: Int,
     val questionName: String,
     val questionSubtext: String?,
-    val surveySectionId: Int
+    val surveySectionId: Int,
+    val questionImageId: Int
 )

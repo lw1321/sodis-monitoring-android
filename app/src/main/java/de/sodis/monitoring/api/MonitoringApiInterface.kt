@@ -1,11 +1,11 @@
 package de.sodis.monitoring.api
 
-import de.sodis.monitoring.db.entity.SurveyHeader
+import de.sodis.monitoring.api.model.SurveyHeaderJson
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.http.GET
 
 interface MonitoringApiInterface {
     @GET("surveys")
-    fun getAllSurveys(): Deferred<Response<List<SurveyHeader>>>
+    fun getAllSurveysAsync(): Deferred<Response<List<SurveyHeaderJson>>>
 }

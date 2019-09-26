@@ -10,8 +10,7 @@ import androidx.room.PrimaryKey
     childColumns = arrayOf("surveyHeaderId")
 )])
 data class SurveySection(
-    @PrimaryKey
-    val id: Int,
+    @PrimaryKey val id: Int,
     val sectionName: String,
     val sectionSubheading: String,
     val sectionTitle: String,
