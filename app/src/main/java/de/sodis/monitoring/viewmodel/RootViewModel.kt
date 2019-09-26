@@ -25,9 +25,8 @@ class RootViewModel(application: Application) : AndroidViewModel(application) {
         )
 
     init {
-        //TOdo coroutines?
         viewModelScope.launch(Dispatchers.IO){
-            surveyRepository.loadSurveys()
+            surveyRepository.loadSurveys(application.applicationContext)
         }
     }
 }
