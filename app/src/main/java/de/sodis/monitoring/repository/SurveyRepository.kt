@@ -1,24 +1,20 @@
 package de.sodis.monitoring.repository
 
-import android.R
-import android.content.ContentValues.TAG
 import android.content.Context
 import android.content.ContextWrapper
+import android.graphics.Bitmap
+import android.net.Uri
 import androidx.annotation.WorkerThread
+import androidx.lifecycle.LiveData
 import com.bumptech.glide.Glide
 import de.sodis.monitoring.api.MonitoringApi
 import de.sodis.monitoring.api.model.SurveyHeaderJson
 import de.sodis.monitoring.db.dao.*
 import de.sodis.monitoring.db.entity.*
-import android.graphics.Bitmap
-import android.net.Uri
-import android.os.Environment
-import java.io.File.separator
-import java.nio.file.Files.exists
-import android.os.Environment.getExternalStorageDirectory
-import android.util.Log
-import java.io.*
-import java.text.SimpleDateFormat
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+import java.io.OutputStream
 import java.util.*
 
 
@@ -35,28 +31,27 @@ class SurveyRepository(
 
 
     // Method to save an bitmap to a file
-    private fun bitmapToFile(bitmap: Bitmap, context: Context): String? {
+    private fun bitmapToFile(bitmap:Bitmap, context: Context): String? {
         // Get the context wrapper
         val wrapper = ContextWrapper(context.applicationContext)
 
         // Initialize a new file instance to save bitmap object
-        var file = wrapper.getDir("Images", Context.MODE_PRIVATE)
-        file = File(file, "${UUID.randomUUID()}.jpg")
+        var file = wrapper.getDir("Images",Context.MODE_PRIVATE)
+        file = File(file,"${UUID.randomUUID()}.jpg")
 
-        try {
+        try{
             // Compress the bitmap and save in jpg format
             val stream: OutputStream = FileOutputStream(file)
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+            bitmap.compress(Bitmap.CompressFormat.JPEG,100,stream)
             stream.flush()
             stream.close()
-        } catch (e: IOException) {
+        }catch (e:IOException){
             e.printStackTrace()
         }
 
         // Return the saved bitmap uri
         return Uri.parse(file.absolutePath).encodedPath
     }
-
     /**
      * If internet connection is available, load all surveys and save it in the local database.
      * Also load and save the associated images in the internal storage.
@@ -127,8 +122,8 @@ class SurveyRepository(
                     questionDao.insert(
                         Question(
                             id = questionJson.id,
-                            dependentQuestionId = questionJson.dependentQuestionid,
-                            dependentQuestionOptionId = questionJson.dependentQuestionOptionid,
+                            dependentQuestionId = questionJson.dependentQuestionId,
+                            dependentQuestionOptionId = questionJson.dependentQuestionOptionId,
                             inputTypeId = questionJson.inputType.id,
                             questionImageId = questionJson.questionImage.id,
                             questionName = questionJson.questionName,
@@ -161,6 +156,13 @@ class SurveyRepository(
         }
         val allQuestions = questionDao.getAll()
         print(allQuestions.toString())
+    }
+
+    /**
+     * Provide a list of all in database stored survey headers.
+     */
+    fun getSurveyHeaders(): LiveData<List<SurveyHeader>> {
+        return surveyHeaderDao.getAll()
     }
 
 

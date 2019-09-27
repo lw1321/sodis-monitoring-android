@@ -15,8 +15,8 @@ data class SurveyHeaderJson(
         val sectionTitle: String
     ) {
         data class QuestionJson(
-            val dependentQuestionid: Int,
-            val dependentQuestionOptionid: Int,
+            val dependentQuestionId: Int,
+            val dependentQuestionOptionId: Int,
             val id: Int,
             val inputType: InputTypeJson,
             val questionImage: QuestionImageJson,
