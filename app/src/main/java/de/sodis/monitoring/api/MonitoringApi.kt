@@ -3,6 +3,7 @@ package de.sodis.monitoring.api
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import de.sodis.monitoring.Config
 import de.sodis.monitoring.api.model.SurveyHeaderJson
+import de.sodis.monitoring.db.entity.Interviewee
 import de.sodis.monitoring.db.entity.SurveyHeader
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
@@ -23,5 +24,9 @@ class MonitoringApi {
 
     fun getSurveysAsync(): Deferred<Response<List<SurveyHeaderJson>>> {
         return monitoringApi.getAllSurveysAsync()
+    }
+
+    fun getIntervieweesAsync(): Deferred<Response<List<Interviewee>>> {
+        return monitoringApi.getAllIntervieweesAsync()
     }
 }

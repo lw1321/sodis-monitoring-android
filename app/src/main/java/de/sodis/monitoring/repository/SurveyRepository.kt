@@ -154,8 +154,6 @@ class SurveyRepository(
                 }
             }
         }
-        val allQuestions = questionDao.getAll()
-        print(allQuestions.toString())
     }
 
     /**

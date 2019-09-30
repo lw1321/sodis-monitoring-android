@@ -6,8 +6,6 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import de.sodis.monitoring.db.dao.*
 import de.sodis.monitoring.db.entity.*
-import java.lang.NullPointerException
-import java.security.AccessControlContext
 
 @Database(entities = [InputType::class, OptionChoice::class, Question::class, QuestionImage::class, QuestionOption::class, SurveyHeader::class, SurveySection::class], version = 1)
 abstract class MonitoringDatabase : RoomDatabase() {
@@ -18,6 +16,7 @@ abstract class MonitoringDatabase : RoomDatabase() {
     abstract fun questionOptionDao(): QuestionOptionDao
     abstract fun surveyHeaderDao(): SurveyHeaderDao
     abstract fun surveySectionDao(): SurveySectionDao
+    abstract fun intervieweeDao(): IntervieweeDao
 
     companion object {
         @Volatile

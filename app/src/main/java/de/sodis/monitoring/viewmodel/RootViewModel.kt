@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import de.sodis.monitoring.api.MonitoringApi
 import de.sodis.monitoring.db.MonitoringDatabase
+import de.sodis.monitoring.repository.IntervieweeRepository
 import de.sodis.monitoring.repository.SurveyRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -23,10 +24,16 @@ class RootViewModel(application: Application) : AndroidViewModel(application) {
             surveySectionDao = monitoringDatabase.surveySectionDao(),
             monitoringApi = MonitoringApi()
         )
+    private val intervieweeRepository =
+        IntervieweeRepository(
+            intervieweeDao = monitoringDatabase.intervieweeDao(),
+            monitoringApi = MonitoringApi()
+        )
 
     init {
         viewModelScope.launch(Dispatchers.IO){
             surveyRepository.loadSurveys(application.applicationContext)
+            intervieweeRepository.loadAll()
         }
     }
 }

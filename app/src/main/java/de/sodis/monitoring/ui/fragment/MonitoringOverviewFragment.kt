@@ -22,7 +22,6 @@ class MonitoringOverviewFragment : Fragment(), RecyclerViewListerner {
         print(id)
         (activity as MainActivity).replaceFragments(SurveyFragment())
         //open survey
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
     private lateinit var monitoringOverviewModel: MonitoringOverviewModel
     private lateinit var adapter: ExpandableRecyclerViewAdapter
