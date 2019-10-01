@@ -11,9 +11,9 @@ import de.sodis.monitoring.ui.viewholder.ParentDefaultViewHolder
 import de.sodis.monitoring.ui.viewholder.SodisViewHolder
 
 class ExpandableRecyclerViewAdapter (
-    val listener: RecyclerViewListerner
+    val listener: RecyclerViewListener
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(),
-    RecyclerViewListerner{
+    RecyclerViewListener{
 
     private  var items: MutableList<SodisItem> = mutableListOf()
 
@@ -29,7 +29,7 @@ class ExpandableRecyclerViewAdapter (
                 this
             )
             SodisItem.TYPE.AUTO_COMPLETE_WITH_HEADER_ITEM-> AutoCompleteHeaderViewHolder(
-                LayoutInflater.from(parent.context).inflate(R.layout.interviewed_item, parent, false),
+                LayoutInflater.from(parent.context).inflate(R.layout.interviewee_item, parent, false),
                 this
             )
             else -> ParentDefaultViewHolder(

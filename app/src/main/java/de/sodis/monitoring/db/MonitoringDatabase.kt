@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import de.sodis.monitoring.db.dao.*
 import de.sodis.monitoring.db.entity.*
 
-@Database(entities = [InputType::class, OptionChoice::class, Question::class, QuestionImage::class, QuestionOption::class, SurveyHeader::class, SurveySection::class], version = 1)
+@Database(entities = [InputType::class, OptionChoice::class, Question::class, QuestionImage::class, QuestionOption::class, SurveyHeader::class, SurveySection::class, Interviewee::class], version = 2)
 abstract class MonitoringDatabase : RoomDatabase() {
     abstract fun inputTypeDao(): InputTypeDao
     abstract fun optionChoiceDao(): OptionChoiceDao

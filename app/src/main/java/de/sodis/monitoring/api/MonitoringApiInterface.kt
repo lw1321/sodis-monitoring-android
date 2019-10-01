@@ -10,5 +10,6 @@ interface MonitoringApiInterface {
     @GET("surveys")
     fun getAllSurveysAsync(): Deferred<Response<List<SurveyHeaderJson>>>
 
+    @GET("interviewees")
     fun getAllIntervieweesAsync(): Deferred<Response<List<Interviewee>>>
 }

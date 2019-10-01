@@ -5,7 +5,6 @@ import androidx.lifecycle.LiveData
 import de.sodis.monitoring.api.MonitoringApi
 import de.sodis.monitoring.db.dao.IntervieweeDao
 import de.sodis.monitoring.db.entity.Interviewee
-import de.sodis.monitoring.db.entity.SurveyHeader
 
 class IntervieweeRepository(private val intervieweeDao: IntervieweeDao, private val monitoringApi: MonitoringApi) {
 
@@ -22,5 +21,9 @@ class IntervieweeRepository(private val intervieweeDao: IntervieweeDao, private 
 
     fun getAll(): LiveData<List<Interviewee>> {
         return intervieweeDao.getAll()
+    }
+
+    fun getByName(name: String): LiveData<Interviewee>{
+        return intervieweeDao.getByName(name)
     }
 }

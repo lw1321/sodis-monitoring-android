@@ -2,14 +2,14 @@ package de.sodis.monitoring.ui.viewholder
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
-import de.sodis.monitoring.ui.adapter.RecyclerViewListerner
+import de.sodis.monitoring.ui.adapter.RecyclerViewListener
 import de.sodis.monitoring.ui.model.DefaultParentItem
 import de.sodis.monitoring.ui.model.SodisItem
 import kotlinx.android.synthetic.main.default_item.view.*
 
 class ParentDefaultViewHolder(
     itemView: View,
-    private val recyclerViewClickListener: RecyclerViewListerner
+    private val recyclerViewClickListener: RecyclerViewListener
 ) : RecyclerView.ViewHolder(itemView), SodisViewHolder {
 
 

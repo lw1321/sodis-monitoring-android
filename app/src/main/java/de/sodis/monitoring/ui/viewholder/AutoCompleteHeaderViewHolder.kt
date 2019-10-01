@@ -3,19 +3,18 @@ package de.sodis.monitoring.ui.viewholder
 import android.R
 import android.view.View
 import android.widget.ArrayAdapter
-import android.widget.MultiAutoCompleteTextView
-import android.widget.MultiAutoCompleteTextView.CommaTokenizer
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import de.sodis.monitoring.ui.adapter.RecyclerViewListerner
+import de.sodis.monitoring.ui.adapter.RecyclerViewListener
 import de.sodis.monitoring.ui.model.AutoCompleteHeaderItem
 import de.sodis.monitoring.ui.model.SodisItem
-import kotlinx.android.synthetic.main.interviewed_item.view.*
+import kotlinx.android.synthetic.main.interviewee_item.view.*
 
 
-class AutoCompleteHeaderViewHolder(itemView: View, private val recyclerViewClickListener: RecyclerViewListerner) : RecyclerView.ViewHolder(itemView), SodisViewHolder {
+class AutoCompleteHeaderViewHolder(itemView: View, private val recyclerViewClickListener: RecyclerViewListener) : RecyclerView.ViewHolder(itemView), SodisViewHolder {
 
     override fun onClick(v: View?) {
-        recyclerViewClickListener.recyclerViewListCLicked(v!!, adapterPosition)
+        //recyclerViewClickListener.recyclerViewListCLicked(v!!, adapterPosition)
     }
     override fun bindView(sodisItem: SodisItem) {
         val item = sodisItem as AutoCompleteHeaderItem
@@ -26,9 +25,15 @@ class AutoCompleteHeaderViewHolder(itemView: View, private val recyclerViewClick
             R.layout.simple_dropdown_item_1line, sodisItem.list
         )
         itemView.multiAutoCompleteTextView.threshold = 1 //will start working from first character
-        itemView.multiAutoCompleteTextView.setTokenizer(CommaTokenizer())
         itemView.multiAutoCompleteTextView.setAdapter(adapter)
 
+        itemView.navigation_button.setOnClickListener {
+            if (itemView.multiAutoCompleteTextView.text.isEmpty()){
+                Toast.makeText(itemView.context,"Name des Befragten eingeben!", Toast.LENGTH_LONG).show()
+                return@setOnClickListener
+            }
+            recyclerViewClickListener.recyclerViewListCLicked(itemView, adapterPosition)
+        }
 
     }
 }

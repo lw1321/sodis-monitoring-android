@@ -15,8 +15,21 @@ import kotlinx.coroutines.launch
 
 class SurveyViewModel(application: Application) : AndroidViewModel(application) {
 
+    /**
+     * Selected Survey, joined sql Response
+     */
+        //TODO join room response header, sections, questions,
+    /**
+     * Selected interviewee
+     */
+    private lateinit var  interviewee: LiveData<Interviewee>
+    /**
+     * List of all interviewee
+     */
     lateinit var intervieweeList: LiveData<List<Interviewee>>
-
+    /**
+     * Repository for interviewee actions
+     */
     private val intervieweeRepository =
         IntervieweeRepository(
             intervieweeDao = MonitoringDatabase.getDatabase(application.applicationContext).intervieweeDao(),
@@ -27,6 +40,10 @@ class SurveyViewModel(application: Application) : AndroidViewModel(application) 
             intervieweeList = intervieweeRepository.getAll()
         }
     }
+    fun setInterviewee(text: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            interviewee =  intervieweeRepository.getByName(name = text)
+        }
+    }
 
-    val intervieewistDummy = listOf("Belgium", "France", "Italy", "Germany", "Spain")
 }

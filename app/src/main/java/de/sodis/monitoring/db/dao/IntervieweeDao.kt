@@ -14,4 +14,7 @@ interface IntervieweeDao {
 
     @Query("SELECT * FROM Interviewee")
     fun getAll(): LiveData<List<Interviewee>>
+
+    @Query("SELECT * FROM Interviewee WHERE name=:name")
+    fun getByName(name: String): LiveData<Interviewee>
 }

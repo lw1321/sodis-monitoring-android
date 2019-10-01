@@ -13,11 +13,11 @@ import de.sodis.monitoring.MainActivity
 import de.sodis.monitoring.R
 import de.sodis.monitoring.replaceFragments
 import de.sodis.monitoring.ui.adapter.ExpandableRecyclerViewAdapter
-import de.sodis.monitoring.ui.adapter.RecyclerViewListerner
+import de.sodis.monitoring.ui.adapter.RecyclerViewListener
 import de.sodis.monitoring.ui.model.DefaultParentItem
 import de.sodis.monitoring.viewmodel.MonitoringOverviewModel
 
-class MonitoringOverviewFragment : Fragment(), RecyclerViewListerner {
+class MonitoringOverviewFragment : Fragment(), RecyclerViewListener {
     override fun recyclerViewListCLicked(view: View, id: Any) {
         print(id)
         (activity as MainActivity).replaceFragments(SurveyFragment())
@@ -38,7 +38,7 @@ class MonitoringOverviewFragment : Fragment(), RecyclerViewListerner {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_surveys_overview, container, false)
+        val view = inflater.inflate(R.layout.list, container, false)
         this.adapter = ExpandableRecyclerViewAdapter(this)
         // Set the adapter
         if (view is RecyclerView) {
