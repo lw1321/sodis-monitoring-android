@@ -15,6 +15,7 @@ import de.sodis.monitoring.replaceFragments
 import de.sodis.monitoring.ui.adapter.ExpandableRecyclerViewAdapter
 import de.sodis.monitoring.ui.adapter.RecyclerViewListener
 import de.sodis.monitoring.ui.model.AutoCompleteHeaderItem
+import de.sodis.monitoring.viewmodel.MyViewModelFactory
 import de.sodis.monitoring.viewmodel.SurveyViewModel
 import kotlinx.android.synthetic.main.interviewee_item.view.*
 
@@ -32,7 +33,8 @@ class SurveyFragment(private val surveyId: Int) : Fragment(), RecyclerViewListen
         super.onCreate(savedInstanceState)
 
         surveyViewModel = activity?.run {
-            ViewModelProviders.of(this).get(SurveyViewModel::class.java)
+            ViewModelProviders.of(this, MyViewModelFactory(application, listOf(surveyId))).get(SurveyViewModel::class.java)
+
         }!!
     }
 

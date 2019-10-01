@@ -11,18 +11,21 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import de.sodis.monitoring.MainActivity
 import de.sodis.monitoring.R
+import de.sodis.monitoring.db.entity.SurveyHeader
 import de.sodis.monitoring.replaceFragments
 import de.sodis.monitoring.ui.adapter.ExpandableRecyclerViewAdapter
 import de.sodis.monitoring.ui.adapter.RecyclerViewListener
 import de.sodis.monitoring.ui.model.DefaultParentItem
 import de.sodis.monitoring.viewmodel.MonitoringOverviewModel
+import de.sodis.monitoring.viewmodel.MyViewModelFactory
 
 class MonitoringOverviewFragment : Fragment(), RecyclerViewListener {
     override fun recyclerViewListCLicked(view: View, id: Any) {
-        print(id)
-        (activity as MainActivity).replaceFragments(SurveyFragment(id as Int))
+        (activity as MainActivity).replaceFragments(SurveyFragment(headerList[id as Int].id))
         //open survey
     }
+
+    private lateinit var headerList: List<SurveyHeader>
     private lateinit var monitoringOverviewModel: MonitoringOverviewModel
     private lateinit var adapter: ExpandableRecyclerViewAdapter
 
@@ -30,7 +33,7 @@ class MonitoringOverviewFragment : Fragment(), RecyclerViewListener {
         super.onCreate(savedInstanceState)
 
         monitoringOverviewModel = activity?.run {
-            ViewModelProviders.of(this).get(MonitoringOverviewModel::class.java)
+            ViewModelProviders.of(this, MyViewModelFactory(application, emptyList())).get(MonitoringOverviewModel::class.java)
         }!!
     }
 
@@ -46,6 +49,7 @@ class MonitoringOverviewFragment : Fragment(), RecyclerViewListener {
             view.layoutManager = LinearLayoutManager(context)
         }
         monitoringOverviewModel.surveyHeaderList.observe(this, Observer {
+            headerList = it
             adapter.setItems(it!!.map { header -> DefaultParentItem(title = header.surveyName)})
         })
         return view

@@ -7,14 +7,18 @@ import androidx.lifecycle.viewModelScope
 import de.sodis.monitoring.api.MonitoringApi
 import de.sodis.monitoring.db.MonitoringDatabase
 import de.sodis.monitoring.db.entity.Interviewee
-import de.sodis.monitoring.db.entity.SurveyHeader
+import de.sodis.monitoring.db.entity.Question
+import de.sodis.monitoring.db.response.SurveyHeaderResponse
 import de.sodis.monitoring.repository.IntervieweeRepository
 import de.sodis.monitoring.repository.SurveyHeaderRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
-class SurveyViewModel(application: Application) : AndroidViewModel(application) {
+class SurveyViewModel(
+    application: Application,
+    surveyId: Int
+) : AndroidViewModel(application) {
 
     /**
      * Selected Survey, joined sql Response
@@ -36,6 +40,9 @@ class SurveyViewModel(application: Application) : AndroidViewModel(application) 
             intervieweeDao = MonitoringDatabase.getDatabase(application.applicationContext).intervieweeDao(),
             monitoringApi = MonitoringApi()
         )
+    lateinit var surveyHeader: LiveData<SurveyHeaderResponse>
+    lateinit var questions: LiveData<Question>
+
     /**
      * Repository for interviewee actions
      */
@@ -46,19 +53,15 @@ class SurveyViewModel(application: Application) : AndroidViewModel(application) 
     init {
         viewModelScope.launch(Dispatchers.IO) {
             intervieweeList = intervieweeRepository.getAll()
+            surveyHeader = surveyHeaderRepository.getSurveyById(surveyId)
+            //TODO Joined respponse!!, or  query after query..sections, questions,..
+            questions = surveyHeaderRepository.getQuestions(surveyHeader.value)
         }
     }
     fun setInterviewee(text: String) {
         viewModelScope.launch(Dispatchers.IO) {
             interviewee =  intervieweeRepository.getByName(name = text)
         }
-    }
-
-    /**
-     * Get all questions for this survey section header id
-     */
-    fun getSurveyHeader(surveyId: Int): SurveyHeader {
-        return surveyHeaderRepository.getSurveyById(surveyId)
     }
 
 }
