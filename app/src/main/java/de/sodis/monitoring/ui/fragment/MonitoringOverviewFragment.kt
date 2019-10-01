@@ -20,7 +20,7 @@ import de.sodis.monitoring.viewmodel.MonitoringOverviewModel
 class MonitoringOverviewFragment : Fragment(), RecyclerViewListener {
     override fun recyclerViewListCLicked(view: View, id: Any) {
         print(id)
-        (activity as MainActivity).replaceFragments(SurveyFragment())
+        (activity as MainActivity).replaceFragments(SurveyFragment(id as Int))
         //open survey
     }
     private lateinit var monitoringOverviewModel: MonitoringOverviewModel

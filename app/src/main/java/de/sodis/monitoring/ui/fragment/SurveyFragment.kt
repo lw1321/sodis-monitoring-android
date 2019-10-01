@@ -18,10 +18,10 @@ import de.sodis.monitoring.ui.model.AutoCompleteHeaderItem
 import de.sodis.monitoring.viewmodel.SurveyViewModel
 import kotlinx.android.synthetic.main.interviewee_item.view.*
 
-class SurveyFragment : Fragment(), RecyclerViewListener {
+class SurveyFragment(private val surveyId: Int) : Fragment(), RecyclerViewListener {
     override fun recyclerViewListCLicked(view: View, id: Any) {
         surveyViewModel.setInterviewee(view.multiAutoCompleteTextView.text.toString())
-        (activity as MainActivity).replaceFragments(QuestionFragment())
+        (activity as MainActivity).replaceFragments(QuestionFragment(surveyId))
 
     }
     private lateinit var surveyViewModel: SurveyViewModel

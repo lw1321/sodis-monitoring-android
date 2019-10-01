@@ -32,7 +32,7 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:minHeight="200dp"
-        android:scaleType="fitCenter"
+        android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/question_header"
@@ -48,8 +48,9 @@
         android:layout_marginEnd="8dp"
         android:layout_marginRight="8dp"
         android:textSize="24sp"
+        android:lines="2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/question_image"
-        tools:text="asdfasdfsadf" />
+        tools:text="asdfasdfsadf adasd asdd asd asd asdfasdf skjfdghjkfg asdf asdf asfd asdf asfd  " />
 </androidx.constraintlayout.widget.ConstraintLayout>

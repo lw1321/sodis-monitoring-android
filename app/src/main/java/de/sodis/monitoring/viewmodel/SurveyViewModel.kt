@@ -9,6 +9,7 @@ import de.sodis.monitoring.db.MonitoringDatabase
 import de.sodis.monitoring.db.entity.Interviewee
 import de.sodis.monitoring.db.entity.SurveyHeader
 import de.sodis.monitoring.repository.IntervieweeRepository
+import de.sodis.monitoring.repository.SurveyHeaderRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -35,6 +36,13 @@ class SurveyViewModel(application: Application) : AndroidViewModel(application) 
             intervieweeDao = MonitoringDatabase.getDatabase(application.applicationContext).intervieweeDao(),
             monitoringApi = MonitoringApi()
         )
+    /**
+     * Repository for interviewee actions
+     */
+    private val surveyHeaderRepository =
+        SurveyHeaderRepository(
+            surveyHeaderDao = MonitoringDatabase.getDatabase(application.applicationContext).surveyHeaderDao()
+        )
     init {
         viewModelScope.launch(Dispatchers.IO) {
             intervieweeList = intervieweeRepository.getAll()
@@ -44,6 +52,13 @@ class SurveyViewModel(application: Application) : AndroidViewModel(application) 
         viewModelScope.launch(Dispatchers.IO) {
             interviewee =  intervieweeRepository.getByName(name = text)
         }
+    }
+
+    /**
+     * Get all questions for this survey section header id
+     */
+    fun getSurveyHeader(surveyId: Int): SurveyHeader {
+        return surveyHeaderRepository.getSurveyById(surveyId)
     }
 
 }

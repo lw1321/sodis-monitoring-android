@@ -13,7 +13,7 @@ import de.sodis.monitoring.ui.adapter.ExpandableRecyclerViewAdapter
 import de.sodis.monitoring.ui.adapter.RecyclerViewListener
 import de.sodis.monitoring.viewmodel.SurveyViewModel
 
-class QuestionFragment : Fragment(), RecyclerViewListener {
+class QuestionFragment(private val surveyId: Int) : Fragment(), RecyclerViewListener {
     override fun recyclerViewListCLicked(view: View, id: Any) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
@@ -40,6 +40,11 @@ class QuestionFragment : Fragment(), RecyclerViewListener {
             view.adapter = this.adapter
             view.layoutManager = LinearLayoutManager(context)
         }
+
+        val surveyHeader = surveyViewModel.getSurveyHeader(surveyId = surveyId)
+        //TODO surveys header POJO Join
+        //save position and input from user in viewmodel
+        //create ui for question[position]
 
         return view
     }

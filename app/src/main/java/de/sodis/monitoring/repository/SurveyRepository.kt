@@ -29,7 +29,7 @@ class SurveyRepository(
     private val monitoringApi: MonitoringApi
 ) {
 
-
+    //TODO extract method to bitmap extension?!
     // Method to save an bitmap to a file
     private fun bitmapToFile(bitmap:Bitmap, context: Context): String? {
         // Get the context wrapper
