@@ -47,9 +47,8 @@ class QuestionFragment(private val surveyId: Int) : Fragment(), RecyclerViewList
         }
 
         surveyViewModel.surveyHeader.observe(this, Observer {
-            surveyViewModel.questions.observe(this, Observer {  })
             it?.let {
-                Toast.makeText(context, it.surveyName, Toast.LENGTH_LONG).show()
+                Toast.makeText(context, it.surveySectionList.first().sectionName, Toast.LENGTH_LONG).show()
             }
         })
         //TODO surveys header POJO Join

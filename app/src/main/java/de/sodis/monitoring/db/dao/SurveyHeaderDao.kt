@@ -17,6 +17,6 @@ interface SurveyHeaderDao {
     @Query("SELECT * FROM SurveyHeader")
     fun getAll(): LiveData<List<SurveyHeader>>
 
-    @Query("SELECT SurveyHeader.surveyName AS surveyName, SurveySection.* FROM SurveyHeader JOIN SurveySection on (SurveySection.surveyHeaderId = SurveyHeader.id) WHERE SurveyHeader.id=:surveyHeaderId")
+    @Query("SELECT * FROM SurveyHeader WHERE id=:surveyHeaderId")
     fun getById(surveyHeaderId: Int): LiveData<SurveyHeaderResponse>
 }

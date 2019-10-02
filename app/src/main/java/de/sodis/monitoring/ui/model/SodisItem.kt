@@ -5,6 +5,7 @@ abstract class SodisItem (var type: Int, var childItemList: List<SodisItem> = em
         companion object {
             const val TYPE_PARENT_DEFAULT = 0
             const val AUTO_COMPLETE_WITH_HEADER_ITEM = 1
+            const val TYPE_QUESTION = 2
         }
 
     }
