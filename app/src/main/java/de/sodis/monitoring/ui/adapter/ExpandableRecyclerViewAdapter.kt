@@ -30,6 +30,10 @@ class ExpandableRecyclerViewAdapter (
                 LayoutInflater.from(parent.context).inflate(R.layout.interviewee_item, parent, false),
                 this
             )
+            SodisItem.TYPE.TYPE_QUESTION-> QuestionHeaderViewHolder(
+                LayoutInflater.from(parent.context).inflate(R.layout.question_header_item, parent, false),
+                this
+            )
             SodisItem.TYPE.TYPE_ANSWER_SELECT-> AnswerSelectViewHolder(
                 LayoutInflater.from(parent.context).inflate(R.layout.text_choice_item, parent, false),
                 this
