@@ -107,12 +107,11 @@ class SurveyViewModel(
     fun nextQuestion(): Boolean{
         if (currentPosition == (surveyQuestions.size - 1)) {
             //done with the survey, save the input
-            //TODO
+            TODO add selected question options
             questionRepository.saveQuestions(answerMap, interviewee.value!!)
             return false
         }
         currentPosition++
-        //todo reset questionitemlist?! why list..item better
         return true
     }
 

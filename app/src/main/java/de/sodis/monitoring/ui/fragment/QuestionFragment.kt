@@ -100,7 +100,7 @@ class QuestionFragment(private val surveyId: Int) : Fragment(), RecyclerViewList
             )
             if (currentQuestion.question.inputTypeId == 2) {//todo
                 tempItemList.add(
-                    TextItem(hiddenText = "Bitte hier die Antwort eingeben")
+                    TextItem(hiddenText = "Respuesta")
                 )
             }
             if (currentQuestion.question.inputTypeId == 1) {

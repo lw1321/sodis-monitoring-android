@@ -18,7 +18,7 @@
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
         android:ems="10"
-        android:hint="Bitte geben sie ihre Antwort hier ein"
+        android:hint="Respuesta"
         android:inputType="textPersonName"
         android:singleLine="false"
         app:layout_constraintBottom_toBottomOf="parent"

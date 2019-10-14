@@ -4,9 +4,11 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import de.sodis.monitoring.db.dao.*
 import de.sodis.monitoring.db.entity.*
 
+@TypeConverters(Converters::class)
 @Database(entities = [InputType::class, OptionChoice::class, Question::class, QuestionImage::class, QuestionOption::class, SurveyHeader::class, SurveySection::class, Interviewee::class], version = 2)
 abstract class MonitoringDatabase : RoomDatabase() {
     abstract fun inputTypeDao(): InputTypeDao

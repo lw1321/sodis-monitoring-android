@@ -53,7 +53,7 @@ class SurveyFragment(private val surveyId: Int) : Fragment(), RecyclerViewListen
             adapter.setItems(
                 mutableListOf(
                     AutoCompleteHeaderItem(
-                        title = "Befragter",
+                        title = "Interrogado",
                         list = it!!.map { interviewee -> interviewee.name }
                     )
                 )
