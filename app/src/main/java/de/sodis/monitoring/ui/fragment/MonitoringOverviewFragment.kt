@@ -16,6 +16,8 @@ import de.sodis.monitoring.replaceFragments
 import de.sodis.monitoring.ui.adapter.ExpandableRecyclerViewAdapter
 import de.sodis.monitoring.ui.adapter.RecyclerViewListener
 import de.sodis.monitoring.ui.model.DefaultParentItem
+import de.sodis.monitoring.ui.model.HeaderItem
+import de.sodis.monitoring.ui.model.SodisItem
 import de.sodis.monitoring.viewmodel.MonitoringOverviewModel
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
 
@@ -50,7 +52,10 @@ class MonitoringOverviewFragment : Fragment(), RecyclerViewListener {
         }
         monitoringOverviewModel.surveyHeaderList.observe(this, Observer {
             headerList = it
-            adapter.setItems(it!!.map { header -> DefaultParentItem(title = header.surveyName)})
+            var tempList = mutableListOf<SodisItem>()
+            tempList.add(0, HeaderItem(title = "Fragebögen"))
+            tempList.addAll(it!!.map { header -> DefaultParentItem(title = header.surveyName) })
+            adapter.setItems(tempList)
         })
         return view
     }

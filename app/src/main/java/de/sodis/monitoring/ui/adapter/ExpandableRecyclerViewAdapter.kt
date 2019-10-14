@@ -50,6 +50,10 @@ class ExpandableRecyclerViewAdapter (
                 LayoutInflater.from(parent.context).inflate(R.layout.navigation_item, parent, false),
                 this
             )
+            SodisItem.TYPE.TYPE_HEADER_DEFAULT-> HeaderViewHolder(
+                LayoutInflater.from(parent.context).inflate(R.layout.header_item, parent, false),
+                this
+            )
 
             else -> ParentDefaultViewHolder(
                 LayoutInflater.from(parent.context).inflate(R.layout.default_item, parent, false),
