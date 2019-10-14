@@ -19,7 +19,7 @@ class QuestionRepository(
     fun getQuestionsBySurveySections(title: String, surveySectionIds: List<Int>): MutableList<QuestionAnswer> {
         val questionList = questionDao.getBySurveySections(surveySectionIds)
         val questionAnswerList: MutableList<QuestionAnswer> = mutableListOf()
-        for (question: Question in questionList.value!!){
+        for (question: Question in questionList){
             var questionOptions = questionOptionDao.getByQuestion(question.id)
             var image = questionImageDao.getById(question.questionImageId)
             questionAnswerList.add(

@@ -25,6 +25,7 @@ import kotlinx.android.synthetic.main.text_choice_item.view.*
 import kotlinx.android.synthetic.main.text_input_item.view.*
 
 class QuestionFragment(private val surveyId: Int) : Fragment(), RecyclerViewListener {
+
     override fun recyclerViewListCLicked(view: View, id: Any) {
         /**
          * save answer depending on type
@@ -39,8 +40,7 @@ class QuestionFragment(private val surveyId: Int) : Fragment(), RecyclerViewList
             val itemView =
                 (mView.findViewHolderForAdapterPosition(1) as AnswerSelectViewHolder).itemView
             val option1Checked = itemView.optionButton.isChecked
-            val option2Checked =
-                (mView.findViewHolderForAdapterPosition(2) as AnswerSelectViewHolder).itemView.optionButton.isChecked
+            val option2Checked = itemView.optionButton2.isChecked
             if (!option1Checked && !option2Checked) {
                 Toast.makeText(
                     context,
@@ -59,7 +59,7 @@ class QuestionFragment(private val surveyId: Int) : Fragment(), RecyclerViewList
         Toast.makeText(context, "Übermitteln des Fragebogens", Toast.LENGTH_LONG)
             .show()//todo show loading animation
         val hasNext = surveyViewModel.nextQuestion()
-        (activity as MainActivity).replaceFragments(if (hasNext) SurveyFragment(surveyId) else MonitoringOverviewFragment())
+        (activity as MainActivity).replaceFragments(if (hasNext) QuestionFragment(surveyId) else MonitoringOverviewFragment())
     }
 
     private lateinit var currentQuestion: QuestionAnswer
@@ -117,7 +117,7 @@ class QuestionFragment(private val surveyId: Int) : Fragment(), RecyclerViewList
             adapter.setItems(tempItemList)
         })
 
-        return view
+        return mView
     }
 
 }

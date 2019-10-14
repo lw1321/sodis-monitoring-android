@@ -17,5 +17,5 @@ interface QuestionDao {
     fun getAll(): List<Question>
 
     @Query("SELECT * FROM Question WHERE surveySectionId IN (:surveySections)")
-    fun getBySurveySections(surveySections: List<Int>): LiveData<List<Question>>
+    fun getBySurveySections(surveySections: List<Int>): List<Question>
 }

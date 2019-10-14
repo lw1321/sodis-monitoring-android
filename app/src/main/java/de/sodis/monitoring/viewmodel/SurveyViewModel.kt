@@ -112,6 +112,7 @@ class SurveyViewModel(
             return false
         }
         currentPosition++
+        //todo reset questionitemlist?! why list..item better
         return true
     }
 
