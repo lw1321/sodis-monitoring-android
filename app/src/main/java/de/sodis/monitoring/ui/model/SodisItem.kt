@@ -8,6 +8,8 @@ abstract class SodisItem (var type: Int, var childItemList: List<SodisItem> = em
             const val TYPE_QUESTION = 2
             const val TYPE_ANSWER_SELECT = 3
             const val TYPE_ANSWER_TEXT = 4
+            const val TYPE_NAVIGATION_BUTTON = 5
+            const val TYPE_NAVIGATION_FINISH_BUTTON = 6
         }
 
     }

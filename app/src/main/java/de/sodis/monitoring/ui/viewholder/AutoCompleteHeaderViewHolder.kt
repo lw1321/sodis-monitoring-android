@@ -27,7 +27,7 @@ class AutoCompleteHeaderViewHolder(itemView: View, private val recyclerViewClick
         itemView.multiAutoCompleteTextView.threshold = 1 //will start working from first character
         itemView.multiAutoCompleteTextView.setAdapter(adapter)
 
-        itemView.navigation_button.setOnClickListener {
+        itemView.navigation_forward_button_1.setOnClickListener {
             if (itemView.multiAutoCompleteTextView.text.isEmpty()){
                 Toast.makeText(itemView.context,"Name des Befragten eingeben!", Toast.LENGTH_LONG).show()
                 return@setOnClickListener

@@ -15,7 +15,9 @@ class AnswerSelectViewHolder(itemView: View, private val recyclerViewClickListen
 
     override fun bindView(sodisItem: SodisItem) {
         val item = sodisItem as SelectItem
-        itemView.optionButton.text = item.name
+        itemView.optionButton.text = item.option1
+        itemView.optionButton2.text = item.option2
+
     }
 
 }

@@ -23,7 +23,6 @@ class SurveyFragment(private val surveyId: Int) : Fragment(), RecyclerViewListen
     override fun recyclerViewListCLicked(view: View, id: Any) {
         surveyViewModel.setInterviewee(view.multiAutoCompleteTextView.text.toString())
         (activity as MainActivity).replaceFragments(QuestionFragment(surveyId))
-
     }
     private lateinit var surveyViewModel: SurveyViewModel
     private lateinit var adapter: ExpandableRecyclerViewAdapter

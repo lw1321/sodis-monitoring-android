@@ -21,7 +21,7 @@ import de.sodis.monitoring.viewmodel.MyViewModelFactory
 
 class MonitoringOverviewFragment : Fragment(), RecyclerViewListener {
     override fun recyclerViewListCLicked(view: View, id: Any) {
-        (activity as MainActivity).replaceFragments(SurveyFragment(headerList[id as Int].id))
+       (activity as MainActivity).replaceFragments(SurveyFragment(headerList[id as Int].id))
         //open survey
     }
 

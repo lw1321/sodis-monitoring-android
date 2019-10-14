@@ -4,30 +4,68 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import de.sodis.monitoring.MainActivity
 import de.sodis.monitoring.R
-import de.sodis.monitoring.db.entity.OptionChoice
+import de.sodis.monitoring.db.response.QuestionAnswer
+import de.sodis.monitoring.replaceFragments
 import de.sodis.monitoring.ui.adapter.ExpandableRecyclerViewAdapter
 import de.sodis.monitoring.ui.adapter.RecyclerViewListener
-import de.sodis.monitoring.ui.model.QuestionItem
-import de.sodis.monitoring.ui.model.SelectItem
-import de.sodis.monitoring.ui.model.SodisItem
-import de.sodis.monitoring.ui.model.TextItem
+import de.sodis.monitoring.ui.model.*
+import de.sodis.monitoring.ui.viewholder.AnswerSelectViewHolder
+import de.sodis.monitoring.ui.viewholder.AnswerTextViewHolder
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
 import de.sodis.monitoring.viewmodel.SurveyViewModel
+import kotlinx.android.synthetic.main.text_choice_item.view.*
+import kotlinx.android.synthetic.main.text_input_item.view.*
 
 class QuestionFragment(private val surveyId: Int) : Fragment(), RecyclerViewListener {
     override fun recyclerViewListCLicked(view: View, id: Any) {
-        //todo save user input
-        //Todo increase position, if position is == maxPosition, finish survey
+        /**
+         * save answer depending on type
+         */
+        if (currentQuestion.question.inputTypeId == 2) {//text!
+            surveyViewModel.setAnswer(
+                currentQuestion.question.id,
+                (mView.findViewHolderForAdapterPosition(1) as AnswerTextViewHolder).itemView.answerTextInput.text.toString()
+            )
+        }
+        if (currentQuestion.question.inputTypeId == 1) {//single choice
+            val itemView =
+                (mView.findViewHolderForAdapterPosition(1) as AnswerSelectViewHolder).itemView
+            val option1Checked = itemView.optionButton.isChecked
+            val option2Checked =
+                (mView.findViewHolderForAdapterPosition(2) as AnswerSelectViewHolder).itemView.optionButton.isChecked
+            if (!option1Checked && !option2Checked) {
+                Toast.makeText(
+                    context,
+                    "Bitte eine Antwortmöglichkeit auswählen!",
+                    Toast.LENGTH_LONG
+                ).show()
+                return
+            }
+            surveyViewModel.setAnswer(
+                currentQuestion.question.id,
+                if (option1Checked) itemView.optionButton.text.toString() else itemView.optionButton2.text.toString()
+            )
+
+        }
+        //show loading screen
+        Toast.makeText(context, "Übermitteln des Fragebogens", Toast.LENGTH_LONG)
+            .show()//todo show loading animation
+        val hasNext = surveyViewModel.nextQuestion()
+        (activity as MainActivity).replaceFragments(if (hasNext) SurveyFragment(surveyId) else MonitoringOverviewFragment())
     }
 
+    private lateinit var currentQuestion: QuestionAnswer
     private lateinit var surveyViewModel: SurveyViewModel
     private lateinit var adapter: ExpandableRecyclerViewAdapter
+    private lateinit var mView: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,21 +81,19 @@ class QuestionFragment(private val surveyId: Int) : Fragment(), RecyclerViewList
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.list, container, false)
+        mView = inflater.inflate(R.layout.list, container, false) as RecyclerView
         this.adapter = ExpandableRecyclerViewAdapter(this)
         // Set the adapter
-        if (view is RecyclerView) {
-            view.adapter = this.adapter
-            view.layoutManager = LinearLayoutManager(context)
-        }
+        mView.adapter = this.adapter
+        mView.layoutManager = LinearLayoutManager(context)
 
         surveyViewModel.questionItemList.observe(this, Observer {
             //at which position are we?? todo
-            val currentQuestion = it.get(index = surveyViewModel.currentPosition)
+            currentQuestion = it.get(index = surveyViewModel.currentPosition)
             val tempItemList = mutableListOf<SodisItem>()
             tempItemList.add(
                 QuestionItem(
-                    title = "Title",//TODO
+                    title = currentQuestion.title,
                     questionText = currentQuestion.question.questionName,
                     imageUri = currentQuestion.image.path
                 )
@@ -68,15 +104,16 @@ class QuestionFragment(private val surveyId: Int) : Fragment(), RecyclerViewList
                 )
             }
             if (currentQuestion.question.inputTypeId == 1) {
-                for (answers: OptionChoice in currentQuestion.answers) {
-                    tempItemList.add(
-                        SelectItem(
-                            name = answers.optionChoiceName
-                        )
+                tempItemList.add(
+                    SelectItem(
+                        option1 = currentQuestion.answers[0].optionChoiceName,
+                        option2 = currentQuestion.answers[1].optionChoiceName
                     )
-                }
+                )
             }
-
+            tempItemList.add(
+                if (surveyViewModel.currentPosition == (it.size - 1)) NavigationFinishItem() else NavigationForwardItem()
+            )
             adapter.setItems(tempItemList)
         })
 

@@ -38,6 +38,15 @@ class ExpandableRecyclerViewAdapter (
                 LayoutInflater.from(parent.context).inflate(R.layout.text_input_item, parent, false),
                 this
             )
+            SodisItem.TYPE.TYPE_NAVIGATION_BUTTON-> NavigationButtonViewHolder(
+                LayoutInflater.from(parent.context).inflate(R.layout.navigation_item, parent, false),
+                this
+            )
+            SodisItem.TYPE.TYPE_NAVIGATION_FINISH_BUTTON-> NavigationFinishButtonViewHolder(
+                LayoutInflater.from(parent.context).inflate(R.layout.navigation_item, parent, false),
+                this
+            )
+
             else -> ParentDefaultViewHolder(
                 LayoutInflater.from(parent.context).inflate(R.layout.default_item, parent, false),
                 this
