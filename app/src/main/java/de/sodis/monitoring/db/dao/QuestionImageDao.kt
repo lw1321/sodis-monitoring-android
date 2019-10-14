@@ -14,4 +14,7 @@ interface QuestionImageDao {
 
     @Query("SELECT COUNT(*) FROM QuestionImage WHERE id = :id")
     fun exists(id: Int): Int
+
+    @Query("SELECT * FROM QuestionImage WHERE id=:id")
+    fun getById(id: Int): QuestionImage
 }

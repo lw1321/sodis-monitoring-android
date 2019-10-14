@@ -1,5 +1,6 @@
 package de.sodis.monitoring.db.dao
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -14,4 +15,7 @@ interface QuestionDao {
 
     @Query("SELECT * FROM Question ")
     fun getAll(): List<Question>
+
+    @Query("SELECT * FROM Question WHERE surveySectionId IN (:surveySections)")
+    fun getBySurveySections(surveySections: List<Int>): LiveData<List<Question>>
 }

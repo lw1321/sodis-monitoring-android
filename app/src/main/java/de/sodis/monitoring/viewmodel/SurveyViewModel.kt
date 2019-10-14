@@ -10,8 +10,10 @@ import de.sodis.monitoring.api.MonitoringApi
 import de.sodis.monitoring.db.MonitoringDatabase
 import de.sodis.monitoring.db.entity.Interviewee
 import de.sodis.monitoring.db.entity.Question
+import de.sodis.monitoring.db.response.QuestionAnswer
 import de.sodis.monitoring.db.response.SurveyHeaderResponse
 import de.sodis.monitoring.repository.IntervieweeRepository
+import de.sodis.monitoring.repository.QuestionRepository
 import de.sodis.monitoring.repository.SurveyHeaderRepository
 import de.sodis.monitoring.ui.model.QuestionItem
 import kotlinx.coroutines.Dispatchers
@@ -45,10 +47,12 @@ class SurveyViewModel(
         )
     lateinit var surveyHeader: LiveData<SurveyHeaderResponse>
 
+    lateinit var surveyQuestions: List<QuestionAnswer>
+
     /**
      * holds all ui relevant informations for the questions
      */
-    val questionItemList: MediatorLiveData<List<QuestionItem>> = MediatorLiveData()
+    val questionItemList: MediatorLiveData<List<QuestionAnswer>> = MediatorLiveData()
     /**
      * Repository for interviewee actions
      */
@@ -58,20 +62,30 @@ class SurveyViewModel(
         )
     private val questionRepository =
         QuestionRepository(
-            questionDao = MonitoringDatabase.getDatabase(application.applicationContext).questionDao()
-        )
+            questionDao = MonitoringDatabase.getDatabase(application.applicationContext).questionDao(),
+            questionOptionDao = MonitoringDatabase.getDatabase(application.applicationContext).questionOptionDao(),
+            questionImageDao = MonitoringDatabase.getDatabase(application.applicationContext).questionImageDao()
+            )
+
+    /**
+     * current position in questionaire
+     */
+    var currentPosition: Int = 0
+
     init {
         viewModelScope.launch(Dispatchers.IO) {
             intervieweeList = intervieweeRepository.getAll()
             surveyHeader = surveyHeaderRepository.getSurveyById(surveyId)
-            surveyQuestions = questionRepository.getQuestionsBySurveyHeader(surveyId)
 
             viewModelScope.launch(Dispatchers.Main){
-                questionItemList.addSource(surveyHeader, Observer {
+                questionItemList.addSource(surveyHeader) {
+                    //we got the survey headers! not we can query the questions.
                     viewModelScope.launch(Dispatchers.IO) {
-                        surveyQuestions = questionRepository.getQuestionsBySurveyHeader(surveyId)
+                        surveyQuestions = questionRepository.getQuestionsBySurveySections(surveyHeader.value!!.surveySectionList.map { sectionItem -> sectionItem.id})
+                        //now we have everything.., check if surveyQuestions is loaded sync, then generate
+                        questionItemList.postValue(surveyQuestions)
                     }
-                })
+                }
             }
         }
     }
