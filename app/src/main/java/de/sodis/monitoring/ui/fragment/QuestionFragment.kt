@@ -62,12 +62,12 @@ class QuestionFragment(private val surveyId: Int) : Fragment(), RecyclerViewList
                     imageUri = currentQuestion.image.path
                 )
             )
-            if (currentQuestion.question.inputTypeId == 1) {//todo
+            if (currentQuestion.question.inputTypeId == 2) {//todo
                 tempItemList.add(
                     TextItem(hiddenText = "Bitte hier die Antwort eingeben")
                 )
             }
-            if (currentQuestion.question.inputTypeId == 2) {
+            if (currentQuestion.question.inputTypeId == 1) {
                 for (answers: OptionChoice in currentQuestion.answers) {
                     tempItemList.add(
                         SelectItem(

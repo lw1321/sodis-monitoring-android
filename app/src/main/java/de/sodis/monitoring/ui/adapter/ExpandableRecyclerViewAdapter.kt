@@ -6,9 +6,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import de.sodis.monitoring.R
 import de.sodis.monitoring.ui.model.SodisItem
-import de.sodis.monitoring.ui.viewholder.AutoCompleteHeaderViewHolder
-import de.sodis.monitoring.ui.viewholder.ParentDefaultViewHolder
-import de.sodis.monitoring.ui.viewholder.SodisViewHolder
+import de.sodis.monitoring.ui.viewholder.*
 
 class ExpandableRecyclerViewAdapter (
     val listener: RecyclerViewListener
@@ -30,6 +28,14 @@ class ExpandableRecyclerViewAdapter (
             )
             SodisItem.TYPE.AUTO_COMPLETE_WITH_HEADER_ITEM-> AutoCompleteHeaderViewHolder(
                 LayoutInflater.from(parent.context).inflate(R.layout.interviewee_item, parent, false),
+                this
+            )
+            SodisItem.TYPE.TYPE_ANSWER_SELECT-> AnswerSelectViewHolder(
+                LayoutInflater.from(parent.context).inflate(R.layout.text_choice_item, parent, false),
+                this
+            )
+            SodisItem.TYPE.TYPE_ANSWER_TEXT-> AnswerTextViewHolder(
+                LayoutInflater.from(parent.context).inflate(R.layout.text_input_item, parent, false),
                 this
             )
             else -> ParentDefaultViewHolder(

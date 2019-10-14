@@ -81,7 +81,7 @@ class SurveyViewModel(
                 questionItemList.addSource(surveyHeader) {
                     //we got the survey headers! not we can query the questions.
                     viewModelScope.launch(Dispatchers.IO) {
-                        surveyQuestions = questionRepository.getQuestionsBySurveySections(surveyHeader.value!!.surveySectionList.map { sectionItem -> sectionItem.id})
+                        surveyQuestions = questionRepository.getQuestionsBySurveySections(surveyHeader.value!!.surveyHeader.surveyName, surveyHeader.value!!.surveySectionList.map { sectionItem -> sectionItem.id})
                         //now we have everything.., check if surveyQuestions is loaded sync, then generate
                         questionItemList.postValue(surveyQuestions)
                     }
