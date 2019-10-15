@@ -5,7 +5,6 @@ import de.sodis.monitoring.Config
 import de.sodis.monitoring.api.model.AnswerJson
 import de.sodis.monitoring.api.model.SurveyHeaderJson
 import de.sodis.monitoring.db.entity.Interviewee
-import de.sodis.monitoring.db.entity.SurveyHeader
 import kotlinx.coroutines.Deferred
 import retrofit2.Response
 import retrofit2.Retrofit

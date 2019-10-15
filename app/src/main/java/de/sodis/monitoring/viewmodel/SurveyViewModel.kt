@@ -7,6 +7,7 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.viewModelScope
 import de.sodis.monitoring.api.MonitoringApi
 import de.sodis.monitoring.db.MonitoringDatabase
+import de.sodis.monitoring.db.entity.Answer
 import de.sodis.monitoring.db.entity.Interviewee
 import de.sodis.monitoring.db.response.QuestionAnswer
 import de.sodis.monitoring.db.response.SurveyHeaderResponse
@@ -15,6 +16,8 @@ import de.sodis.monitoring.repository.QuestionRepository
 import de.sodis.monitoring.repository.SurveyHeaderRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.sql.Timestamp
+import java.time.LocalDateTime
 
 
 class SurveyViewModel(
@@ -61,7 +64,9 @@ class SurveyViewModel(
         QuestionRepository(
             questionDao = MonitoringDatabase.getDatabase(application.applicationContext).questionDao(),
             questionOptionDao = MonitoringDatabase.getDatabase(application.applicationContext).questionOptionDao(),
-            questionImageDao = MonitoringDatabase.getDatabase(application.applicationContext).questionImageDao()
+            questionImageDao = MonitoringDatabase.getDatabase(application.applicationContext).questionImageDao(),
+            answerDao = MonitoringDatabase.getDatabase(application.applicationContext).answerDao(),
+            monitoringApi = MonitoringApi()
         )
 
     /**
@@ -69,7 +74,7 @@ class SurveyViewModel(
      */
     var currentPosition: Int = 0
 
-    var answerMap = mutableMapOf<Int, String>()
+    var answerMap = mutableMapOf<Int, Answer>()
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -98,7 +103,16 @@ class SurveyViewModel(
     }
 
     fun setAnswer(id: Int, answer: String) {
-        answerMap[id] = answer
+        //request questionOption for the answer
+        answerMap[id] = Answer(
+            intervieweeId = interviewee.value!!.id,
+            answerText = answer,
+            timeStamp = Timestamp(System.currentTimeMillis()).toString(),
+            answerNumeric = null,
+            answerYn = null,
+            id = null,
+            questionOptionId = null
+        )
     }
 
     /**
@@ -107,8 +121,9 @@ class SurveyViewModel(
     fun nextQuestion(): Boolean{
         if (currentPosition == (surveyQuestions.size - 1)) {
             //done with the survey, save the input
-            TODO add selected question options
-            questionRepository.saveQuestions(answerMap, interviewee.value!!)
+            questionRepository.saveQuestions(answerMap)
+            //todo start worker manager
+
             return false
         }
         currentPosition++

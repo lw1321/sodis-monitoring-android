@@ -3,6 +3,7 @@ package de.sodis.monitoring.db
 import androidx.room.TypeConverter
 import java.util.*
 
+//TODO
 class Converters {
     @TypeConverter
     fun fromTimestamp(value: Long?): Date? {

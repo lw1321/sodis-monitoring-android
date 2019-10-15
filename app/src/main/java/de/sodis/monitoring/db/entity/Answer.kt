@@ -20,12 +20,13 @@ import java.util.*
     ]
 )
 data class Answer(
-    @PrimaryKey(autoGenerate = true) val id: Int,
-    val answerNumeric: Int,
-    val answerText: String,
-    val answerYn: Boolean,
+    @PrimaryKey(autoGenerate = true) val id: Int?,
+    val answerNumeric: Int?,
+    val answerText: String?,
+    val answerYn: Boolean?,
     val intervieweeId: Int,
-    val questionOptionId: Int,
-    val timeStamp: Date
+    val questionOptionId: Int?,
+    val timeStamp: String,
+    var submitted: Boolean = false
     //TODO GPS position
     )
