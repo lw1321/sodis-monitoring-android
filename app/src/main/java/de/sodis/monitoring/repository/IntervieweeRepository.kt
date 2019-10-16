@@ -8,12 +8,12 @@ import de.sodis.monitoring.db.entity.Interviewee
 
 class IntervieweeRepository(private val intervieweeDao: IntervieweeDao, private val monitoringApi: MonitoringApi) {
 
-    @WorkerThread
-    suspend fun loadAll() {
+
+    fun loadAll() {
         //let's request a new list of interviewees to be sure our local data is up to data.
-        val intervieweesAsync = monitoringApi.getIntervieweesAsync()
-        val resp = intervieweesAsync.await()
-        for (interviewee: Interviewee in resp.body()!!){
+        val respo = monitoringApi.getInterviewees()
+
+        for (interviewee: Interviewee in respo.execute().body()!!){
             //insert interviewee
             intervieweeDao.insert(interviewee)
         }

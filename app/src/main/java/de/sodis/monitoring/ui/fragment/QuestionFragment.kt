@@ -45,7 +45,7 @@ class QuestionFragment(private val surveyId: Int) : Fragment(), RecyclerViewList
             if (!option1Checked && !option2Checked) {
                 Toast.makeText(
                     context,
-                    "Bitte eine Antwortmöglichkeit auswählen!",
+                    "Por favor seleccione una opción de respuesta!",
                     Toast.LENGTH_LONG
                 ).show()
                 return
@@ -57,10 +57,9 @@ class QuestionFragment(private val surveyId: Int) : Fragment(), RecyclerViewList
             )
 
         }
-        //show loading screen
-        Toast.makeText(context, "Übermitteln des Fragebogens", Toast.LENGTH_LONG)
-            .show()//todo show loading animation
         val hasNext = surveyViewModel.nextQuestion()
+        if(!hasNext)
+            Toast.makeText(context, "Los datos se guardan", Toast.LENGTH_LONG).show()
         (activity as MainActivity).replaceFragments(if (hasNext) QuestionFragment(surveyId) else MonitoringOverviewFragment())
     }
 
@@ -90,7 +89,6 @@ class QuestionFragment(private val surveyId: Int) : Fragment(), RecyclerViewList
         mView.layoutManager = LinearLayoutManager(context)
 
         surveyViewModel.questionItemList.observe(this, Observer {
-            //at which position are we?? todo
             currentQuestion = it.get(index = surveyViewModel.currentPosition)
             val tempItemList = mutableListOf<SodisItem>()
             tempItemList.add(

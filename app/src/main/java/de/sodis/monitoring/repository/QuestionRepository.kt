@@ -57,9 +57,14 @@ class QuestionRepository(
                 it.toAnswerJson()
             )
         }
-        monitoringApi.postAnswers(tempList)
-    }
+        val call = monitoringApi.postAnswers(tempList)
+        val execute = call.execute()
+        if (execute.isSuccessful){
+            //cool save the date
+            answerDao.setSubmitted(allUnsubmitted.map { answer -> answer.id as Int})
+        }
 
+    }
 }
 
 private fun Answer.toAnswerJson(): AnswerJson {

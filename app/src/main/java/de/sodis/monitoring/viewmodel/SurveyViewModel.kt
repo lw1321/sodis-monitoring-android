@@ -5,6 +5,10 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.viewModelScope
+import androidx.work.Constraints
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequestBuilder
+import androidx.work.WorkManager
 import de.sodis.monitoring.api.MonitoringApi
 import de.sodis.monitoring.db.MonitoringDatabase
 import de.sodis.monitoring.db.entity.Answer
@@ -14,15 +18,16 @@ import de.sodis.monitoring.db.response.SurveyHeaderResponse
 import de.sodis.monitoring.repository.IntervieweeRepository
 import de.sodis.monitoring.repository.QuestionRepository
 import de.sodis.monitoring.repository.SurveyHeaderRepository
+import de.sodis.monitoring.repository.worker.UploadWorker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.sql.Timestamp
 
 
 class SurveyViewModel(
-    application: Application,
+    private val mApplication: Application,
     surveyId: Int
-) : AndroidViewModel(application) {
+) : AndroidViewModel(mApplication) {
 
     /**
      * Selected Survey, joined sql Response
@@ -41,7 +46,7 @@ class SurveyViewModel(
      */
     private val intervieweeRepository =
         IntervieweeRepository(
-            intervieweeDao = MonitoringDatabase.getDatabase(application.applicationContext).intervieweeDao(),
+            intervieweeDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).intervieweeDao(),
             monitoringApi = MonitoringApi()
         )
     lateinit var surveyHeader: LiveData<SurveyHeaderResponse>
@@ -57,14 +62,14 @@ class SurveyViewModel(
      */
     private val surveyHeaderRepository =
         SurveyHeaderRepository(
-            surveyHeaderDao = MonitoringDatabase.getDatabase(application.applicationContext).surveyHeaderDao()
+            surveyHeaderDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).surveyHeaderDao()
         )
     private val questionRepository =
         QuestionRepository(
-            questionDao = MonitoringDatabase.getDatabase(application.applicationContext).questionDao(),
-            questionOptionDao = MonitoringDatabase.getDatabase(application.applicationContext).questionOptionDao(),
-            questionImageDao = MonitoringDatabase.getDatabase(application.applicationContext).questionImageDao(),
-            answerDao = MonitoringDatabase.getDatabase(application.applicationContext).answerDao(),
+            questionDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).questionDao(),
+            questionOptionDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).questionOptionDao(),
+            questionImageDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).questionImageDao(),
+            answerDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).answerDao(),
             monitoringApi = MonitoringApi()
         )
 
@@ -118,10 +123,15 @@ class SurveyViewModel(
     fun nextQuestion(): Boolean {
         if (currentPosition == (surveyQuestions.size - 1)) {
             //done with the survey, save the input
-            viewModelScope.launch(Dispatchers.IO){
+            viewModelScope.launch(Dispatchers.IO) {
                 questionRepository.saveQuestions(answerMap)
             }
-            //todo start worker manager
+            //start worker manager
+            val uploadWorkRequest = OneTimeWorkRequestBuilder<UploadWorker>().setConstraints(
+                Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+            ).build()
+            WorkManager.getInstance(mApplication.applicationContext).enqueue(uploadWorkRequest)
+
             currentPosition = 0
             return false
         }

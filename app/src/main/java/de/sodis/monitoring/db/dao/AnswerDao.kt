@@ -15,4 +15,7 @@ interface AnswerDao {
     @Query("SELECT * FROM Answer WHERE submitted = 0")
     fun getAllUnsubmitted(): List<Answer>
 
+    @Query("UPDATE ANSWER SET submitted=1 WHERE id IN (:ids)")
+    fun setSubmitted(ids: List<Int>)
+
 }

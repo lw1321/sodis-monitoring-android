@@ -56,12 +56,11 @@ class SurveyRepository(
      * If internet connection is available, load all surveys and save it in the local database.
      * Also load and save the associated images in the internal storage.
      */
-    @WorkerThread
-    suspend fun loadSurveys(context: Context) {
-        val getAllSurveysRequest = monitoringApi.getSurveysAsync()
-        val response = getAllSurveysRequest.await()
+    fun loadSurveys(context: Context) {
+        val response = monitoringApi.getSurveys()
+
         //loop through surveys
-        for (surveyHeaderJson: SurveyHeaderJson in response.body()!!) {
+        for (surveyHeaderJson: SurveyHeaderJson in response.execute().body()!!) {
             //save survey Header
             surveyHeaderDao.insert(
                 SurveyHeader(
