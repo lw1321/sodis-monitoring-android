@@ -33,7 +33,8 @@ class QuestionFragment(private val surveyId: Int) : Fragment(), RecyclerViewList
         if (currentQuestion.question.inputTypeId == 2) {//text!
             surveyViewModel.setAnswer(
                 currentQuestion.question.id,
-                (mView.findViewHolderForAdapterPosition(1) as AnswerTextViewHolder).itemView.answerTextInput.text.toString()
+                (mView.findViewHolderForAdapterPosition(1) as AnswerTextViewHolder).itemView.answerTextInput.text.toString(),
+                currentQuestion.answers[0].questionOption.first { questionOption -> questionOption.questionId == currentQuestion.question.id }.id
             )
         }
         if (currentQuestion.question.inputTypeId == 1) {//single choice
@@ -51,7 +52,8 @@ class QuestionFragment(private val surveyId: Int) : Fragment(), RecyclerViewList
             }
             surveyViewModel.setAnswer(
                 currentQuestion.question.id,
-                if (option1Checked) itemView.optionButton.text.toString() else itemView.optionButton2.text.toString()
+                if (option1Checked) itemView.optionButton.text.toString() else itemView.optionButton2.text.toString(),
+                currentQuestion.answers[if (option1Checked) 0 else 1].questionOption.first { questionOption -> questionOption.questionId == currentQuestion.question.id }.id //todo
             )
 
         }
@@ -106,8 +108,8 @@ class QuestionFragment(private val surveyId: Int) : Fragment(), RecyclerViewList
             if (currentQuestion.question.inputTypeId == 1) {
                 tempItemList.add(
                     SelectItem(
-                        option1 = currentQuestion.answers[0].optionChoiceName,
-                        option2 = currentQuestion.answers[1].optionChoiceName
+                        option1 = currentQuestion.answers[0].optionChoice.optionChoiceName,
+                        option2 = currentQuestion.answers[1].optionChoice.optionChoiceName
                     )
                 )
             }

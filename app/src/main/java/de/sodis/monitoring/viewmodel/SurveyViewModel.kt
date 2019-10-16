@@ -17,7 +17,6 @@ import de.sodis.monitoring.repository.SurveyHeaderRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.sql.Timestamp
-import java.time.LocalDateTime
 
 
 class SurveyViewModel(
@@ -32,7 +31,7 @@ class SurveyViewModel(
     /**
      * Selected interviewee
      */
-    private lateinit var interviewee: LiveData<Interviewee>
+    private lateinit var interviewee: Interviewee
     /**
      * List of all interviewee
      */
@@ -86,8 +85,8 @@ class SurveyViewModel(
                     //we got the survey headers! not we can query the questions.
                     viewModelScope.launch(Dispatchers.IO) {
                         surveyQuestions = questionRepository.getQuestionsBySurveySections(
-                            surveyHeader.value!!.surveyHeader.surveyName,
-                            surveyHeader.value!!.surveySectionList.map { sectionItem -> sectionItem.id })
+                            surveyHeader.value!!.surveySectionList
+                        )
                         //now we have everything.., check if surveyQuestions is loaded sync, then generate
                         questionItemList.postValue(surveyQuestions)
                     }
@@ -97,37 +96,45 @@ class SurveyViewModel(
     }
 
     fun setInterviewee(text: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            interviewee = intervieweeRepository.getByName(name = text)
-        }
+        interviewee = intervieweeList.value!!.first { interviewee -> interviewee.name == text }
     }
 
-    fun setAnswer(id: Int, answer: String) {
+    fun setAnswer(id: Int, answer: String, optionChoiceId: Int) {
         //request questionOption for the answer
         answerMap[id] = Answer(
-            intervieweeId = interviewee.value!!.id,
+            intervieweeId = interviewee.id,
             answerText = answer,
             timeStamp = Timestamp(System.currentTimeMillis()).toString(),
             answerNumeric = null,
             answerYn = null,
             id = null,
-            questionOptionId = null
+            questionOptionId = optionChoiceId
         )
     }
 
     /**
      * increases the adapter position if possible, else starting saving routine
      */
-    fun nextQuestion(): Boolean{
+    fun nextQuestion(): Boolean {
         if (currentPosition == (surveyQuestions.size - 1)) {
             //done with the survey, save the input
-            questionRepository.saveQuestions(answerMap)
+            viewModelScope.launch(Dispatchers.IO){
+                questionRepository.saveQuestions(answerMap)
+            }
             //todo start worker manager
-
+            currentPosition = 0
             return false
         }
         currentPosition++
+        //check if current question has a  depended question. if so check if the depended question was
+        //answered how excepected. If not call this function again. Recursive algorithm
+        val currentQuestion = questionItemList.value!![currentPosition].question
+        if (currentQuestion.dependentQuestionId != 0) {
+            //ok there is a depended question, so lets check the answer
+            if (answerMap[currentQuestion.dependentQuestionId]?.questionOptionId != currentQuestion.dependentQuestionOptionId) {
+                return nextQuestion()
+            }
+        }
         return true
     }
-
 }

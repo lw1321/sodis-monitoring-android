@@ -1,6 +1,5 @@
 package de.sodis.monitoring.repository
 
-import android.os.Build
 import de.sodis.monitoring.api.MonitoringApi
 import de.sodis.monitoring.api.model.AnswerJson
 import de.sodis.monitoring.db.dao.AnswerDao
@@ -8,8 +7,8 @@ import de.sodis.monitoring.db.dao.QuestionDao
 import de.sodis.monitoring.db.dao.QuestionImageDao
 import de.sodis.monitoring.db.dao.QuestionOptionDao
 import de.sodis.monitoring.db.entity.Answer
-import de.sodis.monitoring.db.entity.Interviewee
 import de.sodis.monitoring.db.entity.Question
+import de.sodis.monitoring.db.entity.SurveySection
 import de.sodis.monitoring.db.response.QuestionAnswer
 
 
@@ -23,18 +22,18 @@ class QuestionRepository(
     /**
      * include answers
      */
-    fun getQuestionsBySurveySections(title: String, surveySectionIds: List<Int>): MutableList<QuestionAnswer> {
-        val questionList = questionDao.getBySurveySections(surveySectionIds)
+    fun getQuestionsBySurveySections(surveySectionIds: List<SurveySection>): MutableList<QuestionAnswer> {
+        val questionList = questionDao.getBySurveySections(surveySectionIds.map { sectionItem -> sectionItem.id })
         val questionAnswerList: MutableList<QuestionAnswer> = mutableListOf()
         for (question: Question in questionList){
-            var questionOptions = questionOptionDao.getByQuestion(question.id)
+            var questionOptions = questionOptionDao.getOptionsByQuestion(question.id)
             var image = questionImageDao.getById(question.questionImageId)
             questionAnswerList.add(
                 QuestionAnswer(
-                    question=question,
+                    question =question,
                     answers = questionOptions,
                     image = image,
-                    title = title
+                    title = surveySectionIds.first { surveySection -> surveySection.id == question.surveySectionId }.sectionTitle
                 )
             )
         }
@@ -53,7 +52,7 @@ class QuestionRepository(
     fun uploadQuestions(){
         val allUnsubmitted = answerDao.getAllUnsubmitted()
         val tempList = mutableListOf<AnswerJson>()
-        allUnsubmitted.forEach { it ->
+        allUnsubmitted.forEach {
             tempList.add(
                 it.toAnswerJson()
             )

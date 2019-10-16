@@ -25,7 +25,7 @@ data class Answer(
     val answerText: String?,
     val answerYn: Boolean?,
     val intervieweeId: Int,
-    val questionOptionId: Int?,
+    val questionOptionId: Int,
     val timeStamp: String,
     var submitted: Boolean = false
     //TODO GPS position
