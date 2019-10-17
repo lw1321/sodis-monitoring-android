@@ -6,7 +6,8 @@ data class AnswerJson(
     val answerText: String? = null,
     val answerYn: Boolean? = null,
     val interviewee: Interviewee? = null,
-    val questionOption: QuestionOption? = null
+    val questionOption: QuestionOption? = null,
+    val timestamp: String
 ) {
     data class Interviewee(
         val id: Int,

@@ -73,6 +73,7 @@ private fun Answer.toAnswerJson(): AnswerJson {
         answerYn = this.answerYn,
         answerText = this.answerText,
         interviewee = AnswerJson.Interviewee(this.intervieweeId),
-        questionOption = AnswerJson.QuestionOption(this.questionOptionId)//apiseitig optional value
+        questionOption = AnswerJson.QuestionOption(this.questionOptionId),//apiseitig optional value
+        timestamp = this.timeStamp
     )
 }
