@@ -29,7 +29,7 @@ class AutoCompleteHeaderViewHolder(itemView: View, private val recyclerViewClick
 
         itemView.navigation_forward_button_1.setOnClickListener {
             if (itemView.multiAutoCompleteTextView.text.isEmpty()){
-                Toast.makeText(itemView.context,"Name des Befragten eingeben!", Toast.LENGTH_LONG).show()
+                Toast.makeText(itemView.context,"Ingrese el nombre del encuestado", Toast.LENGTH_LONG).show()
                 return@setOnClickListener
             }
             recyclerViewClickListener.recyclerViewListCLicked(itemView, adapterPosition)
