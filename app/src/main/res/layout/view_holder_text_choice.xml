@@ -28,10 +28,11 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <RadioButton
-                android:drawableRight="@drawable/ic_emoji_happy"
+                android:drawableLeft="@drawable/ic_emoji_happy"
+                android:drawablePadding="@dimen/padding_edge"
                 android:id="@+id/optionButton"
                 android:text="@{option2}"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginLeft="8dp"
@@ -46,11 +47,12 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <RadioButton
-                android:drawableRight="@drawable/ic_emoji_sad"
+                android:drawableLeft="@drawable/ic_emoji_sad"
+                android:drawablePadding="@dimen/padding_edge"
                 android:id="@+id/optionButton2"
                 android:textSize="0dp"
                 android:text="@{option2}"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
                 android:layout_marginLeft="8dp"

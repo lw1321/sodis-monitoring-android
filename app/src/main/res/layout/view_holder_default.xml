@@ -16,10 +16,10 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/header_constraints"
-        android:onClick="@{onClick}">
+        android:id="@+id/header_constraints">
 
         <androidx.cardview.widget.CardView
+            android:foreground="?android:attr/selectableItemBackground"
             android:id="@+id/surveyHeaderCardView"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -29,7 +29,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            android:onClick="@{onClick}">
 
             <TextView
                 android:id="@+id/surveyHeaderTitle"
