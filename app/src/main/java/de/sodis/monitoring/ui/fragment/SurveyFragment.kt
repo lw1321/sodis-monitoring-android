@@ -28,6 +28,8 @@ class SurveyFragment(private val surveyId: Int) : BaseListFragment(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        surveyViewModel.setSurveyId(surveyId)
+
         surveyViewModel.intervieweeList.observe(this, Observer { list ->
             recyclerView.withModels {
                 interviewee {

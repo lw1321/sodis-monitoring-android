@@ -36,11 +36,11 @@ class SurveyViewModel(
     /**
      * Selected interviewee
      */
-    var interviewee: Interviewee? = null
+    private lateinit var interviewee: Interviewee
     /**
      * List of all interviewee
      */
-    var intervieweeList: LiveData<List<Interviewee>>
+    lateinit var intervieweeList: LiveData<List<Interviewee>>
     /**
      * Repository for interviewee actions
      */
@@ -49,7 +49,7 @@ class SurveyViewModel(
             intervieweeDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).intervieweeDao(),
             monitoringApi = MonitoringApi()
         )
-    var surveyHeader: LiveData<SurveyHeaderResponse>
+    lateinit var surveyHeader: LiveData<SurveyHeaderResponse>
 
     lateinit var surveyQuestions: List<QuestionAnswer>
 
@@ -82,10 +82,15 @@ class SurveyViewModel(
     var answerMap = mutableMapOf<Int, Answer>()
 
     init {
+        createQuestionList(surveyId)
+    }
+
+    private fun createQuestionList(surveyId: Int) {
         intervieweeList = intervieweeRepository.getAll()
         surveyHeader = surveyHeaderRepository.getSurveyById(surveyId)
 
         viewModelScope.launch(Dispatchers.Main) {
+            questionItemList.removeSource(surveyHeader)
             questionItemList.addSource(surveyHeader) {
                 //we got the survey headers! not we can query the questions.
                 viewModelScope.launch(Dispatchers.IO) {
@@ -103,12 +108,10 @@ class SurveyViewModel(
         interviewee = intervieweeList.value!!.first { interviewee -> interviewee.name == text }
     }
 
-    fun isAnswered(id: Int) = answerMap.containsKey(id)
-
     fun setAnswer(id: Int, answer: String, optionChoiceId: Int) {
         //request questionOption for the answer
         answerMap[id] = Answer(
-            intervieweeId = interviewee!!.id,
+            intervieweeId = interviewee.id,
             answerText = answer,
             timeStamp = Timestamp(System.currentTimeMillis()).toString(),
             answerNumeric = null,
@@ -147,5 +150,9 @@ class SurveyViewModel(
             }
         }
         return true
+    }
+
+    fun setSurveyId(surveyId: Int) {
+         createQuestionList(surveyId)
     }
 }
