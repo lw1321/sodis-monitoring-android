@@ -6,6 +6,8 @@ apply plugin: 'kotlin-android-extensions'
 
 apply plugin: 'kotlin-kapt'
 
+apply plugin: 'io.fabric'
+
 android {
     compileSdkVersion 28
     buildToolsVersion "29.0.2"
@@ -72,5 +74,11 @@ dependencies {
     // Kotlin + coroutines
     implementation "androidx.work:work-runtime-ktx:$work_version"
 
+    //crashllytics
+    // (Recommended) Add Analytics
 
+    // Add dependency
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
+
+    apply plugin: 'com.google.gms.google-services'
 }

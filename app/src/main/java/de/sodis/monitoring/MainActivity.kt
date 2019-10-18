@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
+import com.crashlytics.android.Crashlytics
 import de.sodis.monitoring.ui.fragment.MonitoringOverviewFragment
 import de.sodis.monitoring.viewmodel.RootViewModel
 
