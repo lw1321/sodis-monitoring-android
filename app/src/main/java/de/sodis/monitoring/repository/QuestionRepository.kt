@@ -2,13 +2,8 @@ package de.sodis.monitoring.repository
 
 import de.sodis.monitoring.api.MonitoringApi
 import de.sodis.monitoring.api.model.AnswerJson
-import de.sodis.monitoring.db.dao.AnswerDao
-import de.sodis.monitoring.db.dao.QuestionDao
-import de.sodis.monitoring.db.dao.QuestionImageDao
-import de.sodis.monitoring.db.dao.QuestionOptionDao
-import de.sodis.monitoring.db.entity.Answer
-import de.sodis.monitoring.db.entity.Question
-import de.sodis.monitoring.db.entity.SurveySection
+import de.sodis.monitoring.db.dao.*
+import de.sodis.monitoring.db.entity.*
 import de.sodis.monitoring.db.response.QuestionAnswer
 
 
@@ -17,6 +12,7 @@ class QuestionRepository(
     private val questionOptionDao: QuestionOptionDao,
     private val questionImageDao: QuestionImageDao,
     private val answerDao: AnswerDao,
+    private val optionChoiceDao: OptionChoiceDao,
     private val monitoringApi: MonitoringApi
 ) {
     /**
@@ -26,12 +22,23 @@ class QuestionRepository(
         val questionList = questionDao.getBySurveySections(surveySectionIds.map { sectionItem -> sectionItem.id })
         val questionAnswerList: MutableList<QuestionAnswer> = mutableListOf()
         for (question: Question in questionList){
-            var questionOptions = questionOptionDao.getOptionsByQuestion(question.id)
+            val questionOptionChoiceList: MutableList<QuestionOptionChoice> = mutableListOf()
+            var questionOptions = questionOptionDao.getQuestionOptionsByQuestion(question.id)
+            for(questionOption: QuestionOption in questionOptions){
+                //get the optionchoice..todo clean n:m query..
+                val optionChoice = optionChoiceDao.getById(questionOption.optionChoiceId)
+                questionOptionChoiceList.add(
+                    QuestionOptionChoice(
+                        questionOption=questionOption,
+                        optionChoice = optionChoice
+                    )
+                )
+            }
             var image = questionImageDao.getById(question.questionImageId)
             questionAnswerList.add(
                 QuestionAnswer(
                     question =question,
-                    answers = questionOptions,
+                    answers = questionOptionChoiceList.toList(),
                     image = image,
                     title = surveySectionIds.first { surveySection -> surveySection.id == question.surveySectionId }.sectionTitle
                 )

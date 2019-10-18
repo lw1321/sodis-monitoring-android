@@ -14,4 +14,7 @@ interface OptionChoiceDao {
 
     @Query("SELECT COUNT(*) FROM OptionChoice WHERE id=:id")
     fun exists(id: Int): Int
+
+    @Query("SELECT * FROM OptionChoice WHERE id=:id")
+    fun getById(id:Int): OptionChoice
 }

@@ -14,6 +14,7 @@ class UploadWorker(var appContext: Context, workerParams: WorkerParameters): Wor
             questionOptionDao = MonitoringDatabase.getDatabase(appContext).questionOptionDao(),
             questionImageDao = MonitoringDatabase.getDatabase(appContext).questionImageDao(),
             answerDao = MonitoringDatabase.getDatabase(appContext).answerDao(),
+            optionChoiceDao = MonitoringDatabase.getDatabase(appContext).optionChoiceDao(),
             monitoringApi = MonitoringApi()
         )
         questionRepository.uploadQuestions()

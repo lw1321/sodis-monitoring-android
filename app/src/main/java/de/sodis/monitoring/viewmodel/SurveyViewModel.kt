@@ -70,6 +70,7 @@ class SurveyViewModel(
             questionOptionDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).questionOptionDao(),
             questionImageDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).questionImageDao(),
             answerDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).answerDao(),
+            optionChoiceDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).optionChoiceDao(),
             monitoringApi = MonitoringApi()
         )
 

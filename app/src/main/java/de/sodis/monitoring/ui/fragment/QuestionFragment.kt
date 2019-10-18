@@ -34,7 +34,7 @@ class QuestionFragment(private val surveyId: Int) : Fragment(), RecyclerViewList
             surveyViewModel.setAnswer(
                 currentQuestion.question.id,
                 (mView.findViewHolderForAdapterPosition(1) as AnswerTextViewHolder).itemView.answerTextInput.text.toString(),
-                currentQuestion.answers[0].questionOption.first { questionOption -> questionOption.questionId == currentQuestion.question.id }.id
+                currentQuestion.answers[0].questionOption.id
             )
         }
         if (currentQuestion.question.inputTypeId == 1) {//single choice
@@ -53,7 +53,7 @@ class QuestionFragment(private val surveyId: Int) : Fragment(), RecyclerViewList
             surveyViewModel.setAnswer(
                 currentQuestion.question.id,
                 if (option1Checked) itemView.optionButton.text.toString() else itemView.optionButton2.text.toString(),
-                currentQuestion.answers[if (option1Checked) 0 else 1].questionOption.first { questionOption -> questionOption.questionId == currentQuestion.question.id }.id //todo
+                currentQuestion.answers[if (option1Checked) 0 else 1].questionOption.id //todo
             )
 
         }

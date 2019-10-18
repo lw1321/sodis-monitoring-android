@@ -19,4 +19,8 @@ interface QuestionOptionDao {
 
     @Query("SELECT QuestionOption.*, OptionChoice.* FROM QuestionOption LEFT JOIN  OptionChoice  ON QuestionOption.optionChoiceId=OptionChoice.id WHERE QuestionOption.questionId=:id ")
     fun getOptionsByQuestion(id: Int): List<QuestionOptionResponse>
+
+    @Query("SELECT * FROM QuestionOption WHERE questionId=:id")
+    fun getQuestionOptionsByQuestion(id: Int): List<QuestionOption>
+
 }
