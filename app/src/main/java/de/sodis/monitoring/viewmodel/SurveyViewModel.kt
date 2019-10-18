@@ -82,11 +82,16 @@ class SurveyViewModel(
     var answerMap = mutableMapOf<Int, Answer>()
 
     init {
+        createQuestionList(surveyId)
+    }
+
+    private fun createQuestionList(surveyId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             intervieweeList = intervieweeRepository.getAll()
             surveyHeader = surveyHeaderRepository.getSurveyById(surveyId)
 
             viewModelScope.launch(Dispatchers.Main) {
+                questionItemList.removeSource(surveyHeader)
                 questionItemList.addSource(surveyHeader) {
                     //we got the survey headers! not we can query the questions.
                     viewModelScope.launch(Dispatchers.IO) {
@@ -147,5 +152,9 @@ class SurveyViewModel(
             }
         }
         return true
+    }
+
+    fun setSurveyId(surveyId: Int) {
+         createQuestionList(surveyId)
     }
 }

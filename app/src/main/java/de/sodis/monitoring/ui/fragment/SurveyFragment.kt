@@ -33,8 +33,8 @@ class SurveyFragment(private val surveyId: Int) : Fragment(), RecyclerViewListen
 
         surveyViewModel = activity?.run {
             ViewModelProviders.of(this, MyViewModelFactory(application, listOf(surveyId))).get(SurveyViewModel::class.java)
-
         }!!
+        surveyViewModel.setSurveyId(surveyId)
     }
 
     override fun onCreateView(
