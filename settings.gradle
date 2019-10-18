@@ -1,2 +1,2 @@
 include ':app'
-rootProject.name='monitoring-android'
+rootProject.name='aktion sodis'
