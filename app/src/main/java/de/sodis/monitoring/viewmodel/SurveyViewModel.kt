@@ -36,7 +36,7 @@ class SurveyViewModel(
     /**
      * Selected interviewee
      */
-    private lateinit var interviewee: Interviewee
+    var interviewee: Interviewee? = null
     /**
      * List of all interviewee
      */
@@ -111,7 +111,7 @@ class SurveyViewModel(
     fun setAnswer(id: Int, answer: String, optionChoiceId: Int) {
         //request questionOption for the answer
         answerMap[id] = Answer(
-            intervieweeId = interviewee.id,
+            intervieweeId = interviewee!!.id,
             answerText = answer,
             timeStamp = Timestamp(System.currentTimeMillis()).toString(),
             answerNumeric = null,
@@ -155,4 +155,6 @@ class SurveyViewModel(
     fun setSurveyId(surveyId: Int) {
          createQuestionList(surveyId)
     }
+
+    fun isAnswered(id: Int): Boolean = answerMap.containsKey(id)
 }

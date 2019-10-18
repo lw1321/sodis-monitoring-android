@@ -2,11 +2,11 @@ package de.sodis.monitoring.ui.fragment
 
 import android.net.Uri
 import android.os.Bundle
-import android.widget.Toast
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.bumptech.glide.Glide
+import com.google.android.material.snackbar.Snackbar
 import de.sodis.monitoring.*
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
 import de.sodis.monitoring.viewmodel.SurveyViewModel
@@ -84,17 +84,17 @@ class QuestionFragment(private val surveyId: Int) : BaseListFragment() {
 
                     val hasNext = surveyViewModel.nextQuestion()
                     if (!hasNext)
-                        Toast.makeText(context, "Los datos se guardan", Toast.LENGTH_LONG).show()
+                        Snackbar.make(view!!, "Los datos se guardan", Snackbar.LENGTH_LONG).show()
                     (activity as MainActivity).replaceFragments(
                         if (hasNext) QuestionFragment(
                             surveyId
                         ) else MonitoringOverviewFragment()
                     )
                 } else {
-                    Toast.makeText(
-                        context,
+                    Snackbar.make(
+                        view!!,
                         "Por favor seleccione una opción de respuesta!",
-                        Toast.LENGTH_LONG
+                        Snackbar.LENGTH_LONG
                     ).show()
                 }
             }
