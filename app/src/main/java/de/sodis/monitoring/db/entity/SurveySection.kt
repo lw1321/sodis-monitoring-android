@@ -11,8 +11,8 @@ import androidx.room.PrimaryKey
 )])
 data class SurveySection(
     @PrimaryKey val id: Int,
-    val sectionName: String,
-    val sectionSubheading: String,
+    val sectionName: String?=null,
+    val sectionSubheading: String?=null,
     val sectionTitle: String,
     val surveyHeaderId: Int
 )

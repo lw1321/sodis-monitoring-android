@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 data class SurveyHeader(
     @PrimaryKey
     val id: Int,
-    val instructions: String,
-    val otherHeaderInfo: String,
+    val instructions: String?=null,
+    val otherHeaderInfo: String?=null,
     val surveyName: String
 )
