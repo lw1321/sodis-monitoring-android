@@ -52,7 +52,7 @@ class MonitoringOverviewFragment : Fragment(), RecyclerViewListener {
         }
         monitoringOverviewModel.surveyHeaderList.observe(this, Observer {
             headerList = it
-            var tempList = mutableListOf<SodisItem>()
+            val tempList = mutableListOf<SodisItem>()
             tempList.add(0, HeaderItem(title = "Cuestionario"))
             tempList.addAll(it!!.map { header -> DefaultParentItem(title = header.surveyName) })
             adapter.setItems(tempList)

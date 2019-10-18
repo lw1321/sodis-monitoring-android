@@ -21,6 +21,8 @@ import de.sodis.monitoring.ui.viewholder.AnswerSelectViewHolder
 import de.sodis.monitoring.ui.viewholder.AnswerTextViewHolder
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
 import de.sodis.monitoring.viewmodel.SurveyViewModel
+import kotlinx.android.synthetic.main.continuable_list.view.*
+import kotlinx.android.synthetic.main.list.view.*
 import kotlinx.android.synthetic.main.text_choice_item.view.*
 import kotlinx.android.synthetic.main.text_input_item.view.*
 
@@ -82,7 +84,13 @@ class QuestionFragment(private val surveyId: Int) : Fragment(), RecyclerViewList
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        mView = inflater.inflate(R.layout.list, container, false) as RecyclerView
+        val view = inflater.inflate(R.layout.continuable_list, container, false)
+
+        view.navigation_forward_button_1.setOnClickListener {
+            recyclerViewListCLicked(it, it)
+        }
+
+        mView = view.list
         this.adapter = ExpandableRecyclerViewAdapter(this)
         // Set the adapter
         mView.adapter = this.adapter
@@ -111,13 +119,11 @@ class QuestionFragment(private val surveyId: Int) : Fragment(), RecyclerViewList
                     )
                 )
             }
-            tempItemList.add(
-                if (surveyViewModel.currentPosition == (it.size - 1)) NavigationFinishItem() else NavigationForwardItem()
-            )
+            view.navigation_forward_button_1.setImageResource(if (surveyViewModel.currentPosition != (it.size - 1)) R.drawable.ic_arrow_forward_white_24dp else R.drawable.ic_check_white_24dp)
             adapter.setItems(tempItemList)
         })
 
-        return mView
+        return view
     }
 
 }

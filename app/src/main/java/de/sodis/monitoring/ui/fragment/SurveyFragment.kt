@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -17,13 +18,16 @@ import de.sodis.monitoring.ui.adapter.RecyclerViewListener
 import de.sodis.monitoring.ui.model.AutoCompleteHeaderItem
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
 import de.sodis.monitoring.viewmodel.SurveyViewModel
+import kotlinx.android.synthetic.main.continuable_list.view.*
 import kotlinx.android.synthetic.main.interviewee_item.view.*
+import kotlinx.android.synthetic.main.list.view.*
 
 class SurveyFragment(private val surveyId: Int) : Fragment(), RecyclerViewListener {
+
     override fun recyclerViewListCLicked(view: View, id: Any) {
-        surveyViewModel.setInterviewee(view.multiAutoCompleteTextView.text.toString())
-        (activity as MainActivity).replaceFragments(QuestionFragment(surveyId))
+
     }
+
     private lateinit var surveyViewModel: SurveyViewModel
     private lateinit var adapter: ExpandableRecyclerViewAdapter
 
@@ -42,13 +46,23 @@ class SurveyFragment(private val surveyId: Int) : Fragment(), RecyclerViewListen
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.list, container, false)
+        val view = inflater.inflate(R.layout.continuable_list, container, false)
         this.adapter = ExpandableRecyclerViewAdapter(this)
         // Set the adapter
-        if (view is RecyclerView) {
-            view.adapter = this.adapter
-            view.layoutManager = LinearLayoutManager(context)
+        val recyclerView: RecyclerView = view.list
+        recyclerView.adapter = this.adapter
+        recyclerView.layoutManager = LinearLayoutManager(context)
+
+        view.navigation_forward_button_1.setOnClickListener {
+            if (view.multiAutoCompleteTextView.text.isEmpty()) {
+                Toast.makeText(view.context, "Ingrese el nombre del encuestado", Toast.LENGTH_LONG)
+                    .show()
+            } else {
+                surveyViewModel.setInterviewee(view.multiAutoCompleteTextView.text.toString())
+                (activity as MainActivity).replaceFragments(QuestionFragment(surveyId))
+            }
         }
+
         surveyViewModel.intervieweeList.observe(this, Observer {
             adapter.setItems(
                 mutableListOf(
