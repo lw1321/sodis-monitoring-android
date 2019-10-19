@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProviders
 import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import de.sodis.monitoring.*
+import de.sodis.monitoring.db.response.QuestionAnswer
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
 import de.sodis.monitoring.viewmodel.SurveyViewModel
 import kotlinx.android.synthetic.main.continuable_list.view.*
@@ -19,6 +20,7 @@ import java.io.File
 class QuestionFragment(private val surveyId: Int) : BaseListFragment() {
 
 
+    private lateinit var currentQuestion: QuestionAnswer
     private val surveyViewModel: SurveyViewModel by lazy {
         activity?.run {
             ViewModelProviders.of(this, MyViewModelFactory(application, listOf(surveyId)))
@@ -31,7 +33,7 @@ class QuestionFragment(private val surveyId: Int) : BaseListFragment() {
         super.onCreate(savedInstanceState)
 
         surveyViewModel.questionItemList.observe(this, Observer { list ->
-            val currentQuestion = list.get(index = surveyViewModel.currentPosition)
+            currentQuestion = list.get(index = surveyViewModel.currentPosition)
 
             recyclerView.withModels {
                 question {
@@ -64,6 +66,7 @@ class QuestionFragment(private val surveyId: Int) : BaseListFragment() {
                         option1(currentQuestion.answers[0].optionChoice.optionChoiceName)
                         option2(currentQuestion.answers[1].optionChoice.optionChoiceName)
                         onBind { model, view, position ->
+                            view.dataBinding.root.radio_group.clearCheck()
                             view.dataBinding.root.radio_group.setOnCheckedChangeListener { group, checkedId ->
                                 val index = if (checkedId == R.id.optionButton) 0 else 1
                                 surveyViewModel.setAnswer(
@@ -88,7 +91,8 @@ class QuestionFragment(private val surveyId: Int) : BaseListFragment() {
                     (activity as MainActivity).replaceFragments(
                         if (hasNext) QuestionFragment(
                             surveyId
-                        ) else MonitoringOverviewFragment()
+                        ) else MonitoringOverviewFragment(),
+                        if (hasNext) "QUESTION_TAG" else "MONITORING_OVERVIEW_TAG"
                     )
                 } else {
                     Snackbar.make(

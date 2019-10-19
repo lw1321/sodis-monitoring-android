@@ -39,7 +39,7 @@ class MonitoringOverviewFragment : BaseListFragment() {
                         id(it.id)
                         text(it.surveyName)
                         onClick { _ ->
-                            (activity as MainActivity).replaceFragments(SurveyFragment(it.id))
+                            (activity as MainActivity).replaceFragments(SurveyFragment(it.id), "SURVEY_TAG")
                         }
                     }
                 }

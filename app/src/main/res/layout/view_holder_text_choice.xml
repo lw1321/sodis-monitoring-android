@@ -31,7 +31,7 @@
                 android:drawableLeft="@drawable/ic_emoji_happy"
                 android:drawablePadding="@dimen/padding_edge"
                 android:id="@+id/optionButton"
-                android:text="@{option2}"
+                android:text="@{option1}"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"

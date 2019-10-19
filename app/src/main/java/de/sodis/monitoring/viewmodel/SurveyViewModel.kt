@@ -129,6 +129,8 @@ class SurveyViewModel(
             //done with the survey, save the input
             viewModelScope.launch(Dispatchers.IO) {
                 questionRepository.saveQuestions(answerMap)
+                answerMap.clear()
+                interviewee = null
             }
             //start worker manager
             val uploadWorkRequest = OneTimeWorkRequestBuilder<UploadWorker>().setConstraints(

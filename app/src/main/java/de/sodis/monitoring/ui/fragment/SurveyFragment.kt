@@ -43,6 +43,8 @@ class SurveyFragment(private val surveyId: Int) : BaseListFragment(){
                                 list.map { it.name }
                             )
                             threshold = 1 //will start working from first character
+                            multiAutoCompleteTextView.setText("")
+                            hint = "Interrogado"
                             setAdapter(adapter)
                             setOnItemClickListener { parent, view, position, id ->
                                 surveyViewModel.setInterviewee(list.map { it.name }[position])
@@ -66,8 +68,9 @@ class SurveyFragment(private val surveyId: Int) : BaseListFragment(){
             if (surveyViewModel.interviewee == null) {
                 Snackbar.make(view, "Ingrese el nombre del encuestado", Snackbar.LENGTH_LONG)
                     .show()
-            } else {
-                (activity as MainActivity).replaceFragments(QuestionFragment(surveyId))
+            }
+            else {
+                (activity as MainActivity).replaceFragments(QuestionFragment(surveyId), "QUESTION_TAG")
             }
         }
 

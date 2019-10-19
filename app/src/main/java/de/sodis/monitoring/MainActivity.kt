@@ -17,14 +17,22 @@ class MainActivity : AppCompatActivity() {
         rootViewModel = this.run {
             ViewModelProviders.of(this).get(RootViewModel::class.java)
         }
-        replaceFragments(MonitoringOverviewFragment())
+        replaceFragments(MonitoringOverviewFragment(), "TAG_MONITORING_OVERVIEW")
+    }
+
+    override fun onBackPressed() {
+        //only allow back press for convenience only on interviewee
+        val surveyFragment= supportFragmentManager.findFragmentByTag("SURVEY_TAG")
+        if (surveyFragment != null && surveyFragment.isVisible) {
+            super.onBackPressed()
+        }
     }
 }
 
-fun MainActivity.replaceFragments(fragmentNew: Fragment) {
+fun MainActivity.replaceFragments(fragmentNew: Fragment, tag: String) {
     val transaction = supportFragmentManager.beginTransaction()
     transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
-    transaction.replace(R.id.fragment_container, fragmentNew)
+    transaction.replace(R.id.fragment_container, fragmentNew, tag)
     transaction.addToBackStack(null)
     transaction.commit()
 }
