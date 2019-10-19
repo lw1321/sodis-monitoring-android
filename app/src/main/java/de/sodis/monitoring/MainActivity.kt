@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
         //only allow back press for convenience only on interviewee
         val surveyFragment= supportFragmentManager.findFragmentByTag("SURVEY_TAG")
         if (surveyFragment != null && surveyFragment.isVisible) {
-            super.onBackPressed()
+            //super.onBackPressed()//todo
         }
     }
 }
