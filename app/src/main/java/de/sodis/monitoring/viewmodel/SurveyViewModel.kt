@@ -36,7 +36,7 @@ class SurveyViewModel(
     /**
      * Selected interviewee
      */
-    private lateinit var interviewee: Interviewee
+    var interviewee: Interviewee? = null
     /**
      * List of all interviewee
      */
@@ -86,21 +86,19 @@ class SurveyViewModel(
     }
 
     private fun createQuestionList(surveyId: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            intervieweeList = intervieweeRepository.getAll()
-            surveyHeader = surveyHeaderRepository.getSurveyById(surveyId)
+        intervieweeList = intervieweeRepository.getAll()
+        surveyHeader = surveyHeaderRepository.getSurveyById(surveyId)
 
-            viewModelScope.launch(Dispatchers.Main) {
-                questionItemList.removeSource(surveyHeader)
-                questionItemList.addSource(surveyHeader) {
-                    //we got the survey headers! not we can query the questions.
-                    viewModelScope.launch(Dispatchers.IO) {
-                        surveyQuestions = questionRepository.getQuestionsBySurveySections(
-                            surveyHeader.value!!.surveySectionList
-                        )
-                        //now we have everything.., check if surveyQuestions is loaded sync, then generate
-                        questionItemList.postValue(surveyQuestions)
-                    }
+        viewModelScope.launch(Dispatchers.Main) {
+            questionItemList.removeSource(surveyHeader)
+            questionItemList.addSource(surveyHeader) {
+                //we got the survey headers! not we can query the questions.
+                viewModelScope.launch(Dispatchers.IO) {
+                    surveyQuestions = questionRepository.getQuestionsBySurveySections(
+                        surveyHeader.value!!.surveySectionList
+                    )
+                    //now we have everything.., check if surveyQuestions is loaded sync, then generate
+                    questionItemList.postValue(surveyQuestions)
                 }
             }
         }
@@ -113,7 +111,7 @@ class SurveyViewModel(
     fun setAnswer(id: Int, answer: String, optionChoiceId: Int) {
         //request questionOption for the answer
         answerMap[id] = Answer(
-            intervieweeId = interviewee.id,
+            intervieweeId = interviewee!!.id,
             answerText = answer,
             timeStamp = Timestamp(System.currentTimeMillis()).toString(),
             answerNumeric = null,
@@ -157,4 +155,6 @@ class SurveyViewModel(
     fun setSurveyId(surveyId: Int) {
          createQuestionList(surveyId)
     }
+
+    fun isAnswered(id: Int): Boolean = answerMap.containsKey(id)
 }
