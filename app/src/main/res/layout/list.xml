@@ -5,6 +5,7 @@
     android:paddingStart="@dimen/padding_edge"
     android:paddingEnd="@dimen/padding_edge"
     android:paddingRight="@dimen/padding_edge"
+    android:paddingBottom="@dimen/padding_edge"
     android:id="@+id/list"
     android:layout_width="match_parent"
     android:layout_height="match_parent" />

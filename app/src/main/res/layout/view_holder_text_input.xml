@@ -11,19 +11,15 @@
             type="String" />
     </data>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/constraintLayout"
+    <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:hint="@{hint}">
 
-        <EditText
-            android:id="@+id/answerTextInput"
-            android:layout_width="0dp"
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:hint="@{hint}"
+            android:id="@+id/answerTextInput"
             android:inputType="textPersonName"
             android:singleLine="false"
             android:imeOptions="actionDone"
@@ -31,6 +27,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            app:layout_constraintTop_toTopOf="parent"
+            />
+    </com.google.android.material.textfield.TextInputLayout>
+
 </layout>

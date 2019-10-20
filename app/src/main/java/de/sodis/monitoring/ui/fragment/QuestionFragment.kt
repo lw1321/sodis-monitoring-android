@@ -1,11 +1,10 @@
 package de.sodis.monitoring.ui.fragment
 
-import android.net.Uri
 import android.os.Bundle
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import com.bumptech.glide.Glide
+import coil.api.load
 import com.google.android.material.snackbar.Snackbar
 import de.sodis.monitoring.*
 import de.sodis.monitoring.db.response.QuestionAnswer
@@ -41,9 +40,7 @@ class QuestionFragment(private val surveyId: Int) : BaseListFragment() {
                     title(currentQuestion.title)
                     questionText(currentQuestion.question.questionName)
                     onBind { model, view, position ->
-                        Glide.with(view.dataBinding.root.context)
-                            .load(Uri.fromFile(File(currentQuestion.image.path)))
-                            .into(view.dataBinding.root.question_image)
+                        view.dataBinding.root.question_image.load(File(currentQuestion.image.path))
                     }
                 }
                 when (currentQuestion.question.inputTypeId) {
@@ -52,6 +49,7 @@ class QuestionFragment(private val surveyId: Int) : BaseListFragment() {
                             id("input")
                             hint("Respuesta")
                             onBind { model, view, position ->
+                                view.dataBinding.root.answerTextInput.requestFocus()
                                 view.dataBinding.root.answerTextInput.addTextChangedListener {
                                     surveyViewModel.setAnswer(
                                         currentQuestion.question.id,
