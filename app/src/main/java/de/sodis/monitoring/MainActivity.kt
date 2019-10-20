@@ -2,6 +2,7 @@ package de.sodis.monitoring
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import de.sodis.monitoring.ui.fragment.MonitoringOverviewFragment
@@ -13,10 +14,13 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+
         setContentView(R.layout.activity_main)
         rootViewModel = this.run {
             ViewModelProviders.of(this).get(RootViewModel::class.java)
         }
+
         replaceFragments(MonitoringOverviewFragment(), "TAG_MONITORING_OVERVIEW")
     }
 

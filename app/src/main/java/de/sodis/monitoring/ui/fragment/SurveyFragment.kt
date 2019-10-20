@@ -35,6 +35,7 @@ class SurveyFragment(private val surveyId: Int) : BaseListFragment(){
                 interviewee {
                     id("interviewee")
                     titleText("Interrogado")
+                    hint("Interrogado")
                     onBind { model, view, position ->
                         view.dataBinding.root.multiAutoCompleteTextView.apply {
                             val adapter = ArrayAdapter<String>(
@@ -44,7 +45,7 @@ class SurveyFragment(private val surveyId: Int) : BaseListFragment(){
                             )
                             threshold = 1 //will start working from first character
                             multiAutoCompleteTextView.setText("")
-                            hint = "Interrogado"
+
                             setAdapter(adapter)
                             setOnItemClickListener { parent, view, position, id ->
                                 surveyViewModel.setInterviewee(list.map { it.name }[position])
