@@ -47,7 +47,8 @@ class SurveyViewModel(
     private val intervieweeRepository =
         IntervieweeRepository(
             intervieweeDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).intervieweeDao(),
-            monitoringApi = MonitoringApi()
+            monitoringApi = MonitoringApi(),
+            villageDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).villageDao()
         )
     lateinit var surveyHeader: LiveData<SurveyHeaderResponse>
 

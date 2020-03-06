@@ -8,7 +8,7 @@ import androidx.room.TypeConverters
 import de.sodis.monitoring.db.dao.*
 import de.sodis.monitoring.db.entity.*
 
-@Database(entities = [InputType::class, OptionChoice::class, Question::class, QuestionImage::class, QuestionOption::class, SurveyHeader::class, SurveySection::class, Interviewee::class, Answer::class], version = 5)
+@Database(entities = [InputType::class, OptionChoice::class, Question::class, QuestionImage::class, QuestionOption::class, SurveyHeader::class, SurveySection::class, Interviewee::class, Answer::class, Village::class], version = 6)
 abstract class MonitoringDatabase : RoomDatabase() {
     abstract fun inputTypeDao(): InputTypeDao
     abstract fun optionChoiceDao(): OptionChoiceDao
@@ -19,6 +19,7 @@ abstract class MonitoringDatabase : RoomDatabase() {
     abstract fun surveySectionDao(): SurveySectionDao
     abstract fun intervieweeDao(): IntervieweeDao
     abstract fun answerDao(): AnswerDao
+    abstract fun villageDao(): VillageDao
 
     companion object {
         @Volatile

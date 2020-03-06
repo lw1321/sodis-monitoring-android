@@ -28,7 +28,8 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) :
         val intervieweeRepository =
             IntervieweeRepository(
                 intervieweeDao = monitoringDatabase.intervieweeDao(),
-                monitoringApi = MonitoringApi()
+                monitoringApi = MonitoringApi(),
+                villageDao = monitoringDatabase.villageDao()
             )
 
         return try {
