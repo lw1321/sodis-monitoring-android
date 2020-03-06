@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
+import de.sodis.monitoring.ui.fragment.IntervieweeOverviewFragment
 import de.sodis.monitoring.ui.fragment.MonitoringOverviewFragment
 import de.sodis.monitoring.viewmodel.RootViewModel
 
@@ -21,7 +22,7 @@ class MainActivity : AppCompatActivity() {
             ViewModelProviders.of(this).get(RootViewModel::class.java)
         }
 
-        replaceFragments(MonitoringOverviewFragment(), "TAG_MONITORING_OVERVIEW")
+        replaceFragments(IntervieweeOverviewFragment(), "TAG_MONITORING_OVERVIEW")
     }
 
     override fun onBackPressed() {
