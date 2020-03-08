@@ -1,5 +1,6 @@
 package de.sodis.monitoring.db.dao
 
+import androidx.lifecycle.LiveData
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -14,5 +15,8 @@ interface VillageDao {
 
     @Query("SELECT COUNT(*) FROM Village WHERE id = :id")
     fun count(id: Int): Int
+
+    @Query("SELECT * FROM Village")
+    fun getAll(): LiveData<List<Village>>
 
 }

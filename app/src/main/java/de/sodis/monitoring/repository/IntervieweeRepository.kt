@@ -47,4 +47,12 @@ class IntervieweeRepository(
     fun getByName(name: String): LiveData<Interviewee> {
         return intervieweeDao.getByName(name)
     }
+
+    fun getAllVillages(): LiveData<List<Village>> {
+        return villageDao.getAll()
+    }
+
+    fun getByVillage(villageId: Int): LiveData<List<Interviewee>> {
+        return intervieweeDao.getByVillage(villageId)
+    }
 }
