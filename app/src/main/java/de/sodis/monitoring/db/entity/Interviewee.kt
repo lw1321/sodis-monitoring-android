@@ -17,5 +17,14 @@ data class Interviewee(
     @PrimaryKey
     val id: Int,
     val name: String,
-    val villageId: Int
-)
+    val villageId: Int,
+    val girlsCount: Int,
+    val boysCount: Int,
+    val youngMenCount: Int,
+    val youngWomenCount: Int,
+    val oldMenCount: Int,
+    val hasKnowledge: Int,
+    val oldWomenCount: Int,
+    val menCount: Int,
+    val womenCount: Int
+    )

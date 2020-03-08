@@ -33,4 +33,8 @@ class IntervieweeModel(application: Application) : AndroidViewModel(application)
     fun getByVillage(villageId: Int): LiveData<List<Interviewee>> {
         return intervieweeRepository.getByVillage(villageId)
     }
+
+    fun getInterviewee(intervieweeId: Int):LiveData<Interviewee>  {
+        return intervieweeRepository.getById(intervieweeId)
+    }
 }

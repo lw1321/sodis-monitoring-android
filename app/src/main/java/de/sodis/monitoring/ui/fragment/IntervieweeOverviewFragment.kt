@@ -16,6 +16,7 @@ import de.sodis.monitoring.viewmodel.MyViewModelFactory
 import kotlinx.android.synthetic.main.list.view.*
 import kotlinx.android.synthetic.main.view_holder_tab.*
 
+//TODO refactor redundant code
 class IntervieweeOverviewFragment : Fragment(), TabLayout.OnTabSelectedListener {
     override fun onTabReselected(tab: TabLayout.Tab?) {
     }
@@ -24,22 +25,23 @@ class IntervieweeOverviewFragment : Fragment(), TabLayout.OnTabSelectedListener 
     }
 
     override fun onTabSelected(tab: TabLayout.Tab?) {
-        intervieweeModel.getByVillage((tab!!.tag as Int?)!!).observe(this, Observer { intervieweesVillageList ->
-            recyclerView.withModels {
-                intervieweesVillageList.forEach {
-                    default {
-                        id(it.id)
-                        text(it.name)
-                        onClick { _ ->
-                            (activity as MainActivity).replaceFragments(
-                                SurveyFragment(it.id),
-                                "SURVEY_TAG"
-                            )
+        intervieweeModel.getByVillage((tab!!.tag as Int?)!!)
+            .observe(this, Observer { intervieweesVillageList ->
+                recyclerView.withModels {
+                    intervieweesVillageList.forEach {
+                        default {
+                            id(it.id)
+                            text(it.name)
+                            onClick { _ ->
+                                (activity as MainActivity).replaceFragments(
+                                    IntervieweeDetailFragment(it.id),
+                                    "TAG_INTERVIEW_DETAIL"
+                                )
+                            }
                         }
                     }
                 }
-            }
-        })
+            })
     }
 
     lateinit var recyclerView: EpoxyRecyclerView
@@ -71,22 +73,23 @@ class IntervieweeOverviewFragment : Fragment(), TabLayout.OnTabSelectedListener 
             it.forEach {
                 tab_layout.addTab(tab_layout.run { newTab().setText(it.name).setTag(it.id) })
             }
-            intervieweeModel.getByVillage((tab_layout.getTabAt(tab_layout.selectedTabPosition)!!.tag as Int?)!!).observe(this, Observer { intervieweesVillageList ->
-                recyclerView.withModels {
-                    intervieweesVillageList.forEach {
-                        default {
-                            id(it.id)
-                            text(it.name)
-                            onClick { _ ->
-                                (activity as MainActivity).replaceFragments(
-                                    SurveyFragment(it.id),
-                                    "SURVEY_TAG"
-                                )
+            intervieweeModel.getByVillage((tab_layout.getTabAt(tab_layout.selectedTabPosition)!!.tag as Int?)!!)
+                .observe(this, Observer { intervieweesVillageList ->
+                    recyclerView.withModels {
+                        intervieweesVillageList.forEach {
+                            default {
+                                id(it.id)
+                                text(it.name)
+                                onClick { _ ->
+                                    (activity as MainActivity).replaceFragments(
+                                        IntervieweeDetailFragment(it.id),
+                                        "TAG_INTERVIEW_DETAIL"
+                                    )
+                                }
                             }
                         }
                     }
-                }
-            })
-            })
-        }
+                })
+        })
     }
+}
