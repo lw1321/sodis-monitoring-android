@@ -22,5 +22,5 @@ interface IntervieweeDao {
     fun getByVillage(villageId: Int): LiveData<List<Interviewee>>
 
     @Query("SELECT * FROM Interviewee WHERE id=:intervieweeId")
-    fun getById(intervieweeId: Int): LiveData<Interviewee>
+    fun getById(intervieweeId: Int): Interviewee
 }

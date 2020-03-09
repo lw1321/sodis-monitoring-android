@@ -73,23 +73,6 @@ class IntervieweeOverviewFragment : Fragment(), TabLayout.OnTabSelectedListener 
             it.forEach {
                 tab_layout.addTab(tab_layout.run { newTab().setText(it.name).setTag(it.id) })
             }
-            intervieweeModel.getByVillage((tab_layout.getTabAt(tab_layout.selectedTabPosition)!!.tag as Int?)!!)
-                .observe(this, Observer { intervieweesVillageList ->
-                    recyclerView.withModels {
-                        intervieweesVillageList.forEach {
-                            default {
-                                id(it.id)
-                                text(it.name)
-                                onClick { _ ->
-                                    (activity as MainActivity).replaceFragments(
-                                        IntervieweeDetailFragment(it.id),
-                                        "TAG_INTERVIEW_DETAIL"
-                                    )
-                                }
-                            }
-                        }
-                    }
-                })
         })
     }
 }

@@ -10,6 +10,8 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import de.sodis.monitoring.default
 import de.sodis.monitoring.header
+import de.sodis.monitoring.keyValue
+import de.sodis.monitoring.technology
 import de.sodis.monitoring.viewmodel.IntervieweeModel
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
 import kotlinx.android.synthetic.main.continuable_list.view.*
@@ -23,14 +25,70 @@ class IntervieweeDetailFragment(private val intervieweeId: Int) : BaseListFragme
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        intervieweeModel.getInterviewee(intervieweeId).observe(this, Observer {
+        intervieweeModel.intervieweeDetail.observe(this, Observer {
             recyclerView.withModels {
-                header {
+                header{
                     id("header")
-                    text(it.name)
+                    text(it.interviewee.name)
                 }
+                keyValue {
+                    id("keyValue")
+                    key("village")
+                    value(it.village.name)
+                }
+                keyValue {
+                    id("keyValue")
+                    key("young boys")
+                    value(it.interviewee.boysCount.toString())
+                }
+                keyValue {
+                    id("keyValue")
+                    key("young girls")
+                    value(it.interviewee.girlsCount.toString())
+                }
+
+                keyValue {
+                    id("keyValue")
+                    key("young men")
+                    value(it.interviewee.youngMenCount.toString())
+                }
+                keyValue {
+                    id("keyValue")
+                    key("young women")
+                    value(it.interviewee.youngWomenCount.toString())
+                }
+                keyValue {
+                    id("keyValue")
+                    key("men")
+                    value(it.interviewee.menCount.toString())
+                }
+                keyValue {
+                    id("keyValue")
+                    key("women")
+                    value(it.interviewee.womenCount.toString())
+                }
+                keyValue {
+                    id("keyValue")
+                    key("oldMen")
+                    value(it.interviewee.oldMenCount.toString())
+                }
+                keyValue {
+                    id("keyValue")
+                    key("oldWomen")
+                    value(it.interviewee.oldWomenCount.toString())
+                }
+                it.intervieweeTechnologies.forEach {techno ->
+                    technology {
+                        id("technology")
+                        state(techno.stateTechnology.toString())
+                        knowledgeState(techno.stateKnowledge.toString())
+                        name(techno.name)
+                    }
+                }
+
             }
         })
+        intervieweeModel.setInterviewee(intervieweeId)
     }
 
     override fun onCreateView(

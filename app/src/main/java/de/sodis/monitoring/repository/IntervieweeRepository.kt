@@ -3,15 +3,18 @@ package de.sodis.monitoring.repository
 import androidx.lifecycle.LiveData
 import de.sodis.monitoring.api.MonitoringApi
 import de.sodis.monitoring.api.model.IntervieweeJson
-import de.sodis.monitoring.db.dao.AnswerDao
-import de.sodis.monitoring.db.dao.IntervieweeDao
-import de.sodis.monitoring.db.dao.VillageDao
+import de.sodis.monitoring.db.dao.*
 import de.sodis.monitoring.db.entity.Interviewee
+import de.sodis.monitoring.db.entity.IntervieweeTechnology
+import de.sodis.monitoring.db.entity.Technology
 import de.sodis.monitoring.db.entity.Village
+import de.sodis.monitoring.db.response.IntervieweeDetail
 
 class IntervieweeRepository(
     private val intervieweeDao: IntervieweeDao,
     private val villageDao: VillageDao,
+    private val technologyDao: TechnologyDao,
+    private val intervieweeTechnologyDao: IntervieweeTechnologyDao,
     private val monitoringApi: MonitoringApi
 ) {
 
@@ -29,17 +32,51 @@ class IntervieweeRepository(
                     )
                 )
             }
+
             //insert interviewee
             intervieweeDao.insert(
                 Interviewee(
                     id = interviewee.id,
                     name = interviewee.name,
-                    villageId = interviewee.village.id
+                    villageId = interviewee.village.id,
+                    boysCount = interviewee.boysCount,
+                    girlsCount = interviewee.girlsCount,
+                    hasKnowledge = interviewee.hasKnowledge,
+                    menCount = interviewee.menCount,
+                    womenCount = interviewee.womenCount,
+                    oldMenCount = interviewee.oldMenCount,
+                    oldWomenCount = interviewee.oldWomenCount,
+                    youngMenCount = interviewee.youngMenCount,
+                    youngWomenCount = interviewee.youngWomenCount
                 )
             )
+            interviewee.intervieweeTechnologies.forEach {
+                if (technologyDao.count(it.technology.id) == 0) {
+                    //save input type
+                    technologyDao.insert(
+                        Technology(
+                            id = it.technology.id,
+                            name = it.technology.name
+                        )
+                    )
+                }
+                intervieweeTechnologyDao.insert(
+                    IntervieweeTechnology(
+                        id = it.id,
+                        stateKnowledge = it.stateKnowledge,
+                        technologyId = it.technology.id,
+                        stateTechnology = it.stateTechnology,
+                        intervieweeId = interviewee.id
+                    )
+                )
+            }
+
         }
     }
 
+    /*
+    just basic info
+     */
     fun getAll(): LiveData<List<Interviewee>> {
         return intervieweeDao.getAll()
     }
@@ -56,7 +93,19 @@ class IntervieweeRepository(
         return intervieweeDao.getByVillage(villageId)
     }
 
-    fun getById(intervieweeId: Int): LiveData<Interviewee> {
-        return intervieweeDao.getById(intervieweeId)
+    /**
+     * Full infos
+     * interviewee, technologies, village
+     */
+    suspend fun getById(intervieweeId: Int): IntervieweeDetail {
+        val intervieweeTechnologies =
+            intervieweeTechnologyDao.getByInterviewee(intervieweeId)
+        val interviewee = intervieweeDao.getById(intervieweeId)
+        val village = villageDao.getById(interviewee.villageId)
+        return IntervieweeDetail(
+            interviewee = interviewee,
+            intervieweeTechnologies = intervieweeTechnologies,
+            village = village
+        )
     }
 }

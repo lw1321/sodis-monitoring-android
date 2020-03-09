@@ -27,6 +27,7 @@ class SurveyRepository(
     private val questionImageDao: QuestionImageDao,
     private val questionOptionDao: QuestionOptionDao,
     private val optionChoiceDao: OptionChoiceDao,
+    private val technologyDao: TechnologyDao,
     private val monitoringApi: MonitoringApi
 ) {
 
@@ -63,12 +64,23 @@ class SurveyRepository(
         //loop through surveys
         for (surveyHeaderJson: SurveyHeaderJson in response) {
             //save survey Header
+            //Save Input Types
+            if (technologyDao.count(surveyHeaderJson.technology.id) == 0) {
+                //save input type
+                technologyDao.insert(
+                    Technology(
+                        id = surveyHeaderJson.technology.id,
+                        name= surveyHeaderJson.technology.name
+                    )
+                )
+            }
             surveyHeaderDao.insert(
                 SurveyHeader(
                     id = surveyHeaderJson.id,
                     surveyName = surveyHeaderJson.surveyName,
                     instructions = surveyHeaderJson.instructions,
-                    otherHeaderInfo = surveyHeaderJson.otherHeaderInfo
+                    otherHeaderInfo = surveyHeaderJson.otherHeaderInfo,
+                    technologyId = surveyHeaderJson.technology.id
                 )
             )
 

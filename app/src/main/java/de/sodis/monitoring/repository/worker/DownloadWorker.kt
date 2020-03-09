@@ -23,18 +23,21 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) :
                 questionOptionDao = monitoringDatabase.questionOptionDao(),
                 surveyHeaderDao = monitoringDatabase.surveyHeaderDao(),
                 surveySectionDao = monitoringDatabase.surveySectionDao(),
+                technologyDao= monitoringDatabase.technologyDao(),
                 monitoringApi = MonitoringApi()
             )
         val intervieweeRepository =
             IntervieweeRepository(
                 intervieweeDao = monitoringDatabase.intervieweeDao(),
                 monitoringApi = MonitoringApi(),
+                technologyDao = monitoringDatabase.technologyDao(),
+                intervieweeTechnologyDao = monitoringDatabase.intervieweeTechnologyDao(),
                 villageDao = monitoringDatabase.villageDao()
             )
 
         return try {
-            surveyRepository.loadSurveys(applicationContext)
             intervieweeRepository.loadAll()
+            surveyRepository.loadSurveys(applicationContext)
             Result.success()
         } catch (e: Exception) {
             Crashlytics.logException(e)

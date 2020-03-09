@@ -8,7 +8,10 @@ import androidx.room.TypeConverters
 import de.sodis.monitoring.db.dao.*
 import de.sodis.monitoring.db.entity.*
 
-@Database(entities = [InputType::class, OptionChoice::class, Question::class, QuestionImage::class, QuestionOption::class, SurveyHeader::class, SurveySection::class, Interviewee::class, Answer::class, Village::class], version = 6)
+@Database(
+    entities = [InputType::class, OptionChoice::class, Question::class, QuestionImage::class, QuestionOption::class, SurveyHeader::class, SurveySection::class, Interviewee::class, Answer::class, Village::class, Technology::class, IntervieweeTechnology::class],
+    version = 7
+)
 abstract class MonitoringDatabase : RoomDatabase() {
     abstract fun inputTypeDao(): InputTypeDao
     abstract fun optionChoiceDao(): OptionChoiceDao
@@ -20,6 +23,8 @@ abstract class MonitoringDatabase : RoomDatabase() {
     abstract fun intervieweeDao(): IntervieweeDao
     abstract fun answerDao(): AnswerDao
     abstract fun villageDao(): VillageDao
+    abstract fun technologyDao(): TechnologyDao
+    abstract fun intervieweeTechnologyDao(): IntervieweeTechnologyDao
 
     companion object {
         @Volatile
@@ -27,10 +32,10 @@ abstract class MonitoringDatabase : RoomDatabase() {
 
         fun getDatabase(context: Context): MonitoringDatabase {
             val tempInstance = INSTANCE
-            if(tempInstance != null){
+            if (tempInstance != null) {
                 return tempInstance
             }
-            synchronized(this){
+            synchronized(this) {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     MonitoringDatabase::class.java,

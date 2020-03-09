@@ -23,7 +23,7 @@ data class Interviewee(
     val youngMenCount: Int,
     val youngWomenCount: Int,
     val oldMenCount: Int,
-    val hasKnowledge: Int,
+    val hasKnowledge: Boolean,
     val oldWomenCount: Int,
     val menCount: Int,
     val womenCount: Int
