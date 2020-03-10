@@ -15,6 +15,7 @@ class IntervieweeRepository(
     private val villageDao: VillageDao,
     private val technologyDao: TechnologyDao,
     private val intervieweeTechnologyDao: IntervieweeTechnologyDao,
+    private val taskDao: TaskDao,
     private val monitoringApi: MonitoringApi
 ) {
 
@@ -102,10 +103,12 @@ class IntervieweeRepository(
             intervieweeTechnologyDao.getByInterviewee(intervieweeId)
         val interviewee = intervieweeDao.getById(intervieweeId)
         val village = villageDao.getById(interviewee.villageId)
+        val taskList = taskDao.getTasksByInterviewee(intervieweeId)
         return IntervieweeDetail(
             interviewee = interviewee,
             intervieweeTechnologies = intervieweeTechnologies,
-            village = village
+            village = village,
+            tasks = taskList
         )
     }
 }

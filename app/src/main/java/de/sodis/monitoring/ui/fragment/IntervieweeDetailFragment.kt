@@ -78,11 +78,21 @@ class IntervieweeDetailFragment(private val intervieweeId: Int) : BaseListFragme
                     value(it.interviewee.oldWomenCount.toString())
                 }
                 it.intervieweeTechnologies.forEach {techno ->
+                    //are there open tasks for this technology?
+                    val taskFilteredList = it.tasks.filter { task ->
+                        task.intervieweeTechnologyId == techno.id
+                    }
+                    var taskStatus = "Nothing to do"
+                    if(taskFilteredList.isNotEmpty()){
+                        taskStatus = taskFilteredList.first().name!!
+                    }
+                    taskFilteredList?: "All good"
                     technology {
                         id("technology")
                         state(techno.stateTechnology.toString())
                         knowledgeState(techno.stateKnowledge.toString())
                         name(techno.name)
+                        taskName(taskStatus)
                     }
                 }
 

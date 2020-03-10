@@ -50,7 +50,8 @@ class SurveyViewModel(
             monitoringApi = MonitoringApi(),
             villageDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).villageDao(),
             technologyDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).technologyDao(),
-            intervieweeTechnologyDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).intervieweeTechnologyDao()
+            intervieweeTechnologyDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).intervieweeTechnologyDao(),
+            taskDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).taskDao()
         )
     lateinit var surveyHeader: LiveData<SurveyHeaderResponse>
 

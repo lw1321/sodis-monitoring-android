@@ -19,6 +19,9 @@ interface TaskDao {
     fun getAll(): LiveData<List<Task>>
 
     @Update
-    fun update(task: Task): LiveData<Task>
+    fun update(task: Task): Int
+
+    @Query("SELECT * FROM Task JOIN IntervieweeTechnology ON Task.intervieweeTechnologyId==IntervieweeTechnology.id WHERE IntervieweeTechnology.intervieweeId=:intervieweeId")
+    fun getTasksByInterviewee(intervieweeId: Int): List<Task>
 
 }

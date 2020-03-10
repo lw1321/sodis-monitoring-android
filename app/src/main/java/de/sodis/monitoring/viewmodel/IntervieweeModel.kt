@@ -14,6 +14,7 @@ import de.sodis.monitoring.repository.SurveyRepository
 import androidx.lifecycle.MutableLiveData
 import android.icu.lang.UCharacter.GraphemeClusterBreak.T
 import androidx.lifecycle.viewModelScope
+import de.sodis.monitoring.db.dao.TaskDao
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -31,6 +32,7 @@ class IntervieweeModel(application: Application) : AndroidViewModel(application)
             villageDao = monitoringDatabase.villageDao(),
             intervieweeTechnologyDao = monitoringDatabase.intervieweeTechnologyDao(),
             technologyDao = monitoringDatabase.technologyDao(),
+            taskDao = monitoringDatabase.taskDao(),
             monitoringApi = MonitoringApi()
         )
 

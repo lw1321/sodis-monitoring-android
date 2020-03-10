@@ -14,7 +14,7 @@ import de.sodis.monitoring.api.model.SurveyHeaderJson
     ), ForeignKey(
         entity = IntervieweeTechnology::class,
         parentColumns = arrayOf("id"),
-        childColumns = arrayOf("IntervieweeTechnologyId")
+        childColumns = arrayOf("intervieweeTechnologyId")
     )]
 )
 data class Task(
@@ -24,5 +24,5 @@ data class Task(
     val intervieweeTechnologyId: Int? = null,
     val type: Int? = null,
     val completedOn: String? = null,  //todo date time,
-    val surveyHeaderId: Int
+    val surveyHeaderId: Int? = null
 )
