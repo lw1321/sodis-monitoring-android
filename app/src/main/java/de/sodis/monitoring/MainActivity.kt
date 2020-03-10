@@ -1,15 +1,25 @@
 package de.sodis.monitoring
 
 import android.os.Bundle
+import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import de.sodis.monitoring.ui.fragment.IntervieweeOverviewFragment
 import de.sodis.monitoring.ui.fragment.MonitoringOverviewFragment
 import de.sodis.monitoring.viewmodel.RootViewModel
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.dashboard-> replaceFragments(IntervieweeOverviewFragment(),"INTERVIEWEE_OVERVIEW")
+            R.id.monitoring -> replaceFragments(MonitoringOverviewFragment(),"MONITORING_OVERVIEW")
+            else -> print("dif id")
+        }
+        return true    }
 
     private lateinit var rootViewModel: RootViewModel
 
@@ -21,6 +31,10 @@ class MainActivity : AppCompatActivity() {
         rootViewModel = this.run {
             ViewModelProviders.of(this).get(RootViewModel::class.java)
         }
+        //setup bottom navigation bar interaction listener
+        var bottomNavigation = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        bottomNavigation.setOnNavigationItemSelectedListener(this)
+
 
         replaceFragments(IntervieweeOverviewFragment(), "TAG_MONITORING_OVERVIEW")
     }
