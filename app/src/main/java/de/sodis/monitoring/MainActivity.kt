@@ -10,22 +10,28 @@ import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import de.sodis.monitoring.ui.fragment.IntervieweeOverviewFragment
 import de.sodis.monitoring.ui.fragment.MonitoringOverviewFragment
+import de.sodis.monitoring.ui.fragment.TaskOverviewFragment
 import de.sodis.monitoring.viewmodel.RootViewModel
 
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.dashboard-> {
-                replaceFragments(IntervieweeOverviewFragment(),"INTERVIEWEE_OVERVIEW")
+            R.id.dashboard -> {
+                replaceFragments(IntervieweeOverviewFragment(), "INTERVIEWEE_OVERVIEW")
                 supportActionBar!!.title = "Dashboard"
             }
             R.id.monitoring -> {
-                replaceFragments(MonitoringOverviewFragment(),"MONITORING_OVERVIEW")
+                replaceFragments(MonitoringOverviewFragment(), "MONITORING_OVERVIEW")
                 supportActionBar!!.title = "Monitoreo"
             }
-            else -> print("dif id")
+            R.id.task -> {
+                replaceFragments(TaskOverviewFragment(), "Task_OVERVIEW")
+                supportActionBar!!.title = "Tasks"
+            }
+
         }
-        return true    }
+        return true
+    }
 
     private lateinit var rootViewModel: RootViewModel
 
@@ -48,17 +54,18 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
     override fun onBackPressed() {
         //only allow back press for convenience only on interviewee
-        val surveyFragment= supportFragmentManager.findFragmentByTag("SURVEY_TAG")
+        val surveyFragment = supportFragmentManager.findFragmentByTag("SURVEY_TAG")
         if (surveyFragment != null && surveyFragment.isVisible) {
             //super.onBackPressed()//todo
         }
     }
 }
 
-fun MainActivity.replaceFragments(fragmentNew: Fragment, tag: String) {
+public fun MainActivity.replaceFragments(fragmentNew: Fragment, tag: String) {
     val transaction = supportFragmentManager.beginTransaction()
     transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
     transaction.replace(R.id.fragment_container, fragmentNew, tag)
     transaction.addToBackStack(null)
     transaction.commit()
 }
+

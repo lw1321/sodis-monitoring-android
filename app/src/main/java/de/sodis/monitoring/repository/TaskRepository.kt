@@ -27,8 +27,8 @@ class TaskRepository(
         }
     }
 
-    suspend fun getTasks() {
-        taskDao.getAll()
+    fun getTasks(): LiveData<List<Task>> {
+        return taskDao.getAll()
     }
 
     suspend fun getAllTasksByInterviewee(intervieweeId: Int): List<Task> {
