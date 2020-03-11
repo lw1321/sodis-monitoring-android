@@ -10,6 +10,7 @@ import de.sodis.monitoring.repository.IntervieweeRepository
 import de.sodis.monitoring.repository.SurveyRepository
 import de.sodis.monitoring.repository.TaskRepository
 
+
 class DownloadWorker(appContext: Context, workerParams: WorkerParameters) :
     CoroutineWorker(appContext, workerParams) {
 

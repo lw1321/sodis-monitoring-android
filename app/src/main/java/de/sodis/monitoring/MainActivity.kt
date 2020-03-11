@@ -1,15 +1,19 @@
 package de.sodis.monitoring
 
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.FirebaseAuth
 import de.sodis.monitoring.ui.fragment.IntervieweeOverviewFragment
 import de.sodis.monitoring.ui.fragment.MonitoringOverviewFragment
+import de.sodis.monitoring.ui.fragment.RegistrationFragment
 import de.sodis.monitoring.ui.fragment.TaskOverviewFragment
 import de.sodis.monitoring.viewmodel.RootViewModel
 
@@ -34,6 +38,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     }
 
     private lateinit var rootViewModel: RootViewModel
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +55,22 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
         replaceFragments(IntervieweeOverviewFragment(), "TAG_MONITORING_OVERVIEW")
         supportActionBar!!.title = "Dashboard"
+
+        // Initialize Firebase Auth
+        auth = FirebaseAuth.getInstance()
     }
+
+    override fun onStart() {
+        super.onStart()
+        if (auth.currentUser == null){
+            //registration routine? Or if just no wifi connection check if user is stored in shared prefs?
+            //show registration page
+            //store name?!
+            //store token
+            this.replaceFragments(RegistrationFragment(),"TAG_REGISTRATION" )
+        }
+    }
+
 
     override fun onBackPressed() {
         //only allow back press for convenience only on interviewee
@@ -59,6 +79,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             //super.onBackPressed()//todo
         }
     }
+
 }
 
 public fun MainActivity.replaceFragments(fragmentNew: Fragment, tag: String) {
