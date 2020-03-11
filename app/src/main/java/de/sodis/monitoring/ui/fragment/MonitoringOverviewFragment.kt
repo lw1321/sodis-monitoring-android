@@ -29,11 +29,6 @@ class MonitoringOverviewFragment : BaseListFragment() {
         monitoringOverviewModel.surveyHeaderList.observe(this, Observer {
 
             recyclerView.withModels {
-                header {
-                    id("header")
-                    text("Cuestionario")
-                }
-
                 it.forEach {
                     default {
                         id(it.id)

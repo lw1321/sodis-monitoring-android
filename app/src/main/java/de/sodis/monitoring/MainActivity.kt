@@ -15,8 +15,14 @@ import de.sodis.monitoring.viewmodel.RootViewModel
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.dashboard-> replaceFragments(IntervieweeOverviewFragment(),"INTERVIEWEE_OVERVIEW")
-            R.id.monitoring -> replaceFragments(MonitoringOverviewFragment(),"MONITORING_OVERVIEW")
+            R.id.dashboard-> {
+                replaceFragments(IntervieweeOverviewFragment(),"INTERVIEWEE_OVERVIEW")
+                supportActionBar!!.title = "Dashboard"
+            }
+            R.id.monitoring -> {
+                replaceFragments(MonitoringOverviewFragment(),"MONITORING_OVERVIEW")
+                supportActionBar!!.title = "Monitoreo"
+            }
             else -> print("dif id")
         }
         return true    }
@@ -37,6 +43,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
 
         replaceFragments(IntervieweeOverviewFragment(), "TAG_MONITORING_OVERVIEW")
+        supportActionBar!!.title = "Dashboard"
     }
 
     override fun onBackPressed() {
