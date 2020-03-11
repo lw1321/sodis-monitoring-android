@@ -1,10 +1,9 @@
 package de.sodis.monitoring
 
 import android.os.Bundle
-import android.util.Log
+import android.transition.Visibility
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
@@ -16,6 +15,8 @@ import de.sodis.monitoring.ui.fragment.MonitoringOverviewFragment
 import de.sodis.monitoring.ui.fragment.RegistrationFragment
 import de.sodis.monitoring.ui.fragment.TaskOverviewFragment
 import de.sodis.monitoring.viewmodel.RootViewModel
+import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.continuable_list.*
 
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -37,6 +38,8 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         return true
     }
 
+
+    private lateinit var bottomNavigation: BottomNavigationView
     private lateinit var rootViewModel: RootViewModel
     private lateinit var auth: FirebaseAuth
 
@@ -49,7 +52,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             ViewModelProviders.of(this).get(RootViewModel::class.java)
         }
         //setup bottom navigation bar interaction listener
-        var bottomNavigation = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        bottomNavigation = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         bottomNavigation.setOnNavigationItemSelectedListener(this)
 
 
@@ -62,12 +65,10 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
     override fun onStart() {
         super.onStart()
-        if (auth.currentUser == null){
-            //registration routine? Or if just no wifi connection check if user is stored in shared prefs?
-            //show registration page
-            //store name?!
-            //store token
-            this.replaceFragments(RegistrationFragment(),"TAG_REGISTRATION" )
+        if (auth.currentUser == null) {
+            //todo store token, store name?!
+            supportActionBar!!.title = "Registration"
+            this.replaceFragments(RegistrationFragment(), "TAG_REGISTRATION")
         }
     }
 
@@ -80,9 +81,19 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         }
     }
 
+
 }
 
 public fun MainActivity.replaceFragments(fragmentNew: Fragment, tag: String) {
+    if (tag == "QUESTION_TAG" || tag == "TAG_REGISTRATION" || tag == "TAG_INTERVIEW_DETAIL"
+        || tag == "TAG_INTERVIEW_DETAIL" || tag == "SURVEY_TAG"
+    ) {
+        this.bottom_navigation.visibility = View.GONE
+    }
+    else{
+        this.bottom_navigation.visibility = View.VISIBLE
+    }
+
     val transaction = supportFragmentManager.beginTransaction()
     transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
     transaction.replace(R.id.fragment_container, fragmentNew, tag)
