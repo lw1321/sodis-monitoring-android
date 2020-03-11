@@ -4,9 +4,10 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.graphics.Bitmap
 import android.net.Uri
-import androidx.annotation.WorkerThread
+import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.LiveData
-import com.bumptech.glide.Glide
+import coil.Coil
+import coil.api.get
 import de.sodis.monitoring.api.MonitoringApi
 import de.sodis.monitoring.api.model.SurveyHeaderJson
 import de.sodis.monitoring.db.dao.*
@@ -26,48 +27,60 @@ class SurveyRepository(
     private val questionImageDao: QuestionImageDao,
     private val questionOptionDao: QuestionOptionDao,
     private val optionChoiceDao: OptionChoiceDao,
+    private val technologyDao: TechnologyDao,
     private val monitoringApi: MonitoringApi
 ) {
 
     //TODO extract method to bitmap extension?!
     // Method to save an bitmap to a file
-    private fun bitmapToFile(bitmap:Bitmap, context: Context): String? {
+    private fun bitmapToFile(bitmap: Bitmap, context: Context): String? {
         // Get the context wrapper
         val wrapper = ContextWrapper(context.applicationContext)
 
         // Initialize a new file instance to save bitmap object
-        var file = wrapper.getDir("Images",Context.MODE_PRIVATE)
-        file = File(file,"${UUID.randomUUID()}.jpg")
+        val file = File(wrapper.getDir("Images", Context.MODE_PRIVATE), "${UUID.randomUUID()}.jpg")
 
-        try{
+        try {
             // Compress the bitmap and save in jpg format
             val stream: OutputStream = FileOutputStream(file)
-            bitmap.compress(Bitmap.CompressFormat.JPEG,100,stream)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
             stream.flush()
             stream.close()
-        }catch (e:IOException){
+        } catch (e: IOException) {
             e.printStackTrace()
         }
 
         // Return the saved bitmap uri
         return Uri.parse(file.absolutePath).encodedPath
     }
+
     /**
      * If internet connection is available, load all surveys and save it in the local database.
      * Also load and save the associated images in the internal storage.
      */
-    fun loadSurveys(context: Context) {
+    suspend fun loadSurveys(context: Context) {
         val response = monitoringApi.getSurveys()
 
         //loop through surveys
-        for (surveyHeaderJson: SurveyHeaderJson in response.execute().body()!!) {
+        for (surveyHeaderJson: SurveyHeaderJson in response) {
             //save survey Header
+            //Save Input Types
+            if (technologyDao.count(surveyHeaderJson.technology.id) == 0) {
+                //save input type
+                technologyDao.insert(
+                    Technology(
+                        id = surveyHeaderJson.technology.id,
+                        name= surveyHeaderJson.technology.name
+                    )
+                )
+            }
             surveyHeaderDao.insert(
                 SurveyHeader(
                     id = surveyHeaderJson.id,
                     surveyName = surveyHeaderJson.surveyName,
                     instructions = surveyHeaderJson.instructions,
-                    otherHeaderInfo = surveyHeaderJson.otherHeaderInfo
+                    otherHeaderInfo = surveyHeaderJson.otherHeaderInfo,
+                    technologyId = surveyHeaderJson.technology.id
                 )
             )
 
@@ -89,13 +102,10 @@ class SurveyRepository(
                     //check if image exists. Room returns count, less memory than query the object.
                     if (questionImageDao.exists(questionJson.questionImage.id) == 0) {
                         //load bitmap from url
-                        val futureTarget =
-                            Glide.with(context).asBitmap().load(questionJson.questionImage.url)
-                                .submit()
-                        val bitmap = futureTarget.get()
+                        val bitmap = Coil.get(questionJson.questionImage.url).toBitmap()
+
                         //write bitmap to file
                         val absolutePath = bitmapToFile(bitmap, context)
-                        Glide.with(context).clear(futureTarget)
 
                         //get file path
                         //Save Images

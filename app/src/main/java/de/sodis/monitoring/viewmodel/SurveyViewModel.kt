@@ -36,7 +36,7 @@ class SurveyViewModel(
     /**
      * Selected interviewee
      */
-    private lateinit var interviewee: Interviewee
+    var interviewee: Interviewee? = null
     /**
      * List of all interviewee
      */
@@ -47,7 +47,11 @@ class SurveyViewModel(
     private val intervieweeRepository =
         IntervieweeRepository(
             intervieweeDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).intervieweeDao(),
-            monitoringApi = MonitoringApi()
+            monitoringApi = MonitoringApi(),
+            villageDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).villageDao(),
+            technologyDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).technologyDao(),
+            intervieweeTechnologyDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).intervieweeTechnologyDao(),
+            taskDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).taskDao()
         )
     lateinit var surveyHeader: LiveData<SurveyHeaderResponse>
 
@@ -86,21 +90,19 @@ class SurveyViewModel(
     }
 
     private fun createQuestionList(surveyId: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            intervieweeList = intervieweeRepository.getAll()
-            surveyHeader = surveyHeaderRepository.getSurveyById(surveyId)
+        intervieweeList = intervieweeRepository.getAll()
+        surveyHeader = surveyHeaderRepository.getSurveyById(surveyId)
 
-            viewModelScope.launch(Dispatchers.Main) {
-                questionItemList.removeSource(surveyHeader)
-                questionItemList.addSource(surveyHeader) {
-                    //we got the survey headers! not we can query the questions.
-                    viewModelScope.launch(Dispatchers.IO) {
-                        surveyQuestions = questionRepository.getQuestionsBySurveySections(
-                            surveyHeader.value!!.surveySectionList
-                        )
-                        //now we have everything.., check if surveyQuestions is loaded sync, then generate
-                        questionItemList.postValue(surveyQuestions)
-                    }
+        viewModelScope.launch(Dispatchers.Main) {
+            questionItemList.removeSource(surveyHeader)
+            questionItemList.addSource(surveyHeader) {
+                //we got the survey headers! not we can query the questions.
+                viewModelScope.launch(Dispatchers.IO) {
+                    surveyQuestions = questionRepository.getQuestionsBySurveySections(
+                        surveyHeader.value!!.surveySectionList
+                    )
+                    //now we have everything.., check if surveyQuestions is loaded sync, then generate
+                    questionItemList.postValue(surveyQuestions)
                 }
             }
         }
@@ -113,7 +115,7 @@ class SurveyViewModel(
     fun setAnswer(id: Int, answer: String, optionChoiceId: Int) {
         //request questionOption for the answer
         answerMap[id] = Answer(
-            intervieweeId = interviewee.id,
+            intervieweeId = interviewee!!.id,
             answerText = answer,
             timeStamp = Timestamp(System.currentTimeMillis()).toString(),
             answerNumeric = null,
@@ -131,6 +133,8 @@ class SurveyViewModel(
             //done with the survey, save the input
             viewModelScope.launch(Dispatchers.IO) {
                 questionRepository.saveQuestions(answerMap)
+                answerMap.clear()
+                interviewee = null
             }
             //start worker manager
             val uploadWorkRequest = OneTimeWorkRequestBuilder<UploadWorker>().setConstraints(
@@ -157,4 +161,6 @@ class SurveyViewModel(
     fun setSurveyId(surveyId: Int) {
          createQuestionList(surveyId)
     }
+
+    fun isAnswered(id: Int): Boolean = answerMap.containsKey(id)
 }

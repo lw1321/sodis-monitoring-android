@@ -1,123 +1,107 @@
 package de.sodis.monitoring.ui.fragment
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.Toast
-import androidx.fragment.app.Fragment
+import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import de.sodis.monitoring.MainActivity
-import de.sodis.monitoring.R
+import coil.api.load
+import com.google.android.material.snackbar.Snackbar
+import de.sodis.monitoring.*
 import de.sodis.monitoring.db.response.QuestionAnswer
-import de.sodis.monitoring.replaceFragments
-import de.sodis.monitoring.ui.adapter.ExpandableRecyclerViewAdapter
-import de.sodis.monitoring.ui.adapter.RecyclerViewListener
-import de.sodis.monitoring.ui.model.*
-import de.sodis.monitoring.ui.viewholder.AnswerSelectViewHolder
-import de.sodis.monitoring.ui.viewholder.AnswerTextViewHolder
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
 import de.sodis.monitoring.viewmodel.SurveyViewModel
-import kotlinx.android.synthetic.main.text_choice_item.view.*
-import kotlinx.android.synthetic.main.text_input_item.view.*
+import kotlinx.android.synthetic.main.continuable_list.view.*
+import kotlinx.android.synthetic.main.view_holder_question.view.*
+import kotlinx.android.synthetic.main.view_holder_text_choice.view.*
+import kotlinx.android.synthetic.main.view_holder_text_input.view.*
+import java.io.File
 
-class QuestionFragment(private val surveyId: Int) : Fragment(), RecyclerViewListener {
+class QuestionFragment(private val surveyId: Int) : BaseListFragment() {
 
-    override fun recyclerViewListCLicked(view: View, id: Any) {
-        /**
-         * save answer depending on type
-         */
-        if (currentQuestion.question.inputTypeId == 2) {//text!
-            surveyViewModel.setAnswer(
-                currentQuestion.question.id,
-                (mView.findViewHolderForAdapterPosition(1) as AnswerTextViewHolder).itemView.answerTextInput.text.toString(),
-                currentQuestion.answers[0].questionOption.id
-            )
-        }
-        if (currentQuestion.question.inputTypeId == 1) {//single choice
-            val itemView =
-                (mView.findViewHolderForAdapterPosition(1) as AnswerSelectViewHolder).itemView
-            val option1Checked = itemView.optionButton.isChecked
-            val option2Checked = itemView.optionButton2.isChecked
-            if (!option1Checked && !option2Checked) {
-                Toast.makeText(
-                    context,
-                    "Por favor seleccione una opción de respuesta!",
-                    Toast.LENGTH_LONG
-                ).show()
-                return
-            }
-            surveyViewModel.setAnswer(
-                currentQuestion.question.id,
-                if (option1Checked) itemView.optionButton.text.toString() else itemView.optionButton2.text.toString(),
-                currentQuestion.answers[if (option1Checked) 0 else 1].questionOption.id //todo
-            )
-
-        }
-        val hasNext = surveyViewModel.nextQuestion()
-        if(!hasNext)
-            Toast.makeText(context, "Los datos se guardan", Toast.LENGTH_LONG).show()
-        (activity as MainActivity).replaceFragments(if (hasNext) QuestionFragment(surveyId) else MonitoringOverviewFragment())
-    }
 
     private lateinit var currentQuestion: QuestionAnswer
-    private lateinit var surveyViewModel: SurveyViewModel
-    private lateinit var adapter: ExpandableRecyclerViewAdapter
-    private lateinit var mView: RecyclerView
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        surveyViewModel = activity?.run {
+    private val surveyViewModel: SurveyViewModel by lazy {
+        activity?.run {
             ViewModelProviders.of(this, MyViewModelFactory(application, listOf(surveyId)))
                 .get(SurveyViewModel::class.java)
         }!!
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        mView = inflater.inflate(R.layout.list, container, false) as RecyclerView
-        this.adapter = ExpandableRecyclerViewAdapter(this)
-        // Set the adapter
-        mView.adapter = this.adapter
-        mView.layoutManager = LinearLayoutManager(context)
 
-        surveyViewModel.questionItemList.observe(this, Observer {
-            currentQuestion = it.get(index = surveyViewModel.currentPosition)
-            val tempItemList = mutableListOf<SodisItem>()
-            tempItemList.add(
-                QuestionItem(
-                    title = currentQuestion.title,
-                    questionText = currentQuestion.question.questionName,
-                    imageUri = currentQuestion.image.path
-                )
-            )
-            if (currentQuestion.question.inputTypeId == 2) {//todo
-                tempItemList.add(
-                    TextItem(hiddenText = "Respuesta")
-                )
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        surveyViewModel.questionItemList.observe(this, Observer { list ->
+            currentQuestion = list.get(index = surveyViewModel.currentPosition)
+
+            recyclerView.withModels {
+                question {
+                    id("question")
+                    title(currentQuestion.title)
+                    questionText(currentQuestion.question.questionName)
+                    onBind { model, view, position ->
+                        view.dataBinding.root.question_image.load(File(currentQuestion.image.path))
+                    }
+                }
+                when (currentQuestion.question.inputTypeId) {
+                    2 -> //todo
+                        textInput {
+                            id("input")
+                            hint("Respuesta")
+                            onBind { model, view, position ->
+                                view.dataBinding.root.answerTextInput.requestFocus()
+                                view.dataBinding.root.answerTextInput.addTextChangedListener {
+                                    surveyViewModel.setAnswer(
+                                        currentQuestion.question.id,
+                                        it!!.toString(),
+                                        currentQuestion.answers[0].questionOption.id
+                                    )
+                                }
+                            }
+                        }
+                    1 -> textChoice {
+                        id("choice")
+                        option1(currentQuestion.answers[0].optionChoice.optionChoiceName)
+                        option2(currentQuestion.answers[1].optionChoice.optionChoiceName)
+                        onBind { model, view, position ->
+                            view.dataBinding.root.radio_group.clearCheck()
+                            view.dataBinding.root.radio_group.setOnCheckedChangeListener { group, checkedId ->
+                                val index = if (checkedId == R.id.optionButton) 0 else 1
+                                surveyViewModel.setAnswer(
+                                    currentQuestion.question.id,
+                                    currentQuestion.answers[index].optionChoice.optionChoiceName,
+                                    currentQuestion.answers[index].questionOption.id //todo
+                                )
+                            }
+                        }
+                    }
+                }
             }
-            if (currentQuestion.question.inputTypeId == 1) {
-                tempItemList.add(
-                    SelectItem(
-                        option1 = currentQuestion.answers[0].optionChoice.optionChoiceName,
-                        option2 = currentQuestion.answers[1].optionChoice.optionChoiceName
+
+            view?.navigation_forward_button_1?.setImageResource(if (surveyViewModel.currentPosition != (list.size - 1)) R.drawable.ic_arrow_forward_white_24dp else R.drawable.ic_check_white_24dp)
+
+            view?.navigation_forward_button_1?.setOnClickListener {
+                if (surveyViewModel.isAnswered(currentQuestion.question.id)) {
+
+                    val hasNext = surveyViewModel.nextQuestion()
+                    if (!hasNext)
+                        Snackbar.make(view!!, "Los datos se guardan", Snackbar.LENGTH_LONG).show()
+                    (activity as MainActivity).replaceFragments(
+                        if (hasNext) QuestionFragment(
+                            surveyId
+                        ) else MonitoringOverviewFragment(),
+                        if (hasNext) "QUESTION_TAG" else "MONITORING_OVERVIEW_TAG"
                     )
-                )
+                } else {
+                    Snackbar.make(
+                        view!!,
+                        "Por favor seleccione una opción de respuesta!",
+                        Snackbar.LENGTH_LONG
+                    ).show()
+                }
             }
-            tempItemList.add(
-                if (surveyViewModel.currentPosition == (it.size - 1)) NavigationFinishItem() else NavigationForwardItem()
-            )
-            adapter.setItems(tempItemList)
         })
 
-        return mView
     }
 
 }

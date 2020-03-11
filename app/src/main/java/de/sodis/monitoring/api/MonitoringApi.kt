@@ -3,15 +3,12 @@ package de.sodis.monitoring.api
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import de.sodis.monitoring.Config
 import de.sodis.monitoring.api.model.AnswerJson
+import de.sodis.monitoring.api.model.IntervieweeJson
 import de.sodis.monitoring.api.model.SurveyHeaderJson
+import de.sodis.monitoring.api.model.TaskJson
 import de.sodis.monitoring.db.entity.Interviewee
-import kotlinx.coroutines.Deferred
-import retrofit2.Call
-import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import okhttp3.OkHttpClient
-
 
 
 class MonitoringApi {
@@ -26,14 +23,27 @@ class MonitoringApi {
         monitoringApi = retrofit.create(MonitoringApiInterface::class.java)
     }
 
-    fun getSurveys(): Call<List<SurveyHeaderJson>> {
+    suspend fun getSurveys(): List<SurveyHeaderJson> {
         return monitoringApi.getAllSurveys()
     }
 
-    fun getInterviewees(): Call<List<Interviewee>> {
+    suspend fun getInterviewees(): List<IntervieweeJson> {
         return monitoringApi.getAllInterviewees()
     }
-    fun postAnswers(answers: List<AnswerJson>): Call<List<AnswerJson>> {
+
+    suspend fun postAnswers(answers: List<AnswerJson>): List<AnswerJson> {
         return monitoringApi.postAnswers(answers)
+    }
+
+    suspend fun getTasks(): List<TaskJson> {
+        return monitoringApi.getAllTasks()
+    }
+
+    suspend fun updateTask(task:TaskJson): TaskJson {
+        return monitoringApi.updateTask(task.id, task)
+    }
+
+    suspend fun createTask(task:TaskJson): TaskJson {
+        return monitoringApi.createTask(task)
     }
 }

@@ -1,22 +1,29 @@
 package de.sodis.monitoring.api
 
 import de.sodis.monitoring.api.model.AnswerJson
+import de.sodis.monitoring.api.model.IntervieweeJson
 import de.sodis.monitoring.api.model.SurveyHeaderJson
+import de.sodis.monitoring.api.model.TaskJson
 import de.sodis.monitoring.db.entity.Interviewee
-import kotlinx.coroutines.Deferred
-import retrofit2.Call
-import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
+import retrofit2.http.*
 
 interface MonitoringApiInterface {
     @GET("surveys")
-    fun getAllSurveys(): Call<List<SurveyHeaderJson>>
+    suspend fun getAllSurveys(): List<SurveyHeaderJson>
 
     @GET("interviewees")
-    fun getAllInterviewees(): Call<List<Interviewee>>
+    suspend fun getAllInterviewees(): List<IntervieweeJson>
 
     @POST("answers")
-    fun postAnswers(@Body answers: List<AnswerJson>): Call<List<AnswerJson>>
+    suspend fun postAnswers(@Body answers: List<AnswerJson>): List<AnswerJson>
+
+    @GET("tasks")
+    suspend fun getAllTasks(): List<TaskJson>
+
+    @PUT("tasks/{taskId}")
+    suspend fun updateTask(@Path(value = "taskId", encoded = false) taskId: Int, @Body task: TaskJson): TaskJson
+
+    @POST("tasks")
+    suspend fun createTask(@Body task: TaskJson): TaskJson
+
 }

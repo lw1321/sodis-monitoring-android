@@ -1,5 +1,6 @@
 package de.sodis.monitoring.repository
 
+import com.crashlytics.android.Crashlytics
 import de.sodis.monitoring.api.MonitoringApi
 import de.sodis.monitoring.api.model.AnswerJson
 import de.sodis.monitoring.db.dao.*
@@ -19,25 +20,26 @@ class QuestionRepository(
      * include answers
      */
     fun getQuestionsBySurveySections(surveySectionIds: List<SurveySection>): MutableList<QuestionAnswer> {
-        val questionList = questionDao.getBySurveySections(surveySectionIds.map { sectionItem -> sectionItem.id })
+        val questionList =
+            questionDao.getBySurveySections(surveySectionIds.map { sectionItem -> sectionItem.id })
         val questionAnswerList: MutableList<QuestionAnswer> = mutableListOf()
-        for (question: Question in questionList){
+        for (question: Question in questionList) {
             val questionOptionChoiceList: MutableList<QuestionOptionChoice> = mutableListOf()
-            var questionOptions = questionOptionDao.getQuestionOptionsByQuestion(question.id)
-            for(questionOption: QuestionOption in questionOptions){
+            val questionOptions = questionOptionDao.getQuestionOptionsByQuestion(question.id)
+            for (questionOption: QuestionOption in questionOptions) {
                 //get the optionchoice..todo clean n:m query..
                 val optionChoice = optionChoiceDao.getById(questionOption.optionChoiceId)
                 questionOptionChoiceList.add(
                     QuestionOptionChoice(
-                        questionOption=questionOption,
+                        questionOption = questionOption,
                         optionChoice = optionChoice
                     )
                 )
             }
-            var image = questionImageDao.getById(question.questionImageId)
+            val image = questionImageDao.getById(question.questionImageId)
             questionAnswerList.add(
                 QuestionAnswer(
-                    question =question,
+                    question = question,
                     answers = questionOptionChoiceList.toList(),
                     image = image,
                     title = surveySectionIds.first { surveySection -> surveySection.id == question.surveySectionId }.sectionTitle
@@ -51,24 +53,18 @@ class QuestionRepository(
      * Save questions in loval database, also try to upload them..Also save if the upload was successfully
      */
     fun saveQuestions(answerMap: MutableMap<Int, Answer>) {
-        for((k,v) in answerMap){
+        for ((k, v) in answerMap) {
             answerDao.insert(v)
         }
     }
 
-    fun uploadQuestions(){
-        val allUnsubmitted = answerDao.getAllUnsubmitted()
-        val tempList = mutableListOf<AnswerJson>()
-        allUnsubmitted.forEach {
-            tempList.add(
-                it.toAnswerJson()
-            )
-        }
-        val call = monitoringApi.postAnswers(tempList)
-        val execute = call.execute()
-        if (execute.isSuccessful){
-            //cool save the date
-            answerDao.setSubmitted(allUnsubmitted.map { answer -> answer.id as Int})
+    suspend fun uploadQuestions() {
+        val allUnsubmitted = answerDao.getAllUnsubmitted().map { it.toAnswerJson() }
+        try {
+            monitoringApi.postAnswers(allUnsubmitted)
+            answerDao.setSubmitted(allUnsubmitted.map { answer -> answer.id!! })
+        } catch (e: Exception) {
+            Crashlytics.logException(e)
         }
 
     }

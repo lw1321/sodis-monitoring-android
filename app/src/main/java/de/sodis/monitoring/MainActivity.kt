@@ -1,32 +1,71 @@
 package de.sodis.monitoring
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MenuItem
+import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProviders
-import com.crashlytics.android.Crashlytics
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import de.sodis.monitoring.ui.fragment.IntervieweeOverviewFragment
 import de.sodis.monitoring.ui.fragment.MonitoringOverviewFragment
+import de.sodis.monitoring.ui.fragment.TaskOverviewFragment
 import de.sodis.monitoring.viewmodel.RootViewModel
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.dashboard -> {
+                replaceFragments(IntervieweeOverviewFragment(), "INTERVIEWEE_OVERVIEW")
+                supportActionBar!!.title = "Dashboard"
+            }
+            R.id.monitoring -> {
+                replaceFragments(MonitoringOverviewFragment(), "MONITORING_OVERVIEW")
+                supportActionBar!!.title = "Monitoreo"
+            }
+            R.id.task -> {
+                replaceFragments(TaskOverviewFragment(), "Task_OVERVIEW")
+                supportActionBar!!.title = "Tasks"
+            }
+
+        }
+        return true
+    }
 
     private lateinit var rootViewModel: RootViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+
         setContentView(R.layout.activity_main)
         rootViewModel = this.run {
             ViewModelProviders.of(this).get(RootViewModel::class.java)
         }
-        replaceFragments(MonitoringOverviewFragment())
+        //setup bottom navigation bar interaction listener
+        var bottomNavigation = findViewById<BottomNavigationView>(R.id.bottom_navigation)
+        bottomNavigation.setOnNavigationItemSelectedListener(this)
+
+
+        replaceFragments(IntervieweeOverviewFragment(), "TAG_MONITORING_OVERVIEW")
+        supportActionBar!!.title = "Dashboard"
+    }
+
+    override fun onBackPressed() {
+        //only allow back press for convenience only on interviewee
+        val surveyFragment = supportFragmentManager.findFragmentByTag("SURVEY_TAG")
+        if (surveyFragment != null && surveyFragment.isVisible) {
+            //super.onBackPressed()//todo
+        }
     }
 }
 
-fun MainActivity.replaceFragments(fragmentNew: Fragment) {
+public fun MainActivity.replaceFragments(fragmentNew: Fragment, tag: String) {
     val transaction = supportFragmentManager.beginTransaction()
-    transaction.replace(R.id.fragment_container, fragmentNew)
+    transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
+    transaction.replace(R.id.fragment_container, fragmentNew, tag)
     transaction.addToBackStack(null)
     transaction.commit()
 }
+
