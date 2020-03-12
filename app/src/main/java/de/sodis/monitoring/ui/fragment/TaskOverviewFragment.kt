@@ -13,26 +13,27 @@ import de.sodis.monitoring.header
 import de.sodis.monitoring.replaceFragments
 import de.sodis.monitoring.viewmodel.MonitoringOverviewModel
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
+import de.sodis.monitoring.viewmodel.TaskViewModel
 import kotlinx.android.synthetic.main.continuable_list.view.*
 
-class MonitoringOverviewFragment : BaseListFragment() {
+class TaskOverviewFragment : BaseListFragment() {
 
 
-    private val monitoringOverviewModel: MonitoringOverviewModel by lazy {
+    private val taskViewModel: TaskViewModel by lazy {
         ViewModelProviders.of(this, MyViewModelFactory(activity!!.application, emptyList()))
-            .get(MonitoringOverviewModel::class.java)
+            .get(TaskViewModel::class.java)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        monitoringOverviewModel.surveyHeaderList.observe(this, Observer {
+        taskViewModel.taskList.observe(this, Observer {
 
             recyclerView.withModels {
                 it.forEach {
                     default {
                         id(it.id)
-                        text(it.surveyName)
+                        text(it.name)
                         onClick { _ ->
                             (activity as MainActivity).replaceFragments(SurveyFragment(it.id), "SURVEY_TAG")
                         }

@@ -5,7 +5,8 @@ data class SurveyHeaderJson(
     val instructions: String,
     val otherHeaderInfo: String,
     val surveyName: String,
-    val surveySection: List<SurveySectionJson>
+    val surveySection: List<SurveySectionJson>,
+    val technology: Technology
 ) {
     data class SurveySectionJson(
         val id: Int,
@@ -45,4 +46,9 @@ data class SurveyHeaderJson(
             }
         }
     }
+
+    data class Technology(
+        val id:Int,
+        val name: String
+    )
 }
