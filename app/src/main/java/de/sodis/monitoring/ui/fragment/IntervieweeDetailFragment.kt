@@ -27,7 +27,7 @@ class IntervieweeDetailFragment(private val intervieweeId: Int) : BaseListFragme
         super.onCreate(savedInstanceState)
         intervieweeModel.intervieweeDetail.observe(this, Observer {
             recyclerView.withModels {
-                header{
+                header {
                     id("header")
                     text(it.interviewee.name)
                 }
@@ -38,55 +38,28 @@ class IntervieweeDetailFragment(private val intervieweeId: Int) : BaseListFragme
                 }
                 keyValue {
                     id("keyValue")
-                    key("young boys")
-                    value(it.interviewee.boysCount.toString())
+                    key("miembro de la familia")
+                    value(
+                        (it.interviewee.boysCount
+                                + it.interviewee.girlsCount
+                                + it.interviewee.youngMenCount
+                                + it.interviewee.youngWomenCount
+                                + it.interviewee.womenCount
+                                + it.interviewee.menCount
+                                + it.interviewee.oldWomenCount
+                                + it.interviewee.oldMenCount).toString()
+                    )
                 }
-                keyValue {
-                    id("keyValue")
-                    key("young girls")
-                    value(it.interviewee.girlsCount.toString())
-                }
-
-                keyValue {
-                    id("keyValue")
-                    key("young men")
-                    value(it.interviewee.youngMenCount.toString())
-                }
-                keyValue {
-                    id("keyValue")
-                    key("young women")
-                    value(it.interviewee.youngWomenCount.toString())
-                }
-                keyValue {
-                    id("keyValue")
-                    key("men")
-                    value(it.interviewee.menCount.toString())
-                }
-                keyValue {
-                    id("keyValue")
-                    key("women")
-                    value(it.interviewee.womenCount.toString())
-                }
-                keyValue {
-                    id("keyValue")
-                    key("oldMen")
-                    value(it.interviewee.oldMenCount.toString())
-                }
-                keyValue {
-                    id("keyValue")
-                    key("oldWomen")
-                    value(it.interviewee.oldWomenCount.toString())
-                }
-                it.intervieweeTechnologies.forEach {techno ->
+                it.intervieweeTechnologies.forEach { techno ->
                     //are there open tasks for this technology?
                     val taskFilteredList = it.tasks.filter { task ->
                         task.intervieweeTechnologyId == techno.id
                     }
                     var taskStatus = "Nothing to do"
-                    if(taskFilteredList.isNotEmpty()){
+                    if (taskFilteredList.isNotEmpty()) {
                         taskStatus = taskFilteredList.first().name!!
                     }
-                    taskFilteredList?: "All good"
+                    taskFilteredList ?: "All good"
                     technology {
                         id("technology")
                         state(techno.stateTechnology.toString())
