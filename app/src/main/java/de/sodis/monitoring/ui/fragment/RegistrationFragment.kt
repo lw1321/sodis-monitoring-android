@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.core.view.isGone
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import de.sodis.monitoring.*
 import de.sodis.monitoring.viewmodel.MonitoringOverviewModel
@@ -44,11 +45,8 @@ class RegistrationFragment : BaseListFragment() {
                         if (task.isSuccessful) {
                             // Sign in success, update UI with the signed-in user's information
                             val user = auth.currentUser
-                            Toast.makeText(
-                                activity!!.baseContext, user!!.uid,
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            (activity as MainActivity).replaceFragments(IntervieweeOverviewFragment(), "SURVEY_TAG")
+                            Snackbar.make(view!!, "Registro exitoso!", Snackbar.LENGTH_LONG).show()
+                            (activity as MainActivity).replaceFragments(IntervieweeOverviewFragment(), "INTERVIEWEE_OVERVIEW")
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("E", "signInAnonymously:failure", task.exception)
