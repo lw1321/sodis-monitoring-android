@@ -111,4 +111,8 @@ class IntervieweeRepository(
             tasks = taskList
         )
     }
+
+    suspend fun updateInterviewee(interviewee: Interviewee) {
+        intervieweeDao.update(interviewee)
+    }
 }
