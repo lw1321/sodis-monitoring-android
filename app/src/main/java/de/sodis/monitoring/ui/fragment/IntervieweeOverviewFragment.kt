@@ -1,5 +1,6 @@
 package de.sodis.monitoring.ui.fragment
 
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +15,10 @@ import de.sodis.monitoring.*
 import de.sodis.monitoring.viewmodel.IntervieweeModel
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
 import kotlinx.android.synthetic.main.list.view.*
+import kotlinx.android.synthetic.main.view_holder_picture_list_item.view.*
+import kotlinx.android.synthetic.main.view_holder_question.view.*
 import kotlinx.android.synthetic.main.view_holder_tab.*
+import java.io.FileNotFoundException
 
 //TODO refactor redundant code
 class IntervieweeOverviewFragment : Fragment(), TabLayout.OnTabSelectedListener {
@@ -29,7 +33,7 @@ class IntervieweeOverviewFragment : Fragment(), TabLayout.OnTabSelectedListener 
             .observe(this, Observer { intervieweesVillageList ->
                 recyclerView.withModels {
                     intervieweesVillageList.forEach {
-                        default {
+                        pictureListItem {
                             id(it.id)
                             text(it.name)
                             onClick { _ ->
@@ -37,6 +41,22 @@ class IntervieweeOverviewFragment : Fragment(), TabLayout.OnTabSelectedListener 
                                     IntervieweeDetailFragment(it.id),
                                     "TAG_INTERVIEW_DETAIL"
                                 )
+                            }
+                            onBind { model, view, position ->
+                                val bitmapdata = try {
+                                    context!!.openFileInput("interviewee_${it.id}.jpg").readBytes()
+                                } catch (ex: FileNotFoundException) {
+                                    null
+                                }
+                                if (bitmapdata != null) {
+                                    val bitmap =
+                                        BitmapFactory.decodeByteArray(bitmapdata, 0, bitmapdata.size)
+//                                    view.dataBinding.root.imageView.setImageBitmap(bitmap)
+                                    view.dataBinding.root.imageView.setImageBitmap(bitmap)
+                                } else {
+                                    view.dataBinding.root.imageView.setImageResource(R.drawable.ic_emoji_happy)
+                                }
+
                             }
                         }
                     }

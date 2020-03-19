@@ -48,7 +48,7 @@ class IntervieweeModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-     fun updateInterviewee(interviewee: Interviewee) {
+    fun updateInterviewee(interviewee: Interviewee) {
         viewModelScope.launch(Dispatchers.Default) {
             intervieweeRepository.updateInterviewee(interviewee)
         }
