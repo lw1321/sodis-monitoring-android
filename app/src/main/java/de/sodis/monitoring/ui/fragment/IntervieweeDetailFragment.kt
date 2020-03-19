@@ -126,6 +126,7 @@ class IntervieweeDetailFragment(private val intervieweeId: Int) : BaseListFragme
                 }
 
             }
+            recyclerView.recycledViewPool.clear()
         })
     }
 
