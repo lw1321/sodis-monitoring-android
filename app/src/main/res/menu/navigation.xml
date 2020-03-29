@@ -15,4 +15,9 @@
         android:icon="@drawable/ic_emoji_sad"
         android:title="Task"/>
 
+    <item
+        android:id="@+id/monitoring_history"
+        android:icon="@drawable/ic_emoji_sad"
+        android:title="History"/>
+
 </menu>

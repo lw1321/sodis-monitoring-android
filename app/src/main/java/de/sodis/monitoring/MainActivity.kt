@@ -10,10 +10,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
-import de.sodis.monitoring.ui.fragment.IntervieweeOverviewFragment
-import de.sodis.monitoring.ui.fragment.MonitoringOverviewFragment
-import de.sodis.monitoring.ui.fragment.RegistrationFragment
-import de.sodis.monitoring.ui.fragment.TaskOverviewFragment
+import de.sodis.monitoring.ui.fragment.*
 import de.sodis.monitoring.viewmodel.RootViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.continuable_list.*
@@ -33,7 +30,10 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 replaceFragments(TaskOverviewFragment(), "Task_OVERVIEW")
                 supportActionBar!!.title = "Tasks"
             }
-
+            R.id.monitoring_history -> {
+                replaceFragments(SurveyHistoryFragment(), "SURVEY_HISTORY")
+                supportActionBar!!.title = "Monitorio History"
+            }
         }
         return true
     }
