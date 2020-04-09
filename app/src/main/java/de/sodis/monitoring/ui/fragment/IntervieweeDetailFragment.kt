@@ -3,19 +3,19 @@ package de.sodis.monitoring.ui.fragment
 import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Color
+import android.graphics.*
+import android.graphics.Shader.TileMode
 import android.os.Bundle
 import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.core.view.isGone
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import com.google.firebase.storage.FirebaseStorage
 import de.sodis.monitoring.*
 import de.sodis.monitoring.viewmodel.IntervieweeModel
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
@@ -39,12 +39,9 @@ class IntervieweeDetailFragment(private val intervieweeId: Int) : BaseListFragme
         intervieweeModel.setInterviewee(intervieweeId)
         intervieweeModel.intervieweeDetail.observe(this, Observer { intervieweeD ->
             recyclerView.withModels {
-                header {
-                    id("header")
+                pictureHeader {
+                    id("pictureHeader${intervieweeId}")
                     text(intervieweeD.interviewee.name)
-                }
-                picture {
-                    id("picture${intervieweeId}")
                     onClick { _ ->
                         dispatchTakePictureIntent()
                     }
@@ -57,13 +54,27 @@ class IntervieweeDetailFragment(private val intervieweeId: Int) : BaseListFragme
                         if (bitmapdata != null) {
                             val bitmap =
                                 BitmapFactory.decodeByteArray(bitmapdata, 0, bitmapdata.size)
-                            view.dataBinding.root.imageView.setImageBitmap(bitmap)
+                            val size = Math.min(bitmap.width, bitmap.height)
+                            val cropedBitmap = if(bitmap.width<bitmap.height) {
+                                Bitmap.createBitmap(bitmap,0,(bitmap.height - bitmap.width)/2, size,size)
+                            } else {
+                                Bitmap.createBitmap(bitmap,(bitmap.width-bitmap.height)/2,0,size,size)
+                            }
+
+                            val roundedBitmapDrawable = RoundedBitmapDrawableFactory.create(resources, cropedBitmap)
+
+                            //cut corners
+                            roundedBitmapDrawable.cornerRadius = Math.min(
+                                bitmap.width,
+                                bitmap.height
+                            ) * 0.05f
+//                                    view.dataBinding.root.imageView.setImageBitmap(bitmap)
+                            view.dataBinding.root.imageView.setImageDrawable(roundedBitmapDrawable)
                         } else {
-                            view.dataBinding.root.imageView.setImageResource(R.drawable.ic_emoji_happy)
+                            view.dataBinding.root.imageView.setImageResource(R.drawable.ic_add_a_photo_black_24dp)
                         }
 
                     }
-
                 }
 
                 keyValue {
@@ -203,6 +214,7 @@ class IntervieweeDetailFragment(private val intervieweeId: Int) : BaseListFragme
                 Context.MODE_PRIVATE
             ).use {
                 val blob = ByteArrayOutputStream()
+                //TODO set reasonable compression factor
                 imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, blob)
                 it.write(blob.toByteArray())
             }
