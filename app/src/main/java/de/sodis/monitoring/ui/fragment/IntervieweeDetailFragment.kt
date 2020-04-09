@@ -124,6 +124,12 @@ class IntervieweeDetailFragment(private val intervieweeId: Int) : BaseListFragme
                         taskName(taskStatus ?: "")
                         onBind { model, view, position ->
                             //TODO ist die Zuweisung der Farben richtig?
+                            val bo = BitmapFactory.Options()
+                            bo.inMutable = true;
+                            val b = BitmapFactory.decodeResource(resources, R.drawable.ofen_kreis_basic, bo)
+                            applyCircleGradient(b)
+                            view.dataBinding.root.technolgyImage.setImageBitmap(b)
+
                             view.dataBinding.root.technolgyImage.setColorFilter(
                                 when (techno.stateTechnology) {
                                     0 -> Color.GREEN
@@ -154,6 +160,29 @@ class IntervieweeDetailFragment(private val intervieweeId: Int) : BaseListFragme
             }
             recyclerView.recycledViewPool.clear()
         })
+    }
+
+    private fun applyCircleGradient(b: Bitmap) {
+        val canvas = Canvas(b)
+        val gradient = LinearGradient(
+            0f,
+            0f,
+            0f,
+            b.height.toFloat(),
+            intArrayOf(Color.TRANSPARENT, Color.argb(70, 255, 255, 255)),
+            floatArrayOf(0.0f, 1f),
+            TileMode.CLAMP
+        )
+
+        val paint = Paint()
+        paint.setShader(gradient)
+
+        canvas.drawCircle(
+            b.width.toFloat() / 2.0f,
+            b.height.toFloat() / 2.0f,
+            b.width.toFloat() / 2.0f,
+            paint
+        )
     }
 
     val REQUEST_IMAGE_CAPTURE = 1
