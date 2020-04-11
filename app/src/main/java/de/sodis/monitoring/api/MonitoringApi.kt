@@ -9,16 +9,25 @@ import de.sodis.monitoring.api.model.TaskJson
 import de.sodis.monitoring.db.entity.Interviewee
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import io.fabric.sdk.android.services.settings.IconRequest.build
+import okhttp3.Interceptor
+import okhttp3.OkHttpClient
+import okhttp3.Response
 
 
 class MonitoringApi {
     private var monitoringApi: MonitoringApiInterface
 
     init {
+        val okHttpClient = OkHttpClient.Builder()
+            .addInterceptor(FirebaseUserIdTokenInterceptor())
+            .build()
+
         val retrofit = Retrofit.Builder()
             .baseUrl(Config.MONITORING_API_TEST)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
+            .client(okHttpClient)
             .build()
         monitoringApi = retrofit.create(MonitoringApiInterface::class.java)
     }
