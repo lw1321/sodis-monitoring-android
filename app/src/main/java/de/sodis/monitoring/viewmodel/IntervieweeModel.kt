@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import de.sodis.monitoring.api.MonitoringApi
 import de.sodis.monitoring.db.MonitoringDatabase
 import de.sodis.monitoring.db.entity.Interviewee
+import de.sodis.monitoring.db.entity.Sector
 import de.sodis.monitoring.db.entity.Village
 import de.sodis.monitoring.db.response.IntervieweeDetail
 import de.sodis.monitoring.repository.IntervieweeRepository
@@ -26,6 +27,8 @@ class IntervieweeModel(application: Application) : AndroidViewModel(application)
         IntervieweeRepository(
             intervieweeDao = monitoringDatabase.intervieweeDao(),
             villageDao = monitoringDatabase.villageDao(),
+            sectorDao = monitoringDatabase.sectorDao(),
+            localExpertDao = monitoringDatabase.localExpertDao(),
             intervieweeTechnologyDao = monitoringDatabase.intervieweeTechnologyDao(),
             technologyDao = monitoringDatabase.technologyDao(),
             taskDao = monitoringDatabase.taskDao(),
@@ -52,5 +55,15 @@ class IntervieweeModel(application: Application) : AndroidViewModel(application)
         viewModelScope.launch(Dispatchers.Default) {
             intervieweeRepository.updateInterviewee(interviewee)
         }
+    }
+
+    fun getSectorsOfVillage(villageId: Int): Array<CharSequence> {
+        val sectorsInVillage = intervieweeRepository.getSectorsOfVillage(villageId)
+        return sectorsInVillage.value!!.map { it.name }.toTypedArray()
+
+    }
+
+    fun getIntervieweeById(intervieweeId: Int): Interviewee? {
+        return intervieweeList.value?.filter { it.id == intervieweeId }?.first()
     }
 }

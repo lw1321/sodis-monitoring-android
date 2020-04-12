@@ -81,6 +81,39 @@ class IntervieweeDetailFragment(private val intervieweeId: Int) : BaseListFragme
                     key("village")
                     value(intervieweeD.village.name)
                 }
+
+                if (intervieweeD.sector != null) {
+                    keyValue {
+                        id("keyValueSector")
+                        key("sector")
+                        value(intervieweeD.sector!!.name)
+                        onClick { _ ->
+                            activity?.let {
+                                val builder = AlertDialog.Builder(it).apply {
+                                    setTitle("Choose Sector")
+                                    setItems(intervieweeModel.getSectorsOfVillage(intervieweeD.interviewee.villageId),
+                                        DialogInterface.OnClickListener { dialog, which ->
+                                            // The 'which' argument contains the index position
+                                            // of the selected item
+                                        })
+                                }
+
+                                val dialog = builder.create()
+
+                                dialog.show()
+                            }
+
+
+                        }
+                    }
+                }
+
+                keyValue {
+                    id("keyValueLocalExpert")
+                    key("Local Expert")
+                    value(intervieweeD.localExpert.name)
+                }
+
                 keyValue {
                     id("keyValueCount")
                     key("miembro de la familia")

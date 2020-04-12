@@ -9,8 +9,8 @@ import de.sodis.monitoring.db.dao.*
 import de.sodis.monitoring.db.entity.*
 
 @Database(
-    entities = [InputType::class, OptionChoice::class, Question::class, QuestionImage::class, QuestionOption::class, SurveyHeader::class, SurveySection::class, Interviewee::class, Answer::class, Village::class, Technology::class, IntervieweeTechnology::class, Task::class],
-    version = 9
+    entities = [InputType::class, OptionChoice::class, Question::class, QuestionImage::class, QuestionOption::class, SurveyHeader::class, SurveySection::class, Interviewee::class, Answer::class, Village::class, Technology::class, IntervieweeTechnology::class, Task::class, Sector::class, LocalExpert::class],
+    version = 10
 )
 abstract class MonitoringDatabase : RoomDatabase() {
     abstract fun inputTypeDao(): InputTypeDao
@@ -23,6 +23,8 @@ abstract class MonitoringDatabase : RoomDatabase() {
     abstract fun intervieweeDao(): IntervieweeDao
     abstract fun answerDao(): AnswerDao
     abstract fun villageDao(): VillageDao
+    abstract fun sectorDao(): SectorDao
+    abstract fun localExpertDao(): LocalExpertDao
     abstract fun technologyDao(): TechnologyDao
     abstract fun intervieweeTechnologyDao(): IntervieweeTechnologyDao
     abstract fun taskDao(): TaskDao
