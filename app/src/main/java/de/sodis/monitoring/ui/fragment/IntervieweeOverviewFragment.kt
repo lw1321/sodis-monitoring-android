@@ -56,22 +56,39 @@ class IntervieweeOverviewFragment : Fragment(), TabLayout.OnTabSelectedListener 
                                 }
                                 if (bitmapdata != null) {
                                     val bitmap =
-                                        BitmapFactory.decodeByteArray(bitmapdata, 0, bitmapdata.size)
-                                    val size = min(bitmap.width,bitmap.height)
-                                    val cropedBitmap = if(bitmap.width<bitmap.height) {
-                                        Bitmap.createBitmap(bitmap,0,(bitmap.height - bitmap.width)/2, size,size)
+                                        BitmapFactory.decodeByteArray(
+                                            bitmapdata,
+                                            0,
+                                            bitmapdata.size
+                                        )
+                                    val size = min(bitmap.width, bitmap.height)
+                                    val cropedBitmap = if (bitmap.width < bitmap.height) {
+                                        Bitmap.createBitmap(
+                                            bitmap,
+                                            0,
+                                            (bitmap.height - bitmap.width) / 2,
+                                            size,
+                                            size
+                                        )
                                     } else {
-                                        Bitmap.createBitmap(bitmap,(bitmap.width-bitmap.height)/2,0,size,size)
+                                        Bitmap.createBitmap(
+                                            bitmap,
+                                            (bitmap.width - bitmap.height) / 2,
+                                            0,
+                                            size,
+                                            size
+                                        )
                                     }
-
-
-                                    val roundedBitmapDrawable = RoundedBitmapDrawableFactory.create(resources, cropedBitmap)
-
+                                    val roundedBitmapDrawable =
+                                        RoundedBitmapDrawableFactory.create(resources, cropedBitmap)
 
                                     //cut corners
-                                    roundedBitmapDrawable.cornerRadius = min(bitmap.width, bitmap.height) * 0.05f
+                                    roundedBitmapDrawable.cornerRadius =
+                                        min(bitmap.width, bitmap.height) * 0.05f
 //                                    view.dataBinding.root.imageView.setImageBitmap(bitmap)
-                                    view.dataBinding.root.imageView.setImageDrawable(roundedBitmapDrawable)
+                                    view.dataBinding.root.imageView.setImageDrawable(
+                                        roundedBitmapDrawable
+                                    )
                                 } else {
                                     view.dataBinding.root.imageView.setImageResource(R.drawable.ic_camera_alt_black_24dp)
                                 }
@@ -88,10 +105,6 @@ class IntervieweeOverviewFragment : Fragment(), TabLayout.OnTabSelectedListener 
     private val intervieweeModel: IntervieweeModel by lazy {
         ViewModelProviders.of(this, MyViewModelFactory(activity!!.application, emptyList()))
             .get(IntervieweeModel::class.java)
-    }
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
     }
 
     override fun onCreateView(

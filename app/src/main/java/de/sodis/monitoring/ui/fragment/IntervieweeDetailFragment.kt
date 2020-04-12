@@ -1,5 +1,8 @@
 package de.sodis.monitoring.ui.fragment
 
+import android.app.AlertDialog
+import android.content.DialogInterface
+import android.graphics.Color
 import android.app.Activity.RESULT_OK
 import android.content.Context
 import android.content.Intent
@@ -54,13 +57,26 @@ class IntervieweeDetailFragment(private val intervieweeId: Int) : BaseListFragme
                             val bitmap =
                                 BitmapFactory.decodeByteArray(bitmapdata, 0, bitmapdata.size)
                             val size = Math.min(bitmap.width, bitmap.height)
-                            val cropedBitmap = if(bitmap.width<bitmap.height) {
-                                Bitmap.createBitmap(bitmap,0,(bitmap.height - bitmap.width)/2, size,size)
+                            val cropedBitmap = if (bitmap.width < bitmap.height) {
+                                Bitmap.createBitmap(
+                                    bitmap,
+                                    0,
+                                    (bitmap.height - bitmap.width) / 2,
+                                    size,
+                                    size
+                                )
                             } else {
-                                Bitmap.createBitmap(bitmap,(bitmap.width-bitmap.height)/2,0,size,size)
+                                Bitmap.createBitmap(
+                                    bitmap,
+                                    (bitmap.width - bitmap.height) / 2,
+                                    0,
+                                    size,
+                                    size
+                                )
                             }
 
-                            val roundedBitmapDrawable = RoundedBitmapDrawableFactory.create(resources, cropedBitmap)
+                            val roundedBitmapDrawable =
+                                RoundedBitmapDrawableFactory.create(resources, cropedBitmap)
 
                             //cut corners
                             roundedBitmapDrawable.cornerRadius = Math.min(
@@ -128,7 +144,7 @@ class IntervieweeDetailFragment(private val intervieweeId: Int) : BaseListFragme
                                 + intervieweeD.interviewee.oldMenCount).toString()
                     )
                 }
-                familyAgeStructure{
+                familyAgeStructure {
                     id("family")
                     f0(intervieweeD.interviewee.girlsCount.toString())
                     f1(intervieweeD.interviewee.youngWomenCount.toString())
@@ -141,9 +157,10 @@ class IntervieweeDetailFragment(private val intervieweeId: Int) : BaseListFragme
                     onBind { model, view, position ->
 
                         view.dataBinding.root.editTextf0.addTextChangedListener {
-                            var count = view.dataBinding.root.editTextf0.text.toString().toIntOrNull() ?: 0
+                            var count =
+                                view.dataBinding.root.editTextf0.text.toString().toIntOrNull() ?: 0
                             val newInterviewee = intervieweeD.interviewee.copy(girlsCount = count)
-                                intervieweeModel.updateInterviewee(newInterviewee)
+                            intervieweeModel.updateInterviewee(newInterviewee)
                         }
                     }
 
@@ -222,7 +239,7 @@ class IntervieweeDetailFragment(private val intervieweeId: Int) : BaseListFragme
         )
 
         val paint = Paint()
-        paint.setShader(gradient)
+        paint.shader = gradient
 
         canvas.drawCircle(
             b.width.toFloat() / 2.0f,
