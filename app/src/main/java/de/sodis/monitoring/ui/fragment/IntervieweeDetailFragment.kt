@@ -168,8 +168,12 @@ class IntervieweeDetailFragment(private val intervieweeId: Int) : BaseListFragme
                         onBind { model, view, position ->
                             //TODO ist die Zuweisung der Farben richtig?
                             val bo = BitmapFactory.Options()
-                            bo.inMutable = true;
-                            val b = BitmapFactory.decodeResource(resources, R.drawable.ofen_kreis_basic, bo)
+                            bo.inMutable = true
+                            val b = BitmapFactory.decodeResource(
+                                resources,
+                                R.drawable.ofen_kreis_basic,
+                                bo
+                            )
                             applyCircleGradient(b)
                             view.dataBinding.root.technolgyImage.setImageBitmap(b)
 
