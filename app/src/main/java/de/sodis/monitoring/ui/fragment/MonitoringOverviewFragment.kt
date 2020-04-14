@@ -7,10 +7,10 @@ import android.view.ViewGroup
 import androidx.core.view.isGone
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.findNavController
 import de.sodis.monitoring.MainActivity
 import de.sodis.monitoring.default
-import de.sodis.monitoring.header
-import de.sodis.monitoring.replaceFragments
+import de.sodis.monitoring.hide_bottom_navigation
 import de.sodis.monitoring.viewmodel.MonitoringOverviewModel
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
 import kotlinx.android.synthetic.main.continuable_list.view.*
@@ -34,7 +34,9 @@ class MonitoringOverviewFragment : BaseListFragment() {
                         id(it.id)
                         text(it.surveyName)
                         onClick { _ ->
-                            (activity as MainActivity).replaceFragments(SurveyFragment(it.id), "SURVEY_TAG")
+                            (activity as MainActivity).hide_bottom_navigation()
+                            val action = MonitoringOverviewFragmentDirections.actionMonitoringOverviewFragmentToSurveyFragment(it.id)
+                            findNavController().navigate(action)
                         }
                     }
                 }

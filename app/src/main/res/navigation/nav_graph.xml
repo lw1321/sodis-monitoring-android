@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/intervieweeOverviewFragment">
+
+    <fragment
+        android:id="@+id/intervieweeOverviewFragment"
+        android:name="de.sodis.monitoring.ui.fragment.IntervieweeOverviewFragment"
+        android:label="IntervieweeOverviewFragment" >
+        <action
+            android:id="@+id/action_intervieweeOverviewFragment_to_intervieweeDetailFragment"
+            app:destination="@id/intervieweeDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/intervieweeDetailFragment"
+        android:name="de.sodis.monitoring.ui.fragment.IntervieweeDetailFragment"
+        android:label="IntervieweeDetailFragment" >
+        <argument
+            android:name="intervieweeId"
+            app:argType="integer"
+            android:defaultValue="0" />
+    </fragment>
+    <activity
+        android:id="@+id/mainActivity"
+        android:name="de.sodis.monitoring.MainActivity"
+        android:label="activity_main"
+        tools:layout="@layout/activity_main" />
+    <fragment
+        android:id="@+id/registrationFragment"
+        android:name="de.sodis.monitoring.ui.fragment.RegistrationFragment"
+        android:label="RegistrationFragment" >
+    </fragment>
+    <fragment
+        android:id="@+id/taskOverviewFragment"
+        android:name="de.sodis.monitoring.ui.fragment.TaskOverviewFragment"
+        android:label="TaskOverviewFragment" >
+        <action
+            android:id="@+id/action_taskOverviewFragment_to_surveyFragment"
+            app:destination="@id/surveyFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/monitoringOverviewFragment"
+        android:name="de.sodis.monitoring.ui.fragment.MonitoringOverviewFragment"
+        android:label="MonitoringOverviewFragment" >
+        <action
+            android:id="@+id/action_monitoringOverviewFragment_to_surveyFragment"
+            app:destination="@id/surveyFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/questionFragment"
+        android:name="de.sodis.monitoring.ui.fragment.QuestionFragment"
+        android:label="QuestionFragment" >
+        <argument
+            android:name="surveyId"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_questionFragment_self"
+            app:destination="@id/questionFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/surveyFragment"
+        android:name="de.sodis.monitoring.ui.fragment.SurveyFragment"
+        android:label="SurveyFragment" >
+        <argument
+            android:name="surveyId"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_surveyFragment_to_questionFragment"
+            app:destination="@id/questionFragment" />
+    </fragment>
+</navigation>
