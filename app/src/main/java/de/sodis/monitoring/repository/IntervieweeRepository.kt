@@ -46,45 +46,46 @@ class IntervieweeRepository(
                 }
             }
 
-
-            //insert interviewee
-            intervieweeDao.insert(
-                Interviewee(
-                    id = interviewee.id,
-                    name = interviewee.name,
-                    villageId = interviewee.village.id,
-                    boysCount = interviewee.boysCount,
-                    girlsCount = interviewee.girlsCount,
-                    hasKnowledge = interviewee.hasKnowledge,
-                    menCount = interviewee.menCount,
-                    womenCount = interviewee.womenCount,
-                    oldMenCount = interviewee.oldMenCount,
-                    oldWomenCount = interviewee.oldWomenCount,
-                    youngMenCount = interviewee.youngMenCount,
-                    youngWomenCount = interviewee.youngWomenCount,
-                    sectorId = interviewee.sector?.id,
-                    userId = interviewee.user?.id
+            if(!intervieweeDao.getById(interviewee.id).changed ?: true) {
+                //insert interviewee
+                intervieweeDao.insert(
+                    Interviewee(
+                        id = interviewee.id,
+                        name = interviewee.name,
+                        villageId = interviewee.village.id,
+                        boysCount = interviewee.boysCount,
+                        girlsCount = interviewee.girlsCount,
+                        hasKnowledge = interviewee.hasKnowledge,
+                        menCount = interviewee.menCount,
+                        womenCount = interviewee.womenCount,
+                        oldMenCount = interviewee.oldMenCount,
+                        oldWomenCount = interviewee.oldWomenCount,
+                        youngMenCount = interviewee.youngMenCount,
+                        youngWomenCount = interviewee.youngWomenCount,
+                        sectorId = interviewee.sector?.id,
+                        userId = interviewee.user?.id
+                    )
                 )
-            )
-            interviewee.intervieweeTechnologies.forEach {
-                if (technologyDao.count(it.technology.id) == 0) {
-                    //save input type
-                    technologyDao.insert(
-                        Technology(
-                            id = it.technology.id,
-                            name = it.technology.name
+                interviewee.intervieweeTechnologies.forEach {
+                    if (technologyDao.count(it.technology.id) == 0) {
+                        //save input type
+                        technologyDao.insert(
+                            Technology(
+                                id = it.technology.id,
+                                name = it.technology.name
+                            )
+                        )
+                    }
+                    intervieweeTechnologyDao.insert(
+                        IntervieweeTechnology(
+                            id = it.id,
+                            stateKnowledge = it.stateKnowledge,
+                            technologyId = it.technology.id,
+                            stateTechnology = it.stateTechnology,
+                            intervieweeId = interviewee.id
                         )
                     )
                 }
-                intervieweeTechnologyDao.insert(
-                    IntervieweeTechnology(
-                        id = it.id,
-                        stateKnowledge = it.stateKnowledge,
-                        technologyId = it.technology.id,
-                        stateTechnology = it.stateTechnology,
-                        intervieweeId = interviewee.id
-                    )
-                )
             }
 
         }
@@ -134,8 +135,8 @@ class IntervieweeRepository(
         )
     }
 
-    suspend fun updateInterviewee(interviewee: Interviewee) {
-        intervieweeDao.update(interviewee)
+    fun saveInterviewee(interviewee: Interviewee) {
+        intervieweeDao.insert(interviewee)
     }
 
     fun getSectorsOfVillage(villageId: Int): LiveData<List<Sector>> {

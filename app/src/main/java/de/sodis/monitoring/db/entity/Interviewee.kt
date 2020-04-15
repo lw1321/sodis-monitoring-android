@@ -38,5 +38,6 @@ data class Interviewee(
     val menCount: Int,
     val womenCount: Int,
     val userId: Int?,
-    val sectorId: Int?
+    val sectorId: Int?,
+    var changed: Boolean = false
 )
