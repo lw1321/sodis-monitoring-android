@@ -1,5 +1,7 @@
 package de.sodis.monitoring.api.model
 
+import de.sodis.monitoring.db.entity.LocalExpert
+
 data class IntervieweeJson(
     val id: Int,
     val name: String,
@@ -13,8 +15,10 @@ data class IntervieweeJson(
     val hasKnowledge: Boolean,
     val oldWomenCount: Int,
     val menCount: Int,
-    val womenCount: Int
-    ) {
+    val womenCount: Int,
+    val sector: Sector?,
+    val localExpert: LocalExpert
+) {
     data class Village(
         val id: Int,
         val name: String
@@ -26,4 +30,16 @@ data class IntervieweeJson(
         val stateTechnology: Int,
         val stateKnowledge: Int
     )
+
+    data class Sector(
+        val id: Int,
+        val name: String,
+        val village: Village
+    )
+
+    data class LocalExpert(
+        val id: Int,
+        val name: String
+    )
+
 }

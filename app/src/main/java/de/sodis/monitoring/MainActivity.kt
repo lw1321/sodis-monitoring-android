@@ -87,10 +87,9 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 }
 
 public fun MainActivity.replaceFragments(fragmentNew: Fragment, tag: String) {
-    if (tag == "QUESTION_TAG" || tag == "TAG_REGISTRATION" || tag == "TAG_INTERVIEW_DETAIL"
-        || tag == "TAG_INTERVIEW_DETAIL" || tag == "SURVEY_TAG"
+    if (tag == "QUESTION_TAG" || tag == "TAG_REGISTRATION" ||tag == "SURVEY_TAG"
     ) {
-        this.bottom_navigation.visibility = View.GONE
+        this.bottom_navigation.visibility = View.GONE//TODO navigation controler action based
     }
     else{
         this.bottom_navigation.visibility = View.VISIBLE

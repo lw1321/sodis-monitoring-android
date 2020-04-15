@@ -4,15 +4,14 @@ import androidx.lifecycle.LiveData
 import de.sodis.monitoring.api.MonitoringApi
 import de.sodis.monitoring.api.model.IntervieweeJson
 import de.sodis.monitoring.db.dao.*
-import de.sodis.monitoring.db.entity.Interviewee
-import de.sodis.monitoring.db.entity.IntervieweeTechnology
-import de.sodis.monitoring.db.entity.Technology
-import de.sodis.monitoring.db.entity.Village
+import de.sodis.monitoring.db.entity.*
 import de.sodis.monitoring.db.response.IntervieweeDetail
 
 class IntervieweeRepository(
     private val intervieweeDao: IntervieweeDao,
     private val villageDao: VillageDao,
+    private val sectorDao: SectorDao,
+    private val localExpertDao: LocalExpertDao,
     private val technologyDao: TechnologyDao,
     private val intervieweeTechnologyDao: IntervieweeTechnologyDao,
     private val taskDao: TaskDao,
@@ -34,6 +33,28 @@ class IntervieweeRepository(
                 )
             }
 
+            if (interviewee.sector != null) {
+
+                if (sectorDao.count(interviewee.sector.id) == 0) {
+                    sectorDao.insert(
+                        Sector(
+                            id = interviewee.sector.id,
+                            name = interviewee.sector.name,
+                            villageId = interviewee.sector.village.id
+                        )
+                    )
+                }
+            }
+
+            if (localExpertDao.count(interviewee.localExpert.id) == 0) {
+                localExpertDao.insert(
+                    LocalExpert(
+                        id = interviewee.localExpert.id,
+                        name = interviewee.localExpert.name
+                    )
+                )
+            }
+
             //insert interviewee
             intervieweeDao.insert(
                 Interviewee(
@@ -48,7 +69,9 @@ class IntervieweeRepository(
                     oldMenCount = interviewee.oldMenCount,
                     oldWomenCount = interviewee.oldWomenCount,
                     youngMenCount = interviewee.youngMenCount,
-                    youngWomenCount = interviewee.youngWomenCount
+                    youngWomenCount = interviewee.youngWomenCount,
+                    sectorId = interviewee.sector?.id,
+                    localExpertId = interviewee.localExpert.id
                 )
             )
             interviewee.intervieweeTechnologies.forEach {
@@ -103,12 +126,26 @@ class IntervieweeRepository(
             intervieweeTechnologyDao.getByInterviewee(intervieweeId)
         val interviewee = intervieweeDao.getById(intervieweeId)
         val village = villageDao.getById(interviewee.villageId)
+        val sector = interviewee.sectorId?.let { sectorDao.getById(it) }
+        val localExpert = localExpertDao.getById(interviewee.localExpertId)
         val taskList = taskDao.getTasksByInterviewee(intervieweeId)
         return IntervieweeDetail(
             interviewee = interviewee,
             intervieweeTechnologies = intervieweeTechnologies,
             village = village,
+            sector = sector,
+            localExpert = localExpert,
             tasks = taskList
         )
     }
+
+    suspend fun updateInterviewee(interviewee: Interviewee) {
+        intervieweeDao.update(interviewee)
+    }
+
+    fun getSectorsOfVillage(villageId: Int): LiveData<List<Sector>> {
+        return sectorDao.getByVillageId(villageId)
+
+    }
+
 }

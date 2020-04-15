@@ -49,6 +49,8 @@ class SurveyViewModel(
             intervieweeDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).intervieweeDao(),
             monitoringApi = MonitoringApi(),
             villageDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).villageDao(),
+            localExpertDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).localExpertDao(),
+            sectorDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).sectorDao(),
             technologyDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).technologyDao(),
             intervieweeTechnologyDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).intervieweeTechnologyDao(),
             taskDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).taskDao()
