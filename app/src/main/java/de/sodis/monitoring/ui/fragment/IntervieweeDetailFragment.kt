@@ -194,7 +194,14 @@ class IntervieweeDetailFragment : BaseListFragment() {
                             bo.inMutable = true
                             val b = BitmapFactory.decodeResource(
                                 resources,
-                                R.drawable.ofen_kreis_basic,
+                                when (techno.name) {
+                                    "Cocina Ecologica" -> R.drawable.ofen_kreis_basic
+                                    "Lavado de Manos" -> R.drawable.handwaschstation_icon
+                                    "Baño" -> R.drawable.toilette_icon
+                                    "Tecnología para Agua Segura (Filtro)" -> R.drawable.wasserfilter_icon
+
+                                    else -> R.drawable.sodis_logo
+                                },
                                 bo
                             )
                             applyCircleGradient(b)
