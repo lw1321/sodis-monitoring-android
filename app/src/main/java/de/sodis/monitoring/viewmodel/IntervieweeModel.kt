@@ -28,7 +28,7 @@ class IntervieweeModel(application: Application) : AndroidViewModel(application)
             intervieweeDao = monitoringDatabase.intervieweeDao(),
             villageDao = monitoringDatabase.villageDao(),
             sectorDao = monitoringDatabase.sectorDao(),
-            localExpertDao = monitoringDatabase.localExpertDao(),
+            userDao = monitoringDatabase.userDao(),
             intervieweeTechnologyDao = monitoringDatabase.intervieweeTechnologyDao(),
             technologyDao = monitoringDatabase.technologyDao(),
             taskDao = monitoringDatabase.taskDao(),
@@ -64,6 +64,6 @@ class IntervieweeModel(application: Application) : AndroidViewModel(application)
     }
 
     fun getIntervieweeById(intervieweeId: Int): Interviewee? {
-        return intervieweeList.value?.filter { it.id == intervieweeId }?.first()
+        return intervieweeList.value?.first { it.id == intervieweeId }
     }
 }

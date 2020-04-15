@@ -133,7 +133,7 @@ class IntervieweeDetailFragment : BaseListFragment() {
                 keyValue {
                     id("keyValueLocalExpert")
                     key("Local Expert")
-                    value(intervieweeD.localExpert.name)
+                    value(intervieweeD.user?.firstName + " " + intervieweeD.user?.lastName)
                 }
 
                 keyValue {

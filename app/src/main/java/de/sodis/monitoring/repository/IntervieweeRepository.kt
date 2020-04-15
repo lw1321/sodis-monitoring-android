@@ -11,10 +11,10 @@ class IntervieweeRepository(
     private val intervieweeDao: IntervieweeDao,
     private val villageDao: VillageDao,
     private val sectorDao: SectorDao,
-    private val localExpertDao: LocalExpertDao,
     private val technologyDao: TechnologyDao,
     private val intervieweeTechnologyDao: IntervieweeTechnologyDao,
     private val taskDao: TaskDao,
+    private val userDao: UserDao,
     private val monitoringApi: MonitoringApi
 ) {
 
@@ -46,14 +46,6 @@ class IntervieweeRepository(
                 }
             }
 
-            if (localExpertDao.count(interviewee.localExpert.id) == 0) {
-                localExpertDao.insert(
-                    LocalExpert(
-                        id = interviewee.localExpert.id,
-                        name = interviewee.localExpert.name
-                    )
-                )
-            }
 
             //insert interviewee
             intervieweeDao.insert(
@@ -71,7 +63,7 @@ class IntervieweeRepository(
                     youngMenCount = interviewee.youngMenCount,
                     youngWomenCount = interviewee.youngWomenCount,
                     sectorId = interviewee.sector?.id,
-                    localExpertId = interviewee.localExpert.id
+                    userId = interviewee.user?.id
                 )
             )
             interviewee.intervieweeTechnologies.forEach {
@@ -127,14 +119,17 @@ class IntervieweeRepository(
         val interviewee = intervieweeDao.getById(intervieweeId)
         val village = villageDao.getById(interviewee.villageId)
         val sector = interviewee.sectorId?.let { sectorDao.getById(it) }
-        val localExpert = localExpertDao.getById(interviewee.localExpertId)
+        var localExpert: User? = null
+        if(interviewee.userId != null){
+            localExpert = userDao.getByLocalExpertId(interviewee.userId)
+        }
         val taskList = taskDao.getTasksByInterviewee(intervieweeId)
         return IntervieweeDetail(
             interviewee = interviewee,
             intervieweeTechnologies = intervieweeTechnologies,
             village = village,
             sector = sector,
-            localExpert = localExpert,
+            user= localExpert,
             tasks = taskList
         )
     }

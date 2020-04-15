@@ -63,6 +63,8 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             supportActionBar!!.title = "Registration"
             this.hide_bottom_navigation()
             findNavController(R.id.nav_host_fragment).navigate(R.id.registrationFragment)
+          }else{
+            rootViewModel.requestData()
         }
     }
 
