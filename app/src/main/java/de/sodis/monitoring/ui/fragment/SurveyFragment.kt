@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import androidx.core.view.isGone
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
@@ -70,6 +71,8 @@ class SurveyFragment : BaseListFragment(){
         savedInstanceState: Bundle?
     ): View? {
         val view = super.onCreateView(inflater, container, savedInstanceState)
+
+        view?.navigation_forward_button_left?.isGone = true
 
         view?.navigation_forward_button_1?.setOnClickListener {
             if (surveyViewModel.interviewee == null) {

@@ -85,6 +85,8 @@ class SurveyViewModel(
      */
     var currentPosition: Int = 0
 
+    var listOfAnsweredQuestions: List<Int> = mutableListOf()
+
     var answerMap = mutableMapOf<Int, Answer>()
 
     init {
@@ -145,6 +147,7 @@ class SurveyViewModel(
             WorkManager.getInstance(mApplication.applicationContext).enqueue(uploadWorkRequest)
 
             currentPosition = 0
+            listOfAnsweredQuestions = mutableListOf()
             return false
         }
         currentPosition++
@@ -165,4 +168,15 @@ class SurveyViewModel(
     }
 
     fun isAnswered(id: Int): Boolean = answerMap.containsKey(id)
+
+    fun previousQuestion(): Boolean{
+        if(currentPosition != 0) {
+            val lastPosition = listOfAnsweredQuestions.last()
+            answerMap.remove(questionItemList.value!![lastPosition].question.id)
+            listOfAnsweredQuestions = listOfAnsweredQuestions.subList(0,listOfAnsweredQuestions.size-1)
+            currentPosition = lastPosition
+            return true
+        }
+        return false
+    }
 }

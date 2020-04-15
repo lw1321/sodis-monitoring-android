@@ -168,9 +168,92 @@ class IntervieweeDetailFragment : BaseListFragment() {
                             val newInterviewee = intervieweeD.interviewee.copy(girlsCount = count)
                             intervieweeModel.updateInterviewee(newInterviewee)
                         }
+                        view.dataBinding.root.editTextf0.setOnFocusChangeListener { view, b ->
+                            if (!b) {
+                                recyclerView.requestModelBuild()
+                            }
+                        }
+                        view.dataBinding.root.editTextf1.addTextChangedListener {
+                            var count =
+                                view.dataBinding.root.editTextf1.text.toString().toIntOrNull() ?: 0
+                            val newInterviewee =
+                                intervieweeD.interviewee.copy(youngWomenCount = count)
+                            intervieweeModel.updateInterviewee(newInterviewee)
+                        }
+                        view.dataBinding.root.editTextf1.setOnFocusChangeListener { view, b ->
+                            if (!b) {
+                                recyclerView.requestModelBuild()
+                            }
+                        }
+                        view.dataBinding.root.editTextf2.addTextChangedListener {
+                            var count =
+                                view.dataBinding.root.editTextf2.text.toString().toIntOrNull() ?: 0
+                            val newInterviewee = intervieweeD.interviewee.copy(womenCount = count)
+                            intervieweeModel.updateInterviewee(newInterviewee)
+                        }
+                        view.dataBinding.root.editTextf2.setOnFocusChangeListener { view, b ->
+                            if (!b) {
+                                recyclerView.requestModelBuild()
+                            }
+                        }
+                        view.dataBinding.root.editTextf3.addTextChangedListener {
+                            var count =
+                                view.dataBinding.root.editTextf3.text.toString().toIntOrNull() ?: 0
+                            val newInterviewee =
+                                intervieweeD.interviewee.copy(oldWomenCount = count)
+                            intervieweeModel.updateInterviewee(newInterviewee)
+                        }
+                        view.dataBinding.root.editTextf3.setOnFocusChangeListener { view, b ->
+                            if (!b) {
+                                recyclerView.requestModelBuild()
+                            }
+                        }
+                        view.dataBinding.root.editTextm0.addTextChangedListener {
+                            var count =
+                                view.dataBinding.root.editTextm0.text.toString().toIntOrNull() ?: 0
+                            val newInterviewee = intervieweeD.interviewee.copy(boysCount = count)
+                            intervieweeModel.updateInterviewee(newInterviewee)
+                        }
+                        view.dataBinding.root.editTextm0.setOnFocusChangeListener { view, b ->
+                            if (!b) {
+                                recyclerView.requestModelBuild()
+                            }
+                        }
+                        view.dataBinding.root.editTextm1.addTextChangedListener {
+                            var count =
+                                view.dataBinding.root.editTextm1.text.toString().toIntOrNull() ?: 0
+                            val newInterviewee =
+                                intervieweeD.interviewee.copy(youngMenCount = count)
+                            intervieweeModel.updateInterviewee(newInterviewee)
+                        }
+                        view.dataBinding.root.editTextm1.setOnFocusChangeListener { view, b ->
+                            if (!b) {
+                                recyclerView.requestModelBuild()
+                            }
+                        }
+                        view.dataBinding.root.editTextm2.addTextChangedListener {
+                            var count =
+                                view.dataBinding.root.editTextm2.text.toString().toIntOrNull() ?: 0
+                            val newInterviewee = intervieweeD.interviewee.copy(menCount = count)
+                            intervieweeModel.updateInterviewee(newInterviewee)
+                        }
+                        view.dataBinding.root.editTextm2.setOnFocusChangeListener { view, b ->
+                            if (!b) {
+                                recyclerView.requestModelBuild()
+                            }
+                        }
+                        view.dataBinding.root.editTextm3.addTextChangedListener {
+                            var count =
+                                view.dataBinding.root.editTextm3.text.toString().toIntOrNull() ?: 0
+                            val newInterviewee = intervieweeD.interviewee.copy(oldMenCount = count)
+                            intervieweeModel.updateInterviewee(newInterviewee)
+                        }
+                        view.dataBinding.root.editTextm3.setOnFocusChangeListener { view, b ->
+                            if (!b) {
+                                recyclerView.requestModelBuild()
+                            }
+                        }
                     }
-
-
                 }
                 intervieweeD.intervieweeTechnologies.forEach { techno ->
                     //are there open tasks for this technology?
@@ -188,13 +271,27 @@ class IntervieweeDetailFragment : BaseListFragment() {
                         knowledgeState(techno.stateKnowledge.toString())
                         name(techno.name)
                         taskName(taskStatus ?: "")
+                        onClick { _ ->
+                            if (taskStatus == null) {
+                                IntervieweeDetailFragmentDirections.actionIntervieweeDetailFragmentToSurveyFragment(
+                                    taskFilteredList.first().surveyHeaderId!!
+                                )
+                            }
+                        }
                         onBind { model, view, position ->
                             //TODO ist die Zuweisung der Farben richtig?
                             val bo = BitmapFactory.Options()
                             bo.inMutable = true
                             val b = BitmapFactory.decodeResource(
                                 resources,
-                                R.drawable.ofen_kreis_basic,
+                                when (techno.name) {
+                                    "Cocina Ecologica" -> R.drawable.ofen_kreis_basic
+                                    "Lavado de Manos" -> R.drawable.handwaschstation_icon
+                                    "Baño" -> R.drawable.toilette_icon
+                                    "Tecnología para Agua Segura (Filtro)" -> R.drawable.wasserfilter_icon
+
+                                    else -> R.drawable.sodis_logo
+                                },
                                 bo
                             )
                             applyCircleGradient(b)
@@ -229,6 +326,16 @@ class IntervieweeDetailFragment : BaseListFragment() {
 
             }
             recyclerView.recycledViewPool.clear()
+            view?.navigation_forward_button_1?.setImageResource(R.drawable.ic_baseline_save_24)
+            view?.navigation_forward_button_1?.setOnClickListener {
+                intervieweeModel.saveInterviewee()
+                Snackbar.make(
+                    view!!,
+                    "Saved",
+                    Snackbar.LENGTH_LONG
+                ).show()
+            }
+
         })
     }
 
@@ -287,6 +394,7 @@ class IntervieweeDetailFragment : BaseListFragment() {
     ): View? {
         val view = super.onCreateView(inflater, container, savedInstanceState)
         view?.navigation_forward_button_1?.isGone = true
+        view?.navigation_forward_button_left?.isGone = true
         return view
     }
 }

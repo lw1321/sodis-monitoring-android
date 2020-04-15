@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isGone
+import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
@@ -49,6 +50,7 @@ class RegistrationFragment : BaseListFragment() {
     ): View? {
         val view = super.onCreateView(inflater, container, savedInstanceState)
         view?.navigation_forward_button_1?.isGone = true
+        view?.navigation_forward_button_left?.isGone = true
 
         recyclerView.withModels {
             register {
