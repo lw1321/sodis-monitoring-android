@@ -18,6 +18,7 @@ import androidx.core.view.isGone
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.navArgs
 import de.sodis.monitoring.*
 import de.sodis.monitoring.viewmodel.IntervieweeModel
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
@@ -29,15 +30,20 @@ import java.io.ByteArrayOutputStream
 import java.io.FileNotFoundException
 
 
-class IntervieweeDetailFragment(private val intervieweeId: Int) : BaseListFragment() {
+class IntervieweeDetailFragment : BaseListFragment() {
 
     private val intervieweeModel: IntervieweeModel by lazy {
         ViewModelProviders.of(this, MyViewModelFactory(activity!!.application, emptyList()))
             .get(IntervieweeModel::class.java)
     }
 
+    val args: IntervieweeDetailFragmentArgs by navArgs()
+    var intervieweeId: Int = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        intervieweeId = args.intervieweeId
         intervieweeModel.setInterviewee(intervieweeId)
         intervieweeModel.intervieweeDetail.observe(this, Observer { intervieweeD ->
             recyclerView.withModels {

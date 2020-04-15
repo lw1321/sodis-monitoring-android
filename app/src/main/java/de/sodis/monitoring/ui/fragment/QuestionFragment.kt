@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import coil.api.load
 import com.google.android.material.snackbar.Snackbar
 import de.sodis.monitoring.*
@@ -16,7 +18,7 @@ import kotlinx.android.synthetic.main.view_holder_text_choice.view.*
 import kotlinx.android.synthetic.main.view_holder_text_input.view.*
 import java.io.File
 
-class QuestionFragment(private val surveyId: Int) : BaseListFragment() {
+class QuestionFragment : BaseListFragment() {
 
 
     private lateinit var currentQuestion: QuestionAnswer
@@ -27,10 +29,13 @@ class QuestionFragment(private val surveyId: Int) : BaseListFragment() {
         }!!
     }
 
+    val args: QuestionFragmentArgs by navArgs()
+    var surveyId: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        surveyId = args.surveyId
         surveyViewModel.questionItemList.observe(this, Observer { list ->
             currentQuestion = list.get(index = surveyViewModel.currentPosition)
 
@@ -84,14 +89,14 @@ class QuestionFragment(private val surveyId: Int) : BaseListFragment() {
                 if (surveyViewModel.isAnswered(currentQuestion.question.id)) {
 
                     val hasNext = surveyViewModel.nextQuestion()
-                    if (!hasNext)
+                    if (hasNext) {
+                        val action = QuestionFragmentDirections.actionQuestionFragmentSelf(surveyId)
+                        findNavController().navigate(action)
+                    } else {
                         Snackbar.make(view!!, "Los datos se guardan", Snackbar.LENGTH_LONG).show()
-                    (activity as MainActivity).replaceFragments(
-                        if (hasNext) QuestionFragment(
-                            surveyId
-                        ) else MonitoringOverviewFragment(),
-                        if (hasNext) "QUESTION_TAG" else "MONITORING_OVERVIEW_TAG"
-                    )
+                        (activity as MainActivity).show_bottom_navigation()
+                        findNavController().navigate(R.id.monitoringOverviewFragment)
+                    }
                 } else {
                     Snackbar.make(
                         view!!,

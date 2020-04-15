@@ -7,12 +7,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isGone
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
-import de.sodis.monitoring.*
-import de.sodis.monitoring.api.MonitoringApi
+import de.sodis.monitoring.MainActivity
+import de.sodis.monitoring.R
+import de.sodis.monitoring.register
+import de.sodis.monitoring.show_bottom_navigation
 import de.sodis.monitoring.viewmodel.*
 import kotlinx.android.synthetic.main.continuable_list.view.*
 import kotlinx.android.synthetic.main.view_holder_register.view.*
@@ -67,10 +68,9 @@ class RegistrationFragment : BaseListFragment() {
                             rootViewModel.requestData()
                             //register user on Sodis API
                             Snackbar.make(view!!, "Registro exitoso!", Snackbar.LENGTH_LONG).show()
-                            (activity as MainActivity).replaceFragments(
-                                IntervieweeOverviewFragment(),
-                                "INTERVIEWEE_OVERVIEW"
-                            )
+                          
+                            (activity as MainActivity).show_bottom_navigation()
+                            findNavController().navigate(R.id.intervieweeOverviewFragment)
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("E", "signInAnonymously:failure", task.exception)

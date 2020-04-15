@@ -10,13 +10,13 @@ import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.navOptions
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.airbnb.epoxy.EpoxyRecyclerView
 import com.google.android.material.tabs.TabLayout
-import de.sodis.monitoring.MainActivity
 import de.sodis.monitoring.R
 import de.sodis.monitoring.pictureListItem
-import de.sodis.monitoring.replaceFragments
 import de.sodis.monitoring.viewmodel.IntervieweeModel
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
 import kotlinx.android.synthetic.main.list.view.*
@@ -43,10 +43,16 @@ class IntervieweeOverviewFragment : Fragment(), TabLayout.OnTabSelectedListener 
                             id(it.id)
                             text(it.name)
                             onClick { _ ->
-                                (activity as MainActivity).replaceFragments(
-                                    IntervieweeDetailFragment(it.id),
-                                    "TAG_INTERVIEW_DETAIL"
-                                )
+                                val options = navOptions {
+                                    anim {
+                                        enter = R.anim.slide_in_right
+                                        exit = R.anim.slide_out_left
+                                        popEnter = R.anim.slide_in_left
+                                        popExit = R.anim.slide_out_right
+                                    }
+                                }
+                                val action = IntervieweeOverviewFragmentDirections.actionIntervieweeOverviewFragmentToIntervieweeDetailFragment(intervieweeId =  it.id)
+                                findNavController().navigate(action)
                             }
                             onBind { model, view, position ->
                                 val bitmapdata = try {
