@@ -272,6 +272,13 @@ class IntervieweeDetailFragment : BaseListFragment() {
                         knowledgeState(techno.stateKnowledge.toString())
                         name(techno.name)
                         taskName(taskStatus ?: "")
+                        onClick { _ ->
+                            if (taskStatus == null) {
+                                IntervieweeDetailFragmentDirections.actionIntervieweeDetailFragmentToSurveyFragment(
+                                    taskFilteredList.first().surveyHeaderId!!
+                                )
+                            }
+                        }
                         onBind { model, view, position ->
                             //TODO ist die Zuweisung der Farben richtig?
                             val bo = BitmapFactory.Options()
