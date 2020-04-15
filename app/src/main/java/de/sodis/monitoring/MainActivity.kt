@@ -69,6 +69,8 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             //todo store token, store name?!
             supportActionBar!!.title = "Registration"
             this.replaceFragments(RegistrationFragment(), "TAG_REGISTRATION")
+        }else{
+            rootViewModel.requestData()
         }
     }
 
