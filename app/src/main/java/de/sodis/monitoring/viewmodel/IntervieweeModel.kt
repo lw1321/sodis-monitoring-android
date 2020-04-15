@@ -22,6 +22,8 @@ class IntervieweeModel(application: Application) : AndroidViewModel(application)
     var villageList: LiveData<List<Village>>
     var intervieweeDetail: MutableLiveData<IntervieweeDetail>
 
+    var modiefied: Boolean = false
+
     private val monitoringDatabase = MonitoringDatabase.getDatabase(application.applicationContext)
     private val intervieweeRepository =
         IntervieweeRepository(
@@ -52,9 +54,8 @@ class IntervieweeModel(application: Application) : AndroidViewModel(application)
     }
 
     fun updateInterviewee(interviewee: Interviewee) {
-        viewModelScope.launch(Dispatchers.Default) {
-            intervieweeRepository.updateInterviewee(interviewee)
-        }
+        intervieweeDetail.value!!.interviewee = interviewee
+        modiefied = true
     }
 
     fun getSectorsOfVillage(villageId: Int): Array<CharSequence> {
@@ -63,7 +64,10 @@ class IntervieweeModel(application: Application) : AndroidViewModel(application)
 
     }
 
-    fun getIntervieweeById(intervieweeId: Int): Interviewee? {
-        return intervieweeList.value?.first { it.id == intervieweeId }
+    fun saveInterviewee() {
+        intervieweeDetail.value!!.interviewee.changed = true
+        viewModelScope.launch(Dispatchers.IO) {
+            intervieweeRepository.saveInterviewee(intervieweeDetail.value!!.interviewee)
+        }
     }
 }
