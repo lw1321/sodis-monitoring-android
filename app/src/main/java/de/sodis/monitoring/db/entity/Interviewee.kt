@@ -12,9 +12,9 @@ import androidx.room.PrimaryKey
             childColumns = arrayOf("villageId")
         ),
         ForeignKey(
-            entity = LocalExpert::class,
+            entity = User::class,
             parentColumns = arrayOf("id"),
-            childColumns = arrayOf("localExpertId")
+            childColumns = arrayOf("userId")
         ),
         ForeignKey(
             entity = Sector::class,
@@ -37,6 +37,6 @@ data class Interviewee(
     val oldWomenCount: Int,
     val menCount: Int,
     val womenCount: Int,
-    val localExpertId: Int,
+    val userId: Int?,
     val sectorId: Int?
 )

@@ -7,6 +7,6 @@ data class IntervieweeDetail(
     var intervieweeTechnologies: List<IntervieweeTechnologyDetail>,
     var village: Village,
     var sector: Sector?,
-    var localExpert: LocalExpert,
+    var user: User?,
     var tasks: List<Task>
 )

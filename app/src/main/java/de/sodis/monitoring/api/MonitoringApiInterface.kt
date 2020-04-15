@@ -1,7 +1,7 @@
 package de.sodis.monitoring.api
 
 import de.sodis.monitoring.api.model.*
-import de.sodis.monitoring.db.entity.Interviewee
+import de.sodis.monitoring.db.entity.User
 import retrofit2.http.*
 
 interface MonitoringApiInterface {
@@ -24,11 +24,11 @@ interface MonitoringApiInterface {
     suspend fun createTask(@Body task: TaskJson): TaskJson
 
     @POST("users/register")
-    suspend fun registerUser(@Body user: UserRegister): UserRegister
+    suspend fun registerUser(@Body user: User): User
 
     @GET("myself")
-    suspend fun getMyself(): UserRegister
+    suspend fun getMyself(): User
 
     @GET("users")
-    suspend fun getAllUsers(): List<UserRegister>
+    suspend fun getAllUsers(): List<User>
 }

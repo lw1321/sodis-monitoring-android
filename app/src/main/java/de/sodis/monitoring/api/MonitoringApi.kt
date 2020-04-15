@@ -3,13 +3,10 @@ package de.sodis.monitoring.api
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import de.sodis.monitoring.Config
 import de.sodis.monitoring.api.model.*
-import de.sodis.monitoring.db.entity.Interviewee
+import de.sodis.monitoring.db.entity.User
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import io.fabric.sdk.android.services.settings.IconRequest.build
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
-import okhttp3.Response
 
 
 class MonitoringApi {
@@ -21,7 +18,7 @@ class MonitoringApi {
             .build()
 
         val retrofit = Retrofit.Builder()
-            .baseUrl(Config.MONITORING_API_TEST)
+            .baseUrl(Config.MONITORING_API_DEV)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .client(okHttpClient)
@@ -53,7 +50,15 @@ class MonitoringApi {
         return monitoringApi.createTask(task)
     }
 
-    suspend fun registerUser(userRegister: UserRegister): UserRegister {
-        return monitoringApi.registerUser(userRegister)
+    suspend fun registerUser(user: User): User {
+        return monitoringApi.registerUser(user)
     }
+
+    suspend fun getAllUsers(): List<User> {
+        return monitoringApi.getAllUsers()
+    }
+    suspend fun getMyself(): User {
+        return monitoringApi.getMyself()
+    }
+
 }

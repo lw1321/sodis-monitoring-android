@@ -1,10 +1,14 @@
-package de.sodis.monitoring.api.model
+package de.sodis.monitoring.db.entity
 
-data class UserRegister(
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity
+data class User(
+    @PrimaryKey val id: Int? = null,
     val firstName: String? = null,
     val lastName: String? = null,
     val type: Int = 0,
-    val id: Int? = null,
     val firebaseId: String? = null,
     val email: String? = null
 )

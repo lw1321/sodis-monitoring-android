@@ -9,6 +9,7 @@ import de.sodis.monitoring.db.MonitoringDatabase
 import de.sodis.monitoring.repository.IntervieweeRepository
 import de.sodis.monitoring.repository.SurveyRepository
 import de.sodis.monitoring.repository.TaskRepository
+import de.sodis.monitoring.repository.UserRepository
 
 
 class DownloadWorker(appContext: Context, workerParams: WorkerParameters) :
@@ -36,7 +37,7 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) :
                 intervieweeTechnologyDao = monitoringDatabase.intervieweeTechnologyDao(),
                 villageDao = monitoringDatabase.villageDao(),
                 sectorDao = monitoringDatabase.sectorDao(),
-                localExpertDao = monitoringDatabase.localExpertDao(),
+                userDao = monitoringDatabase.userDao(),
                 taskDao = monitoringDatabase.taskDao()
             )
         val taskRepository =
@@ -44,11 +45,17 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) :
                 taskDao = monitoringDatabase.taskDao(),
                 monitoringApi = MonitoringApi()
             )
+        val userRepository =
+            UserRepository(
+                monitoringApi = MonitoringApi(),
+                userDao = monitoringDatabase.userDao()
+            )
 
         return try {
+            userRepository.loadAllUsers()
             intervieweeRepository.loadAll()
             surveyRepository.loadSurveys(applicationContext)
-            taskRepository.downloadTasks()
+            //taskRepository.downloadTasks() //todo
             Result.success()
         } catch (e: Exception) {
             Crashlytics.logException(e)
