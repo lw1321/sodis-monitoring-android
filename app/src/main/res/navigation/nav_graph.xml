@@ -44,6 +44,25 @@
             app:destination="@id/surveyFragment" />
     </fragment>
     <fragment
+        android:id="@+id/monitoringHistoryFragment"
+        android:name="de.sodis.monitoring.ui.fragment.SurveyHistoryFragment"
+        android:label="MonitoringHistoryFragment" >
+        <action
+            android:id="@+id/action_monitoringHistoryFragment_to_questionFragment"
+            app:destination="@id/questionHistoryFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/questionHistoryFragment"
+        android:name="de.sodis.monitoring.ui.fragment.QuestionHistoryFragment"
+        android:label="questionHistoryFragment" >
+        <argument
+            android:name="completedSurveyId"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_monitoringHistoryFragment_to_questionHistoryFragment"
+            app:destination="@+id/questionHistoryFragment" />
+    </fragment>
+    <fragment
         android:id="@+id/monitoringOverviewFragment"
         android:name="de.sodis.monitoring.ui.fragment.MonitoringOverviewFragment"
         android:label="MonitoringOverviewFragment" >

@@ -19,4 +19,7 @@ interface SurveyHeaderDao {
 
     @Query("SELECT * FROM SurveyHeader WHERE id=:surveyHeaderId")
     fun getById(surveyHeaderId: Int): LiveData<SurveyHeaderResponse>
+
+    @Query("SELECT * FROM SurveyHeader WHERE id=:surveyHeaderId")
+    fun getByIdSync(surveyHeaderId: Int): SurveyHeaderResponse
 }

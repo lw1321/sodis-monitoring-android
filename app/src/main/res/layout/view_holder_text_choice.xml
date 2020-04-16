@@ -3,13 +3,30 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <variable
             name="option1"
             type="String" />
 
         <variable
+            name="option1checked"
+            type="Boolean" />
+
+        <variable
+            name="option1visible"
+            type="Integer" />
+
+        <variable
             name="option2"
             type="String" />
+
+        <variable
+            name="option2checked"
+            type="Boolean" />
+
+        <variable
+            name="option2visible"
+            type="Integer" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -37,10 +54,12 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginBottom="8dp"
+                android:checked="@{option1checked}"
                 android:drawableLeft="@drawable/ic_emoji_happy"
                 android:drawablePadding="@dimen/padding_edge"
                 android:text="@{option1}"
                 android:textSize="0dp"
+                android:visibility="@{option1visible}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -56,10 +75,12 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginBottom="8dp"
+                android:checked="@{option2checked}"
                 android:drawableLeft="@drawable/ic_emoji_sad"
                 android:drawablePadding="@dimen/padding_edge"
                 android:text="@{option2}"
                 android:textSize="0dp"
+                android:visibility="@{option2visible}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

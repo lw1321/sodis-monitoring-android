@@ -7,14 +7,10 @@ import android.view.ViewGroup
 import androidx.core.view.isGone
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import de.sodis.monitoring.MainActivity
+import androidx.navigation.fragment.findNavController
 import de.sodis.monitoring.default
-import de.sodis.monitoring.header
-import de.sodis.monitoring.replaceFragments
-import de.sodis.monitoring.viewmodel.MonitoringOverviewModel
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
 import de.sodis.monitoring.viewmodel.SurveyHistoryViewModel
-import de.sodis.monitoring.viewmodel.TaskViewModel
 import kotlinx.android.synthetic.main.continuable_list.view.*
 
 class SurveyHistoryFragment : BaseListFragment() {
@@ -36,7 +32,8 @@ class SurveyHistoryFragment : BaseListFragment() {
                         id(it.name)
                         text(it.name + " / " + it.surveyName)
                         onClick { _ ->
-                            (activity as MainActivity).replaceFragments(SurveyFragment(1), "SURVEY_TAG")
+                            val action = SurveyHistoryFragmentDirections.actionMonitoringHistoryFragmentToQuestionFragment(it.id)
+                            findNavController().navigate(action)
                         }
                     }
                 }
@@ -53,6 +50,7 @@ class SurveyHistoryFragment : BaseListFragment() {
     ): View? {
         val view = super.onCreateView(inflater, container, savedInstanceState)
         view?.navigation_forward_button_1?.isGone = true
+        view?.navigation_forward_button_left?.isGone = true
         return view
     }
 }

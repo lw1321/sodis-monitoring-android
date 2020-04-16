@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 @Entity(
     foreignKeys = [
         ForeignKey(
-            entity = QuestionOption::class,
+            entity = CompletedSurvey::class,
             parentColumns = arrayOf("id"),
             childColumns = arrayOf("completedSurveyId")
         )

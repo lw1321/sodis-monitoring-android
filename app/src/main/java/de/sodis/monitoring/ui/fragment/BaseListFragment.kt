@@ -22,7 +22,7 @@ abstract class BaseListFragment : Fragment() {
 
         recyclerView = view.list
         recyclerView.layoutManager = LinearLayoutManager(context)
-
+        recyclerView.recycledViewPool.clear()
         return view
     }
 

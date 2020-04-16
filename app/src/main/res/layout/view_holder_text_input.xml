@@ -4,11 +4,15 @@
 
     <data>
         <variable
+            name="inputType"
+            type="int" />
+
+        <variable
             name="hint"
             type="String" />
         <variable
             name="text"
-            type="String" />
+            type="String"/>
     </data>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -20,7 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/answerTextInput"
-            android:inputType="textPersonName"
+            android:inputType="@{inputType}"
             android:singleLine="false"
             android:imeOptions="actionDone"
             android:text="@={text}"

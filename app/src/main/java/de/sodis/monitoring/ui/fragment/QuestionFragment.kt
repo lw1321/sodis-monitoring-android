@@ -1,6 +1,7 @@
 package de.sodis.monitoring.ui.fragment
 
 import android.os.Bundle
+import android.text.InputType
 import androidx.core.view.isGone
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Observer
@@ -35,7 +36,6 @@ class QuestionFragment : BaseListFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         surveyId = args.surveyId
         surveyViewModel.questionItemList.observe(this, Observer { list ->
             currentQuestion = list.get(index = surveyViewModel.currentPosition)
@@ -54,6 +54,7 @@ class QuestionFragment : BaseListFragment() {
                         textInput {
                             id("input")
                             hint("Respuesta")
+                            inputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME)
                             onBind { model, view, position ->
                                 view.dataBinding.root.answerTextInput.requestFocus()
                                 view.dataBinding.root.answerTextInput.addTextChangedListener {
