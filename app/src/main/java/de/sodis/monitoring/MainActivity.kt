@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
+import de.sodis.monitoring.ui.fragment.*
 import de.sodis.monitoring.viewmodel.RootViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -27,7 +28,10 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 findNavController(R.id.nav_host_fragment).navigate(R.id.taskOverviewFragment)
                 supportActionBar!!.title = "Tasks"
             }
-
+            R.id.monitoring_history -> {
+                replaceFragments(SurveyHistoryFragment(), "SURVEY_HISTORY")
+                supportActionBar!!.title = "Monitorio History"
+            }
         }
         return true
     }

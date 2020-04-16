@@ -14,6 +14,7 @@ class QuestionRepository(
     private val questionImageDao: QuestionImageDao,
     private val answerDao: AnswerDao,
     private val optionChoiceDao: OptionChoiceDao,
+    private val completedSurveyDao: CompletedSurveyDao,
     private val monitoringApi: MonitoringApi
 ) {
     /**
@@ -52,31 +53,37 @@ class QuestionRepository(
     /**
      * Save questions in loval database, also try to upload them..Also save if the upload was successfully
      */
-    fun saveQuestions(answerMap: MutableMap<Int, Answer>) {
-        for ((k, v) in answerMap) {
+
+    fun saveQuestions(
+        answerMap: MutableMap<Int, Answer>,
+        completedSurvey: CompletedSurvey
+    ) {
+        val completedSurveyId = completedSurveyDao.insert(completedSurvey)
+        for ((k, v) in answerMap) {//todo insertAll
+            v.completedSurveyId=completedSurveyId.toInt()
             answerDao.insert(v)
         }
     }
-
+    //TODO api umbauen, completed survey + answers
     suspend fun uploadQuestions() {
-        val allUnsubmitted = answerDao.getAllUnsubmitted().map { it.toAnswerJson() }
-        try {
-            monitoringApi.postAnswers(allUnsubmitted)
-            answerDao.setSubmitted(allUnsubmitted.map { answer -> answer.id!! })
-        } catch (e: Exception) {
-            Crashlytics.logException(e)
-        }
+//        val allUnsubmitted = answerDao.getAllUnsubmitted().map { it.toAnswerJson() }
+//        try {
+//            monitoringApi.postAnswers(allUnsubmitted)
+//            answerDao.setSubmitted(allUnsubmitted.map { answer -> answer.id!! })
+//        } catch (e: Exception) {
+//            Crashlytics.logException(e)
+//        }
 
     }
 }
 
-private fun Answer.toAnswerJson(): AnswerJson {
-    return AnswerJson(
-        answerNumeric = this.answerNumeric,
-        answerYn = this.answerYn,
-        answerText = this.answerText,
-        interviewee = AnswerJson.Interviewee(this.intervieweeId),
-        questionOption = AnswerJson.QuestionOption(this.questionOptionId),//apiseitig optional value
-        timestamp = this.timeStamp
-    )
-}
+//private fun Answer.toAnswerJson(): AnswerJson {
+//    return AnswerJson(
+//        answerNumeric = this.answerNumeric,
+//        answerYn = this.answerYn,
+//        answerText = this.answerText,
+//        interviewee = AnswerJson.Interviewee(this.intervieweeId),
+//        questionOption = AnswerJson.QuestionOption(this.questionOptionId),//apiseitig optional value
+//        timestamp = this.timeStamp
+//    )
+//}

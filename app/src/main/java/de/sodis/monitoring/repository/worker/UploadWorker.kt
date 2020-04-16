@@ -18,6 +18,7 @@ class UploadWorker(appContext: Context, workerParams: WorkerParameters) :
             questionImageDao = MonitoringDatabase.getDatabase(applicationContext).questionImageDao(),
             answerDao = MonitoringDatabase.getDatabase(applicationContext).answerDao(),
             optionChoiceDao = MonitoringDatabase.getDatabase(applicationContext).optionChoiceDao(),
+            completedSurveyDao = MonitoringDatabase.getDatabase(applicationContext).completedSurveyDao(),
             monitoringApi = MonitoringApi()
         )
         return try {

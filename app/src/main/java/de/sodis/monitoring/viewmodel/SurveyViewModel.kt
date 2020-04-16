@@ -12,6 +12,7 @@ import androidx.work.WorkManager
 import de.sodis.monitoring.api.MonitoringApi
 import de.sodis.monitoring.db.MonitoringDatabase
 import de.sodis.monitoring.db.entity.Answer
+import de.sodis.monitoring.db.entity.CompletedSurvey
 import de.sodis.monitoring.db.entity.Interviewee
 import de.sodis.monitoring.db.response.QuestionAnswer
 import de.sodis.monitoring.db.response.SurveyHeaderResponse
@@ -77,6 +78,7 @@ class SurveyViewModel(
             questionImageDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).questionImageDao(),
             answerDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).answerDao(),
             optionChoiceDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).optionChoiceDao(),
+            completedSurveyDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).completedSurveyDao(),
             monitoringApi = MonitoringApi()
         )
 
@@ -119,13 +121,12 @@ class SurveyViewModel(
     fun setAnswer(id: Int, answer: String, optionChoiceId: Int) {
         //request questionOption for the answer
         answerMap[id] = Answer(
-            intervieweeId = interviewee!!.id,
             answerText = answer,
-            timeStamp = Timestamp(System.currentTimeMillis()).toString(),
             answerNumeric = null,
             answerYn = null,
             id = null,
-            questionOptionId = optionChoiceId
+            questionOptionId = optionChoiceId,
+            completedSurveyId = null
         )
     }
 
@@ -136,7 +137,14 @@ class SurveyViewModel(
         if (currentPosition == (surveyQuestions.size - 1)) {
             //done with the survey, save the input
             viewModelScope.launch(Dispatchers.IO) {
-                questionRepository.saveQuestions(answerMap)
+                questionRepository.saveQuestions(
+                    answerMap,
+                    CompletedSurvey(
+                        intervieweeId = interviewee!!.id,
+                        timeStamp = Timestamp(System.currentTimeMillis()).toString(),
+                        surveyHeaderId = surveyHeader.value!!.surveyHeader.id
+                    )
+                )
                 answerMap.clear()
                 interviewee = null
             }
@@ -164,7 +172,7 @@ class SurveyViewModel(
     }
 
     fun setSurveyId(surveyId: Int) {
-         createQuestionList(surveyId)
+        createQuestionList(surveyId)
     }
 
     fun isAnswered(id: Int): Boolean = answerMap.containsKey(id)
