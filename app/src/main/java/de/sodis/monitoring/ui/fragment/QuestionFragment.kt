@@ -1,6 +1,7 @@
 package de.sodis.monitoring.ui.fragment
 
 import android.os.Bundle
+import androidx.core.view.isGone
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -87,7 +88,7 @@ class QuestionFragment : BaseListFragment() {
 
             view?.navigation_forward_button_1?.setOnClickListener {
                 if (surveyViewModel.isAnswered(currentQuestion.question.id)) {
-
+                    surveyViewModel.listOfAnsweredQuestions += surveyViewModel.currentPosition
                     val hasNext = surveyViewModel.nextQuestion()
                     if (hasNext) {
                         val action = QuestionFragmentDirections.actionQuestionFragmentSelf(surveyId)
@@ -103,6 +104,16 @@ class QuestionFragment : BaseListFragment() {
                         "Por favor seleccione una opción de respuesta!",
                         Snackbar.LENGTH_LONG
                     ).show()
+                }
+            }
+
+            view?.navigation_forward_button_left?.isGone = surveyViewModel.currentPosition == 0
+
+            view?.navigation_forward_button_left?.setOnClickListener {
+                if (surveyViewModel.currentPosition != 0) {
+                    surveyViewModel.previousQuestion()
+                    val action = QuestionFragmentDirections.actionQuestionFragmentSelf(surveyId)
+                    findNavController().navigate(action)
                 }
             }
         })
