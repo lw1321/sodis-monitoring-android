@@ -1,33 +1,31 @@
 package de.sodis.monitoring
 
 import android.os.Bundle
-import android.transition.Visibility
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.findNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import de.sodis.monitoring.ui.fragment.*
 import de.sodis.monitoring.viewmodel.RootViewModel
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.continuable_list.*
 
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.dashboard -> {
-                replaceFragments(IntervieweeOverviewFragment(), "INTERVIEWEE_OVERVIEW")
+                findNavController(R.id.nav_host_fragment).navigate(R.id.intervieweeOverviewFragment)
                 supportActionBar!!.title = "Dashboard"
             }
             R.id.monitoring -> {
-                replaceFragments(MonitoringOverviewFragment(), "MONITORING_OVERVIEW")
+                findNavController(R.id.nav_host_fragment).navigate(R.id.monitoringOverviewFragment)
                 supportActionBar!!.title = "Monitoreo"
             }
             R.id.task -> {
-                replaceFragments(TaskOverviewFragment(), "Task_OVERVIEW")
+                findNavController(R.id.nav_host_fragment).navigate(R.id.taskOverviewFragment)
                 supportActionBar!!.title = "Tasks"
             }
             R.id.monitoring_history -> {
@@ -55,8 +53,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         bottomNavigation = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         bottomNavigation.setOnNavigationItemSelectedListener(this)
 
-
-        replaceFragments(IntervieweeOverviewFragment(), "TAG_MONITORING_OVERVIEW")
+        findNavController(R.id.nav_host_fragment).navigate(R.id.intervieweeOverviewFragment)
         supportActionBar!!.title = "Dashboard"
 
         // Initialize Firebase Auth
@@ -68,36 +65,33 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         if (auth.currentUser == null) {
             //todo store token, store name?!
             supportActionBar!!.title = "Registration"
-            this.replaceFragments(RegistrationFragment(), "TAG_REGISTRATION")
+            this.hide_bottom_navigation()
+            findNavController(R.id.nav_host_fragment).navigate(R.id.registrationFragment)
+          }else{
+            rootViewModel.requestData()
         }
     }
 
 
     override fun onBackPressed() {
         //only allow back press for convenience only on interviewee
-        val surveyFragment = supportFragmentManager.findFragmentByTag("SURVEY_TAG")
-        if (surveyFragment != null && surveyFragment.isVisible) {
-            //super.onBackPressed()//todo
+        val currFragmentId = findNavController(R.id.nav_host_fragment).currentDestination!!.id
+        if (currFragmentId == R.id.intervieweeDetailFragment || currFragmentId == R.id.surveyFragment) {
+            super.onBackPressed()
+        }
+        if (currFragmentId == R.id.surveyFragment) {
+            this.show_bottom_navigation()
         }
     }
 
 
 }
 
-public fun MainActivity.replaceFragments(fragmentNew: Fragment, tag: String) {
-    if (tag == "QUESTION_TAG" || tag == "TAG_REGISTRATION" || tag == "TAG_INTERVIEW_DETAIL"
-        || tag == "TAG_INTERVIEW_DETAIL" || tag == "SURVEY_TAG"
-    ) {
-        this.bottom_navigation.visibility = View.GONE
-    }
-    else{
-        this.bottom_navigation.visibility = View.VISIBLE
-    }
+public fun MainActivity.hide_bottom_navigation() {
+    this.bottom_navigation.visibility = View.GONE
+}
 
-    val transaction = supportFragmentManager.beginTransaction()
-    transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
-    transaction.replace(R.id.fragment_container, fragmentNew, tag)
-    transaction.addToBackStack(null)
-    transaction.commit()
+public fun MainActivity.show_bottom_navigation() {
+    this.bottom_navigation.visibility = View.VISIBLE
 }
 

@@ -17,6 +17,7 @@ class MyViewModelFactory(private val mApplication: Application, private val mPar
                 mApplication,
                 mParams[0] as Int
             ) as T
+            modelClass === RegisterViewModel::class.java -> RegisterViewModel(mApplication) as T
             modelClass === RootViewModel::class.java -> RootViewModel(mApplication) as T
             else -> super.create(modelClass)
         }

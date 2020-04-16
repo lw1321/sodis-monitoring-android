@@ -7,11 +7,8 @@ import android.view.ViewGroup
 import androidx.core.view.isGone
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import de.sodis.monitoring.MainActivity
+import androidx.navigation.fragment.findNavController
 import de.sodis.monitoring.default
-import de.sodis.monitoring.header
-import de.sodis.monitoring.replaceFragments
-import de.sodis.monitoring.viewmodel.MonitoringOverviewModel
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
 import de.sodis.monitoring.viewmodel.TaskViewModel
 import kotlinx.android.synthetic.main.continuable_list.view.*
@@ -35,7 +32,11 @@ class TaskOverviewFragment : BaseListFragment() {
                         id(it.id)
                         text(it.name)
                         onClick { _ ->
-                            (activity as MainActivity).replaceFragments(SurveyFragment(it.id), "SURVEY_TAG")
+                            findNavController().navigate(
+                                TaskOverviewFragmentDirections.actionTaskOverviewFragmentToSurveyFragment(
+                                    it.id
+                                )
+                            )
                         }
                     }
                 }
@@ -53,6 +54,8 @@ class TaskOverviewFragment : BaseListFragment() {
     ): View? {
         val view = super.onCreateView(inflater, container, savedInstanceState)
         view?.navigation_forward_button_1?.isGone = true
+        view?.navigation_forward_button_left?.isGone = true
+
         return view
     }
 }

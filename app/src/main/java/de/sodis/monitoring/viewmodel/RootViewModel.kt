@@ -8,15 +8,14 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import de.sodis.monitoring.repository.worker.DownloadWorker
 
-class RootViewModel(application: Application) : AndroidViewModel(application) {
+class RootViewModel(private val mApplication: Application) : AndroidViewModel(mApplication) {
 
-    init {
+    fun requestData(){
         //start worker
         //start worker manager
         val downloadWorkRequest = OneTimeWorkRequestBuilder<DownloadWorker>().setConstraints(
             Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
         ).build()
-        WorkManager.getInstance(application.applicationContext).enqueue(downloadWorkRequest)
-
+        WorkManager.getInstance(mApplication.applicationContext).enqueue(downloadWorkRequest)
     }
 }

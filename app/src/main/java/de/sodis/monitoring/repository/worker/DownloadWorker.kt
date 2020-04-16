@@ -9,6 +9,7 @@ import de.sodis.monitoring.db.MonitoringDatabase
 import de.sodis.monitoring.repository.IntervieweeRepository
 import de.sodis.monitoring.repository.SurveyRepository
 import de.sodis.monitoring.repository.TaskRepository
+import de.sodis.monitoring.repository.UserRepository
 
 
 class DownloadWorker(appContext: Context, workerParams: WorkerParameters) :
@@ -25,7 +26,7 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) :
                 questionOptionDao = monitoringDatabase.questionOptionDao(),
                 surveyHeaderDao = monitoringDatabase.surveyHeaderDao(),
                 surveySectionDao = monitoringDatabase.surveySectionDao(),
-                technologyDao= monitoringDatabase.technologyDao(),
+                technologyDao = monitoringDatabase.technologyDao(),
                 monitoringApi = MonitoringApi()
             )
         val intervieweeRepository =
@@ -35,6 +36,8 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) :
                 technologyDao = monitoringDatabase.technologyDao(),
                 intervieweeTechnologyDao = monitoringDatabase.intervieweeTechnologyDao(),
                 villageDao = monitoringDatabase.villageDao(),
+                sectorDao = monitoringDatabase.sectorDao(),
+                userDao = monitoringDatabase.userDao(),
                 taskDao = monitoringDatabase.taskDao()
             )
         val taskRepository =
@@ -42,11 +45,17 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) :
                 taskDao = monitoringDatabase.taskDao(),
                 monitoringApi = MonitoringApi()
             )
+        val userRepository =
+            UserRepository(
+                monitoringApi = MonitoringApi(),
+                userDao = monitoringDatabase.userDao()
+            )
 
         return try {
+            userRepository.loadAllUsers()
             intervieweeRepository.loadAll()
             surveyRepository.loadSurveys(applicationContext)
-            taskRepository.downloadTasks()
+            taskRepository.downloadTasks() //todo
             Result.success()
         } catch (e: Exception) {
             Crashlytics.logException(e)

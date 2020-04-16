@@ -16,4 +16,14 @@
         app:backgroundTint="@color/colorPrimary"
         app:srcCompat="@drawable/ic_arrow_forward_white_24dp"/>
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/navigation_forward_button_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|left"
+        android:layout_margin="@dimen/padding_edge"
+        app:backgroundTint="@color/colorPrimary"
+        app:srcCompat="@drawable/ic_arrow_back_white_24"/>
+
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

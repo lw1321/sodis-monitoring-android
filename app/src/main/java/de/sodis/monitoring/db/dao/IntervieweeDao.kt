@@ -1,10 +1,7 @@
 package de.sodis.monitoring.db.dao
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import de.sodis.monitoring.db.entity.Interviewee
 
 @Dao
@@ -23,4 +20,7 @@ interface IntervieweeDao {
 
     @Query("SELECT * FROM Interviewee WHERE id=:intervieweeId")
     fun getById(intervieweeId: Int): Interviewee
+
+    @Update
+    fun update(interviewee: Interviewee)
 }
