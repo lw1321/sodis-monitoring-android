@@ -46,7 +46,7 @@ class IntervieweeRepository(
                 }
             }
 
-            if(!intervieweeDao.getById(interviewee.id).changed ?: true) {
+            if(intervieweeDao.getById(interviewee.id) == null  || !intervieweeDao.getById(interviewee.id).changed) {//Todo update routine, when local changes distinguish from api and not published.
                 //insert interviewee
                 intervieweeDao.insert(
                     Interviewee(
