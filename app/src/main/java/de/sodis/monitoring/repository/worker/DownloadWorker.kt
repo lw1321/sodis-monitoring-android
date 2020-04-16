@@ -55,7 +55,7 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) :
             userRepository.loadAllUsers()
             intervieweeRepository.loadAll()
             surveyRepository.loadSurveys(applicationContext)
-            //taskRepository.downloadTasks() //todo
+            taskRepository.downloadTasks() //todo
             Result.success()
         } catch (e: Exception) {
             Crashlytics.logException(e)
