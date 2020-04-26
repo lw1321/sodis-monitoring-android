@@ -52,7 +52,7 @@
             android:id="@+id/textView9"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Mayores de 50 Años"
+            android:text="@string/general_data_old_people"
             app:layout_constraintBottom_toBottomOf="@+id/editTextf3"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/editTextf3" />
@@ -73,7 +73,7 @@
             android:id="@+id/textView8"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Mayores de 15 a 49 Años"
+            android:text="@string/general_data_adult"
             app:layout_constraintBottom_toBottomOf="@+id/editTextf2"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/editTextf2" />
@@ -105,7 +105,7 @@
             android:id="@+id/textView7"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Niños de 6 a 14 Años"
+            android:text="@string/gerneral_data_young"
             app:layout_constraintBottom_toBottomOf="@+id/editTextf1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/editTextf1" />
@@ -137,7 +137,7 @@
             android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="19dp"
-            android:text="Mujeres"
+            android:text="@string/general_data_women"
             app:layout_constraintEnd_toEndOf="@+id/editTextf0"
             app:layout_constraintStart_toStartOf="@+id/editTextf0"
             app:layout_constraintTop_toTopOf="parent" />
@@ -146,7 +146,7 @@
             android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="19dp"
-            android:text="Hombres"
+            android:text="@string/general_data_men"
             app:layout_constraintEnd_toEndOf="@+id/editTextm0"
             app:layout_constraintStart_toStartOf="@+id/editTextm0"
             app:layout_constraintTop_toTopOf="parent" />
@@ -155,7 +155,7 @@
             android:id="@+id/textView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Menores de 0 a 5 Años"
+            android:text="@string/general_data_child"
             app:layout_constraintBottom_toBottomOf="@+id/editTextf0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="@+id/editTextf0" />

@@ -12,7 +12,7 @@ import androidx.room.PrimaryKey
             childColumns = arrayOf("intervieweeId")
         ),
         ForeignKey(
-            entity = Interviewee::class,
+            entity = SurveyHeader::class,
             parentColumns = arrayOf("id"),
             childColumns = arrayOf("surveyHeaderId")
         )

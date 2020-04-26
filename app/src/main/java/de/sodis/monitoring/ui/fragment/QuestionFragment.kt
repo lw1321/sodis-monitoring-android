@@ -53,7 +53,7 @@ class QuestionFragment : BaseListFragment() {
                     2 -> //todo
                         textInput {
                             id("input")
-                            hint("Respuesta")
+                            hint(getString(R.string.hint_monitoring_answer))
                             inputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME)
                             onBind { model, view, position ->
                                 view.dataBinding.root.answerTextInput.requestFocus()
@@ -95,14 +95,14 @@ class QuestionFragment : BaseListFragment() {
                         val action = QuestionFragmentDirections.actionQuestionFragmentSelf(surveyId)
                         findNavController().navigate(action)
                     } else {
-                        Snackbar.make(view!!, "Los datos se guardan", Snackbar.LENGTH_LONG).show()
+                        Snackbar.make(view!!, getString(R.string.message_monitoring_completed), Snackbar.LENGTH_LONG).show()
                         (activity as MainActivity).show_bottom_navigation()
                         findNavController().navigate(R.id.monitoringOverviewFragment)
                     }
                 } else {
                     Snackbar.make(
                         view!!,
-                        "Por favor seleccione una opción de respuesta!",
+                        getString(R.string.message_monitoring_answer_required),
                         Snackbar.LENGTH_LONG
                     ).show()
                 }

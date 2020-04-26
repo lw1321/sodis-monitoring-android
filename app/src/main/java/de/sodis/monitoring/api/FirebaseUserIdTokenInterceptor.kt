@@ -39,6 +39,6 @@ class FirebaseUserIdTokenInterceptor : Interceptor {
     companion object {
 
         // Custom header for passing ID token in request.
-        private val X_FIREBASE_ID_TOKEN = "X-Authorization-Firebase"
+            private val X_FIREBASE_ID_TOKEN = "X-Authorization-Firebase"
     }
 }

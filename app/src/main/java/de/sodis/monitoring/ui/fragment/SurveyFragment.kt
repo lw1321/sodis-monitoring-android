@@ -12,6 +12,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
 import de.sodis.monitoring.MainActivity
+import de.sodis.monitoring.R
 import de.sodis.monitoring.hide_bottom_navigation
 import de.sodis.monitoring.interviewee
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
@@ -41,8 +42,8 @@ class SurveyFragment : BaseListFragment(){
             recyclerView.withModels {
                 interviewee {
                     id("interviewee")
-                    titleText("Interrogado")
-                    hint("Interrogado")
+                    titleText(getString(R.string.monitoring_interviewee))
+                    hint(getString(R.string.monitoring_interviewee))
                     onBind { model, view, position ->
                         view.dataBinding.root.multiAutoCompleteTextView.apply {
                             val adapter = ArrayAdapter<String>(
@@ -76,7 +77,7 @@ class SurveyFragment : BaseListFragment(){
 
         view?.navigation_forward_button_1?.setOnClickListener {
             if (surveyViewModel.interviewee == null) {
-                Snackbar.make(view, "Ingrese el nombre del encuestado", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, getString(R.string.message_monitoring_interviewee_not_selected), Snackbar.LENGTH_LONG)
                     .show()
             }
             else {
