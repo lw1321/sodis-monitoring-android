@@ -18,7 +18,12 @@ interface MonitoringApiInterface {
     suspend fun getAllTasks(): List<TaskJson>
 
     @PUT("tasks/{taskId}")
-    suspend fun updateTask(@Path(value = "taskId", encoded = false) taskId: Int, @Body task: TaskJson): TaskJson
+    suspend fun updateTask(
+        @Path(
+            value = "taskId",
+            encoded = false
+        ) taskId: Int, @Body task: TaskJson
+    ): TaskJson
 
     @POST("tasks")
     suspend fun createTask(@Body task: TaskJson): TaskJson
@@ -31,4 +36,7 @@ interface MonitoringApiInterface {
 
     @GET("users")
     suspend fun getAllUsers(): List<User>
+
+    @POST("completed-surveys")
+    suspend fun postCompletedSurveys(): List<CompletedSurveyJson>
 }

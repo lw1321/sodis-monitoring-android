@@ -42,11 +42,11 @@ class MonitoringApi {
         return monitoringApi.getAllTasks()
     }
 
-    suspend fun updateTask(task:TaskJson): TaskJson {
+    suspend fun updateTask(task: TaskJson): TaskJson {
         return monitoringApi.updateTask(task.id, task)
     }
 
-    suspend fun createTask(task:TaskJson): TaskJson {
+    suspend fun createTask(task: TaskJson): TaskJson {
         return monitoringApi.createTask(task)
     }
 
@@ -57,8 +57,13 @@ class MonitoringApi {
     suspend fun getAllUsers(): List<User> {
         return monitoringApi.getAllUsers()
     }
+
     suspend fun getMyself(): User {
         return monitoringApi.getMyself()
+    }
+
+    suspend fun postCompletedSurveys(completedSurveyJsonList: List<CompletedSurveyJson>): List<CompletedSurveyJson> {
+        return monitoringApi.postCompletedSurveys()
     }
 
 }

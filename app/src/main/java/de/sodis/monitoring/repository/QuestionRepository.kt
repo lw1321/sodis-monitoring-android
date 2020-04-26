@@ -1,8 +1,10 @@
 package de.sodis.monitoring.repository
 
 import com.crashlytics.android.Crashlytics
+import com.crashlytics.android.answers.Answers
 import de.sodis.monitoring.api.MonitoringApi
 import de.sodis.monitoring.api.model.AnswerJson
+import de.sodis.monitoring.api.model.CompletedSurveyJson
 import de.sodis.monitoring.db.dao.*
 import de.sodis.monitoring.db.entity.*
 import de.sodis.monitoring.db.response.QuestionAnswer
@@ -60,30 +62,42 @@ class QuestionRepository(
     ) {
         val completedSurveyId = completedSurveyDao.insert(completedSurvey)
         for ((k, v) in answerMap) {//todo insertAll
-            v.completedSurveyId=completedSurveyId.toInt()
+            v.completedSurveyId = completedSurveyId.toInt()
             answerDao.insert(v)
         }
     }
-    //TODO api umbauen, completed survey + answers
-    suspend fun uploadQuestions() {
-//        val allUnsubmitted = answerDao.getAllUnsubmitted().map { it.toAnswerJson() }
-//        try {
-//            monitoringApi.postAnswers(allUnsubmitted)
-//            answerDao.setSubmitted(allUnsubmitted.map { answer -> answer.id!! })
-//        } catch (e: Exception) {
-//            Crashlytics.logException(e)
-//        }
 
+    suspend fun uploadQuestions() {
+        // 1. get all completed surveys
+        val tempCompletedSurveysList: MutableList<CompletedSurveyJson> = mutableListOf()
+        val completedSurveys = completedSurveyDao.getAllUnsubmitted()
+        completedSurveys.forEach {
+            // 2. for each completed survey get all answers.
+            val answers = answerDao.getAnswersByCompletedSurveyId(it.id!!).map { it.toAnswerJson() }
+            // 3. link answerlist to the completed survey
+            val completedSurveyJson = CompletedSurveyJson(
+                answers = answers,
+                interviewee = CompletedSurveyJson.Interviewee(id = it.id),
+                creationDate = it.timeStamp,
+                surveyHeader = CompletedSurveyJson.SurveyHeader(it.surveyHeaderId)
+            )
+            // 4. add the combined completed survey to a temp list
+            tempCompletedSurveysList.add(completedSurveyJson);
+        }
+        // 5. send temp list as body to POST completed-surveys
+        //todo "mapping" local and server ids
+        val postCompletedSurveys = monitoringApi.postCompletedSurveys(tempCompletedSurveysList)
+        // 6. If successfull set submitted to true for all completed surveys.
+        completedSurveyDao.setSubmitted(completedSurveys.map { completedSurvey -> completedSurvey.id!! })
     }
 }
 
-//private fun Answer.toAnswerJson(): AnswerJson {
-//    return AnswerJson(
-//        answerNumeric = this.answerNumeric,
-//        answerYn = this.answerYn,
-//        answerText = this.answerText,
-//        interviewee = AnswerJson.Interviewee(this.intervieweeId),
-//        questionOption = AnswerJson.QuestionOption(this.questionOptionId),//apiseitig optional value
-//        timestamp = this.timeStamp
-//    )
-//}
+private fun Answer.toAnswerJson(): CompletedSurveyJson.Answer {
+    return CompletedSurveyJson.Answer(
+        answerNumeric = this.answerNumeric!!,
+        questionOption = CompletedSurveyJson.Answer.QuestionOption(this.questionOptionId),
+        answerText = this.answerText!!
+    )
+}
+
+
