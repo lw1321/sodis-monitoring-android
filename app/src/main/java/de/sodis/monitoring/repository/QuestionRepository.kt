@@ -94,7 +94,7 @@ class QuestionRepository(
 
 private fun Answer.toAnswerJson(): CompletedSurveyJson.Answer {
     return CompletedSurveyJson.Answer(
-        answerNumeric = this.answerNumeric!!,
+        answerNumeric = this.answerNumeric,
         questionOption = CompletedSurveyJson.Answer.QuestionOption(this.questionOptionId),
         answerText = this.answerText!!
     )

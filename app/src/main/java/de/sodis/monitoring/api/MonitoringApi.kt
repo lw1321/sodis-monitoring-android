@@ -34,10 +34,6 @@ class MonitoringApi {
         return monitoringApi.getAllInterviewees()
     }
 
-    suspend fun postAnswers(answers: List<AnswerJson>): List<AnswerJson> {
-        return monitoringApi.postAnswers(answers)
-    }
-
     suspend fun getTasks(): List<TaskJson> {
         return monitoringApi.getAllTasks()
     }
@@ -63,7 +59,7 @@ class MonitoringApi {
     }
 
     suspend fun postCompletedSurveys(completedSurveyJsonList: List<CompletedSurveyJson>): List<CompletedSurveyJson> {
-        return monitoringApi.postCompletedSurveys()
+        return monitoringApi.postCompletedSurveys(completedSurveyJsonList)
     }
 
 }

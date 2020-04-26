@@ -11,9 +11,6 @@ interface MonitoringApiInterface {
     @GET("interviewees")
     suspend fun getAllInterviewees(): List<IntervieweeJson>
 
-    @POST("answers")
-    suspend fun postAnswers(@Body answers: List<AnswerJson>): List<AnswerJson>
-
     @GET("tasks")
     suspend fun getAllTasks(): List<TaskJson>
 
@@ -38,5 +35,5 @@ interface MonitoringApiInterface {
     suspend fun getAllUsers(): List<User>
 
     @POST("completed-surveys")
-    suspend fun postCompletedSurveys(): List<CompletedSurveyJson>
+    suspend fun postCompletedSurveys(@Body completedSurveyJson: List<CompletedSurveyJson>): List<CompletedSurveyJson>
 }
