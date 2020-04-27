@@ -33,11 +33,10 @@ data class Interviewee(
     val youngMenCount: Int,
     val youngWomenCount: Int,
     val oldMenCount: Int,
-    val hasKnowledge: Boolean,
     val oldWomenCount: Int,
     val menCount: Int,
     val womenCount: Int,
     val userId: Int?,
     val sectorId: Int?,
-    var changed: Boolean = false
+    var changed: Boolean = false//todo modification date + id mapping
 )

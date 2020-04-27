@@ -43,7 +43,7 @@ class SurveyHistoryRepository(
                     image = image,
                     title = surveySectionList.first {
                         it.id==question.surveySectionId
-                    }.sectionTitle,
+                    }.sectionName!!,
                     answer = answer
                 )
             )

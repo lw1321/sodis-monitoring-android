@@ -15,7 +15,6 @@ import androidx.room.PrimaryKey
 )
 data class Answer(
     @PrimaryKey(autoGenerate = true) val id: Int?,
-    val answerNumeric: Int?,
     val answerText: String?,
     val answerYn: Boolean?,
     val questionOptionId: Int,

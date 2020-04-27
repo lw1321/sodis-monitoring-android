@@ -122,11 +122,10 @@ class SurveyViewModel(
         //request questionOption for the answer
         answerMap[id] = Answer(
             answerText = answer,
-            answerNumeric = null,
-            answerYn = null,
             id = null,
             questionOptionId = optionChoiceId,
-            completedSurveyId = null
+            completedSurveyId = null, //todo
+            answerYn = null//todo differe yn/text
         )
     }
 

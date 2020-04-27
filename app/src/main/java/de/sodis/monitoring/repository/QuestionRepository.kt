@@ -45,7 +45,7 @@ class QuestionRepository(
                     question = question,
                     answers = questionOptionChoiceList.toList(),
                     image = image,
-                    title = surveySectionIds.first { surveySection -> surveySection.id == question.surveySectionId }.sectionTitle
+                    title = surveySectionIds.first { surveySection -> surveySection.id == question.surveySectionId }.sectionName
                 )
             )
         }
@@ -94,9 +94,9 @@ class QuestionRepository(
 
 private fun Answer.toAnswerJson(): CompletedSurveyJson.Answer {
     return CompletedSurveyJson.Answer(
-        answerNumeric = this.answerNumeric,
+        answerYn = this.answerYn,
         questionOption = CompletedSurveyJson.Answer.QuestionOption(this.questionOptionId),
-        answerText = this.answerText!!
+        answerText = this.answerText
     )
 }
 

@@ -78,8 +78,6 @@ class SurveyRepository(
                 SurveyHeader(
                     id = surveyHeaderJson.id,
                     surveyName = surveyHeaderJson.surveyName,
-                    instructions = surveyHeaderJson.instructions,
-                    otherHeaderInfo = surveyHeaderJson.otherHeaderInfo,
                     technologyId = surveyHeaderJson.technology.id
                 )
             )
@@ -91,8 +89,6 @@ class SurveyRepository(
                     SurveySection(
                         id = surveySectionJson.id,
                         sectionName = surveySectionJson.sectionName,
-                        sectionSubheading = surveySectionJson.sectionSubheading,
-                        sectionTitle = surveySectionJson.sectionTitle,
                         surveyHeaderId = surveyHeaderJson.id
                     )
                 )
@@ -136,7 +132,6 @@ class SurveyRepository(
                             inputTypeId = questionJson.inputType.id,
                             questionImageId = questionJson.questionImage.id,
                             questionName = questionJson.questionName,
-                            questionSubtext = questionJson.questionSubtext,
                             surveySectionId = surveySectionJson.id
                         )
                     )

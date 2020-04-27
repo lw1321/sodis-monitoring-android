@@ -55,7 +55,6 @@ class IntervieweeRepository(
                         villageId = interviewee.village.id,
                         boysCount = interviewee.boysCount,
                         girlsCount = interviewee.girlsCount,
-                        hasKnowledge = interviewee.hasKnowledge,
                         menCount = interviewee.menCount,
                         womenCount = interviewee.womenCount,
                         oldMenCount = interviewee.oldMenCount,

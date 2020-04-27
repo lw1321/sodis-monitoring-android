@@ -7,7 +7,7 @@ data class CompletedSurveyJson(
     val surveyHeader: SurveyHeader
 ) {
     data class Answer(
-        val answerNumeric: Int?,
+        val answerYn: Boolean?,
         val answerText: String?,
         val questionOption: QuestionOption
     ) {
