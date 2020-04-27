@@ -95,7 +95,7 @@ class QuestionFragment : BaseListFragment() {
                         val action = QuestionFragmentDirections.actionQuestionFragmentSelf(surveyId)
                         findNavController().navigate(action)
                     } else {
-                        Snackbar.make(view!!, getString(R.string.message_monitoring_completed), Snackbar.LENGTH_LONG).show()
+                        Snackbar.make(view!!.rootView.findViewById(R.id.nav_host_fragment), getString(R.string.message_monitoring_completed), Snackbar.LENGTH_LONG).show()
                         (activity as MainActivity).show_bottom_navigation()
                         findNavController().navigate(R.id.monitoringOverviewFragment)
                     }
