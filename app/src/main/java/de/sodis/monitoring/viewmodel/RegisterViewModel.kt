@@ -15,13 +15,13 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
     private val userRepository = UserRepository(monitoringApi = MonitoringApi(), userDao = MonitoringDatabase.getDatabase(application.applicationContext).userDao())
 
     //TODO first save local in case there is no internet, then upload via upload worker
-    fun register(firstName: String, lastName: String) {
+    fun register(firstName: String, lastName: String, type: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             userRepository.register(
                 User(
                     firstName = firstName,
                     lastName = lastName,
-                    type = 0
+                    type = type
                 )
             )
         }

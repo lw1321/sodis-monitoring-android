@@ -19,4 +19,14 @@
     <string name="hint_monitoring_answer">Respuesta</string>
     <string name="monitoring_interviewee">Interrogado</string>
     <string name="message_monitoring_interviewee_not_selected">Ingrese el nombre del encuestado</string>
+    <string name="registration_welcome">Welcome</string>
+    <string name="registration_choose_local_expert">Local Expert</string>
+    <string name="registration_choose_sodis">Sodis</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="registration_title">Registration</string>
+    <string name="registration_successfull">Registro exitoso!</string>
+    <string name="invalid_email_message">Please enter a valid Mail</string>
+    <string name="password_too_short_message">Passwort  muss mindestens 7 zeichen lang sein</string>
+    <string name="name_empty_message">Name can not be empty</string>
 </resources>

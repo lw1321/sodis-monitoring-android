@@ -31,9 +31,33 @@
         android:label="activity_main"
         tools:layout="@layout/activity_main" />
     <fragment
-        android:id="@+id/registrationFragment"
-        android:name="de.sodis.monitoring.ui.fragment.RegistrationFragment"
-        android:label="RegistrationFragment" >
+        android:id="@+id/registrationOverviewwFragment"
+        android:name="de.sodis.monitoring.ui.fragment.registration.RegistrationOverviewFragment"
+        android:label="RegistrationOverviewFragment" >
+
+        <action
+            android:id="@+id/action_registrationOverviewwFragment_to_registrationEmailPasswordFragment"
+            app:destination="@id/registrationEmailPasswordFragment" />
+        <action
+            android:id="@+id/action_registrationOverviewwFragment_to_registrationName"
+            app:destination="@id/registrationNameFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/registrationEmailPasswordFragment"
+        android:name="de.sodis.monitoring.ui.fragment.registration.RegistrationEmailPasswordFragment"
+        android:label="RegistrationEmailPasswordFragment" >
+
+        <action
+            android:id="@+id/action_registrationEmailPasswordFragment_to_registrationName"
+            app:destination="@id/registrationNameFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/registrationNameFragment"
+        android:name="de.sodis.monitoring.ui.fragment.registration.RegistrationNameFragment"
+        android:label="RegistrationNameFragment" >
+        <action
+            android:id="@+id/action_registrationNameFragment_to_mainActivity"
+            app:destination="@id/mainActivity" />
     </fragment>
     <fragment
         android:id="@+id/taskOverviewFragment"
