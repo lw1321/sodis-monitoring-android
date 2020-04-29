@@ -59,7 +59,7 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) :
             questionImageRepository.downloadMetaData()
             surveyRepository.loadSurveys()
             questionImageRepository.downloadQuestionImages(applicationContext)
-            taskRepository.downloadTasks() //todo
+            //taskRepository.downloadTasks() //just offline tasks for now
             Result.success()
         } catch (e: Exception) {
             Crashlytics.logException(e)
