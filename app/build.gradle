@@ -76,7 +76,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.1.0-beta01'
 
     //workmanager
-    def work_version = "2.2.0"
+    def work_version = "2.3.0-alpha01"
     // Kotlin + coroutines
     implementation "androidx.work:work-runtime-ktx:$work_version"
 

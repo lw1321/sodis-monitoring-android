@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isGone
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
@@ -14,6 +15,7 @@ import com.google.firebase.auth.FirebaseAuth
 import de.sodis.monitoring.MainActivity
 import de.sodis.monitoring.R
 import de.sodis.monitoring.registerName
+import de.sodis.monitoring.repository.worker.DownloadWorker.Companion.Progress
 import de.sodis.monitoring.show_bottom_navigation
 import de.sodis.monitoring.ui.fragment.BaseListFragment
 import de.sodis.monitoring.viewmodel.*
@@ -44,7 +46,6 @@ class RegistrationNameFragment : BaseListFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         auth = FirebaseAuth.getInstance()
-
     }
 
     override fun onCreateView(
@@ -84,7 +85,6 @@ class RegistrationNameFragment : BaseListFragment() {
                 }
             }
         }
-
         return view
     }
 }

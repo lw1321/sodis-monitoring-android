@@ -1,14 +1,20 @@
 package de.sodis.monitoring
 
+import android.content.Context
 import android.os.Bundle
+import android.util.AttributeSet
 import android.view.MenuItem
 import android.view.View
+import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
+import de.sodis.monitoring.repository.worker.DownloadWorker
 import de.sodis.monitoring.viewmodel.RootViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -57,6 +63,36 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
         // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance()
+
+
+
+    }
+
+    override fun onCreateView(name: String, context: Context, attrs: AttributeSet): View? {
+        val view = super.onCreateView(name, context, attrs)
+
+        val progressBar = view!!.findViewById<ProgressBar>(R.id.progress_bar)
+        progressBar.visibility = View.GONE
+        rootViewModel.workInfoByIdLiveData.observe(this, Observer {
+            if(it != null){
+                val progress = it.progress
+                val value = progress.getInt(DownloadWorker.Progress, 0)
+                print("progress:$value")
+                progressBar.visibility = View.VISIBLE
+                progressBar.progress = value
+                if(value == 100){
+                    progressBar.visibility = View.GONE
+                    Snackbar.make(
+                        view,
+                        getString(R.string.download_FINISHED),
+                        Snackbar.LENGTH_LONG
+                    ).show()
+                }
+            }
+
+        })
+        return view
+
     }
 
     override fun onStart() {

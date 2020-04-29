@@ -3,6 +3,7 @@ package de.sodis.monitoring.repository.worker
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
+import androidx.work.workDataOf
 import com.crashlytics.android.Crashlytics
 import de.sodis.monitoring.api.MonitoringApi
 import de.sodis.monitoring.db.MonitoringDatabase
@@ -12,6 +13,10 @@ import de.sodis.monitoring.repository.*
 
 class DownloadWorker(appContext: Context, workerParams: WorkerParameters) :
     CoroutineWorker(appContext, workerParams) {
+
+    companion object {
+        const val Progress = "Progress"
+    }
 
     override suspend fun doWork(): Result {
         val monitoringDatabase = MonitoringDatabase.getDatabase(applicationContext)
@@ -54,11 +59,24 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) :
         )
 
         return try {
+            val progressStarting = workDataOf(Progress to 0)
+            val progress20 = workDataOf(Progress to 20)
+            val progress40 = workDataOf(Progress to 40)
+            val progress60 = workDataOf(Progress to 60)
+            val progress80 = workDataOf(Progress to 80)
+            val progressFinished = workDataOf(Progress to 100)
+
+            setProgress(progressStarting)
             userRepository.loadAllUsers()
+            setProgress(progress20)
             intervieweeRepository.loadAll()
+            setProgress(progress40)
             questionImageRepository.downloadMetaData()
+            setProgress(progress60)
             surveyRepository.loadSurveys()
+            setProgress(progress80)
             questionImageRepository.downloadQuestionImages(applicationContext)
+            setProgress(progressFinished)
             //taskRepository.downloadTasks() //just offline tasks for now
             Result.success()
         } catch (e: Exception) {

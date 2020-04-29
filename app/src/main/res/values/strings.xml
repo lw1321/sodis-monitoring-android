@@ -29,4 +29,5 @@
     <string name="invalid_email_message">Please enter a valid Mail</string>
     <string name="password_too_short_message">Passwort  muss mindestens 7 zeichen lang sein</string>
     <string name="name_empty_message">Name can not be empty</string>
+    <string name="download_FINISHED">lOADING SUCCESSFULLY FINISHED</string>
 </resources>
