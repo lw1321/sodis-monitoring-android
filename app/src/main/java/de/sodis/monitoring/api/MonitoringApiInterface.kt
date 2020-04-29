@@ -36,4 +36,6 @@ interface MonitoringApiInterface {
 
     @POST("completed-surveys")
     suspend fun postCompletedSurveys(@Body completedSurveyJson: List<CompletedSurveyJson>): List<CompletedSurveyJson>
+    @GET("question-images")
+    suspend fun getAllQuestionImages(): List<SurveyHeaderJson.SurveySectionJson.QuestionJson.QuestionImageJson>
 }

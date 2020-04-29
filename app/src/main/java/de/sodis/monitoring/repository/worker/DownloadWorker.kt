@@ -6,10 +6,8 @@ import androidx.work.WorkerParameters
 import com.crashlytics.android.Crashlytics
 import de.sodis.monitoring.api.MonitoringApi
 import de.sodis.monitoring.db.MonitoringDatabase
-import de.sodis.monitoring.repository.IntervieweeRepository
-import de.sodis.monitoring.repository.SurveyRepository
-import de.sodis.monitoring.repository.TaskRepository
-import de.sodis.monitoring.repository.UserRepository
+import de.sodis.monitoring.db.entity.QuestionImage
+import de.sodis.monitoring.repository.*
 
 
 class DownloadWorker(appContext: Context, workerParams: WorkerParameters) :
@@ -50,11 +48,17 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) :
                 monitoringApi = MonitoringApi(),
                 userDao = monitoringDatabase.userDao()
             )
+        val questionImageRepository = QuestionImageRepository(
+            monitoringApi = MonitoringApi(),
+            questionImageDao = monitoringDatabase.questionImageDao()
+        )
 
         return try {
             userRepository.loadAllUsers()
             intervieweeRepository.loadAll()
-            surveyRepository.loadSurveys(applicationContext)
+            questionImageRepository.downloadMetaData()
+            surveyRepository.loadSurveys()
+            questionImageRepository.downloadQuestionImages(applicationContext)
             taskRepository.downloadTasks() //todo
             Result.success()
         } catch (e: Exception) {

@@ -8,5 +8,5 @@ data class QuestionImage(
     @PrimaryKey
     val id: Int,
     val url: String,
-    val path: String?
+    var path: String?
 )

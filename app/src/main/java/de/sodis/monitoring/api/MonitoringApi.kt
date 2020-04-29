@@ -62,4 +62,8 @@ class MonitoringApi {
         return monitoringApi.postCompletedSurveys(completedSurveyJsonList)
     }
 
+    suspend fun getQuestionImages(): List<SurveyHeaderJson.SurveySectionJson.QuestionJson.QuestionImageJson> {
+        return monitoringApi.getAllQuestionImages()
+    }
+
 }

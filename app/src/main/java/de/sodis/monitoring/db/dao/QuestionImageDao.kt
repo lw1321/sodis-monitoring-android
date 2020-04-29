@@ -1,9 +1,6 @@
 package de.sodis.monitoring.db.dao
 
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import de.sodis.monitoring.db.entity.QuestionImage
 
 @Dao
@@ -17,4 +14,10 @@ interface QuestionImageDao {
 
     @Query("SELECT * FROM QuestionImage WHERE id=:id")
     fun getById(id: Int): QuestionImage
+
+    @Query("SELECT * FROM QuestionImage WHERE path=null")
+    fun getAllNotDownloaded(): List<QuestionImage>
+
+    @Update
+    fun update(questionImage: QuestionImage)
 }
