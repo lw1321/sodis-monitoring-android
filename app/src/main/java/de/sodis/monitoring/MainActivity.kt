@@ -66,34 +66,9 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
 
 
-    }
-
-    override fun onCreateView(name: String, context: Context, attrs: AttributeSet): View? {
-        val view = super.onCreateView(name, context, attrs)
-
-        val progressBar = view!!.findViewById<ProgressBar>(R.id.progress_bar)
-        progressBar.visibility = View.GONE
-        rootViewModel.workInfoByIdLiveData.observe(this, Observer {
-            if(it != null){
-                val progress = it.progress
-                val value = progress.getInt(DownloadWorker.Progress, 0)
-                print("progress:$value")
-                progressBar.visibility = View.VISIBLE
-                progressBar.progress = value
-                if(value == 100){
-                    progressBar.visibility = View.GONE
-                    Snackbar.make(
-                        view,
-                        getString(R.string.download_FINISHED),
-                        Snackbar.LENGTH_LONG
-                    ).show()
-                }
-            }
-
-        })
-        return view
 
     }
+
 
     override fun onStart() {
         super.onStart()
@@ -104,6 +79,19 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             findNavController(R.id.nav_host_fragment).navigate(R.id.registrationOverviewwFragment)
           }else{
             rootViewModel.requestData()
+            rootViewModel.workInfoByIdLiveData.observe(this, Observer {
+                if(it != null){
+                    val progress = it.progress
+                    val value = progress.getInt(DownloadWorker.Progress, 0)
+                    print("progress:$value")
+                    this.progress_bar.visibility = View.VISIBLE
+                    this.progress_bar.progress = value
+                    if(value == 100){
+                        this.progress_bar.visibility = View.GONE
+                    }
+                }
+
+            })
         }
     }
 

@@ -15,7 +15,7 @@ interface QuestionImageDao {
     @Query("SELECT * FROM QuestionImage WHERE id=:id")
     fun getById(id: Int): QuestionImage
 
-    @Query("SELECT * FROM QuestionImage WHERE path=null")
+    @Query("SELECT * FROM QuestionImage WHERE path is Null")
     fun getAllNotDownloaded(): List<QuestionImage>
 
     @Update
