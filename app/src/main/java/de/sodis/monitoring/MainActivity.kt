@@ -1,20 +1,14 @@
 package de.sodis.monitoring
 
-import android.content.Context
 import android.os.Bundle
-import android.util.AttributeSet
 import android.view.MenuItem
 import android.view.View
-import android.widget.ProgressBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
-import de.sodis.monitoring.repository.worker.DownloadWorker
 import de.sodis.monitoring.viewmodel.RootViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -39,7 +33,6 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
 
     private lateinit var bottomNavigation: BottomNavigationView
-    private lateinit var rootViewModel: RootViewModel
     private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,9 +40,6 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
 
         setContentView(R.layout.activity_main)
-        rootViewModel = this.run {
-            ViewModelProviders.of(this).get(RootViewModel::class.java)
-        }
         //setup bottom navigation bar interaction listener
         bottomNavigation = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         bottomNavigation.setOnNavigationItemSelectedListener(this)
@@ -73,22 +63,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             supportActionBar!!.title = "Registration"
             this.hide_bottom_navigation()
             findNavController(R.id.nav_host_fragment).navigate(R.id.registrationOverviewwFragment)
-          }else{
-            rootViewModel.requestData()
-            rootViewModel.workInfoByIdLiveData.observe(this, Observer {
-                if(it != null){
-                    val progress = it.progress
-                    val value = progress.getInt(DownloadWorker.Progress, 0)
-                    print("progress:$value")
-                    this.progress_bar.visibility = View.VISIBLE
-                    this.progress_bar.progress = value
-                    if(value == 100){
-                        this.progress_bar.visibility = View.GONE
-                    }
-                }
-
-            })
-        }
+          }
     }
 
 
@@ -104,6 +79,16 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     }
 
 
+}
+
+
+public fun MainActivity.hideProgressBar() {
+    this.progress_bar.visibility = View.GONE
+}
+
+public fun MainActivity.showProgressBar(value: Int) {
+    this.progress_bar.visibility = View.VISIBLE
+    this.progress_bar.progress = value
 }
 
 public fun MainActivity.hide_bottom_navigation() {

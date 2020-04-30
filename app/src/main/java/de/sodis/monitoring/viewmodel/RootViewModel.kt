@@ -9,8 +9,6 @@ import de.sodis.monitoring.repository.worker.DownloadWorker
 class RootViewModel(private val mApplication: Application) : AndroidViewModel(mApplication) {
 
     lateinit var workInfoByIdLiveData: LiveData<WorkInfo>
-
-
     //todo api endpoint to check if there are updated data before downloading all
     fun requestData(){
         //start worker

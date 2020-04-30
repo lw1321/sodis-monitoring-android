@@ -29,7 +29,7 @@ class SurveyHistoryFragment : BaseListFragment() {
             recyclerView.withModels {
                 it.forEach {
                     default {
-                        id(it.name)
+                        id(it.id)
                         text(it.name + " / " + it.surveyName)
                         onClick { _ ->
                             val action = SurveyHistoryFragmentDirections.actionMonitoringHistoryFragmentToQuestionFragment(it.id)
