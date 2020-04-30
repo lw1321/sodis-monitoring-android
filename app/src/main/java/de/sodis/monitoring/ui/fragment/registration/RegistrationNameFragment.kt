@@ -76,18 +76,19 @@ class RegistrationNameFragment : BaseListFragment() {
                                 print("progress:$value")
                                 (activity as MainActivity).showProgressBar(value)
                                 if(value == 100){
+                                    //register user on Sodis API
+                                    Snackbar.make(
+                                        view!!,
+                                        getString(R.string.registration_successfull),
+                                        Snackbar.LENGTH_LONG
+                                    ).show()
                                     (activity as MainActivity).hideProgressBar()
                                     findNavController().navigate(R.id.mainActivity)
                                 }
                             }
                         })
-                        //register user on Sodis API
-                        Snackbar.make(
-                            view!!,
-                            getString(R.string.registration_successfull),
-                            Snackbar.LENGTH_LONG
-                        ).show()
-                    
+
+
                     }
                 }
             }
