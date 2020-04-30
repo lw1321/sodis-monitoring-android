@@ -31,8 +31,8 @@ class SurveyHistoryFragment : BaseListFragment() {
                 it.forEach {
                     history {
                         id(it.id)
-                        firstText(it.name )
-                        secondText(it.surveyName)
+                        firstText(it.surveyName )
+                        secondText(it.name)
                         onClick { _ ->
                             val action = SurveyHistoryFragmentDirections.actionMonitoringHistoryFragmentToQuestionFragment(it.id)
                             findNavController().navigate(action)
