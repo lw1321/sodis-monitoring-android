@@ -23,19 +23,15 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         when (item.itemId) {
             R.id.dashboard -> {
                 findNavController(R.id.nav_host_fragment).navigate(R.id.intervieweeOverviewFragment)
-                supportActionBar!!.title = "Dashboard"
+                supportActionBar!!.title = getString(R.string.tab_village_overview)
             }
             R.id.monitoring -> {
                 findNavController(R.id.nav_host_fragment).navigate(R.id.monitoringOverviewFragment)
-                supportActionBar!!.title = "Monitoreo"
-            }
-            R.id.task -> {
-                findNavController(R.id.nav_host_fragment).navigate(R.id.taskOverviewFragment)
-                supportActionBar!!.title = "Tasks"
+                supportActionBar!!.title = getString(R.string.tab_monitoring)
             }
             R.id.monitoring_history-> {
                 findNavController(R.id.nav_host_fragment).navigate(R.id.monitoringHistoryFragment)
-                supportActionBar!!.title = "History"
+                supportActionBar!!.title = getString(R.string.tab_history)
             }
         }
         return true

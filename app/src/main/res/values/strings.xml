@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Monitoreo</string>
-    <string name="tab_village_overview">Dashboard</string>
+    <string name="tab_village_overview">Villages</string>
     <string name="tab_monitoring">Monitoring</string>
     <string name="tab_task">Task</string>
     <string name="tab_history">History</string>
@@ -30,4 +30,5 @@
     <string name="password_too_short_message">Passwort  muss mindestens 7 zeichen lang sein</string>
     <string name="name_empty_message">Name can not be empty</string>
     <string name="download_FINISHED">lOADING SUCCESSFULLY FINISHED</string>
+    <string name="history">History</string>
 </resources>
