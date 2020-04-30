@@ -35,7 +35,9 @@
         <ImageView
             android:id="@+id/question_image"
             android:layout_width="match_parent"
-            android:layout_height="250dp"
+            android:layout_height="wrap_content"
+            android:minHeight="200dp"
+            android:maxHeight="300dp"
             android:layout_marginTop="16dp"
             android:scaleType="center"
             android:adjustViewBounds="true"
