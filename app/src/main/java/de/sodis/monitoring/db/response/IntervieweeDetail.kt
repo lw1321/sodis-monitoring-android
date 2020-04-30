@@ -1,12 +1,12 @@
 package de.sodis.monitoring.db.response
 
-import de.sodis.monitoring.db.entity.Interviewee
-import de.sodis.monitoring.db.entity.Task
-import de.sodis.monitoring.db.entity.Village
+import de.sodis.monitoring.db.entity.*
 
 data class IntervieweeDetail(
     var interviewee: Interviewee,
     var intervieweeTechnologies: List<IntervieweeTechnologyDetail>,
     var village: Village,
+    var sector: Sector?,
+    var user: User?,
     var tasks: List<Task>
-    )
+)

@@ -1,5 +1,6 @@
 package de.sodis.monitoring.api.model
 
+
 data class IntervieweeJson(
     val id: Int,
     val name: String,
@@ -13,8 +14,10 @@ data class IntervieweeJson(
     val hasKnowledge: Boolean,
     val oldWomenCount: Int,
     val menCount: Int,
-    val womenCount: Int
-    ) {
+    val womenCount: Int,
+    val sector: Sector?,
+    val user: User?
+) {
     data class Village(
         val id: Int,
         val name: String
@@ -26,4 +29,20 @@ data class IntervieweeJson(
         val stateTechnology: Int,
         val stateKnowledge: Int
     )
+
+    data class Sector(
+        val id: Int,
+        val name: String,
+        val village: Village
+    )
+
+    data class User(
+        val id: Int,
+        val firstName: String?,
+        val lastName: String?,
+        val firebaseId: String?,
+        val email: String?,
+        val type: Int
+    )
+
 }

@@ -1,4 +1,4 @@
-package de.sodis.monitoring.ui.fragment
+package de.sodis.monitoring.ui.fragment.registration
 
 import android.os.Bundle
 import android.util.Log
@@ -7,20 +7,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isGone
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import de.sodis.monitoring.*
-import de.sodis.monitoring.viewmodel.MonitoringOverviewModel
-import de.sodis.monitoring.viewmodel.MyViewModelFactory
+import de.sodis.monitoring.ui.fragment.BaseListFragment
+import de.sodis.monitoring.ui.fragment.IntervieweeOverviewFragment
+import de.sodis.monitoring.viewmodel.*
 import kotlinx.android.synthetic.main.continuable_list.view.*
+import kotlinx.android.synthetic.main.view_holder_register_name.view.*
 
-class RegistrationFragment : BaseListFragment() {
-
-
+class RegistrationOverviewFragment : BaseListFragment() {
     private lateinit var auth: FirebaseAuth
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,18 +34,17 @@ class RegistrationFragment : BaseListFragment() {
     ): View? {
         val view = super.onCreateView(inflater, container, savedInstanceState)
         view?.navigation_forward_button_1?.isGone = true
+        view?.navigation_forward_button_left?.isGone = true
 
         recyclerView.withModels {
-            register {
+            registerOverview {
                 id("registration")
-                onClick { _ ->
-                    //Firebase auth
+                onClickAnonymousRegistation { _ ->
+                    //do the navigat
                     auth.signInAnonymously().addOnCompleteListener(activity!!) { task ->
                         if (task.isSuccessful) {
                             // Sign in success, update UI with the signed-in user's information
-                            val user = auth.currentUser
-                            Snackbar.make(view!!, "Registro exitoso!", Snackbar.LENGTH_LONG).show()
-                            (activity as MainActivity).replaceFragments(IntervieweeOverviewFragment(), "INTERVIEWEE_OVERVIEW")
+                            findNavController().navigate(R.id.registrationNameFragment)
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w("E", "signInAnonymously:failure", task.exception)
@@ -57,9 +55,11 @@ class RegistrationFragment : BaseListFragment() {
                         }
                     }
                 }
+                onClickEmailPasswordRegistration { _ ->
+                    findNavController().navigate(R.id.registrationEmailPasswordFragment)
+                }
             }
         }
-
         return view
     }
 }

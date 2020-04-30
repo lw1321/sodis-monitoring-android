@@ -1,9 +1,13 @@
 package de.sodis.monitoring.ui.fragment
 
 import android.os.Bundle
+import android.text.InputType
+import androidx.core.view.isGone
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import coil.api.load
 import com.google.android.material.snackbar.Snackbar
 import de.sodis.monitoring.*
@@ -16,7 +20,7 @@ import kotlinx.android.synthetic.main.view_holder_text_choice.view.*
 import kotlinx.android.synthetic.main.view_holder_text_input.view.*
 import java.io.File
 
-class QuestionFragment(private val surveyId: Int) : BaseListFragment() {
+class QuestionFragment : BaseListFragment() {
 
 
     private lateinit var currentQuestion: QuestionAnswer
@@ -27,10 +31,12 @@ class QuestionFragment(private val surveyId: Int) : BaseListFragment() {
         }!!
     }
 
+    val args: QuestionFragmentArgs by navArgs()
+    var surveyId: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        surveyId = args.surveyId
         surveyViewModel.questionItemList.observe(this, Observer { list ->
             currentQuestion = list.get(index = surveyViewModel.currentPosition)
 
@@ -47,7 +53,8 @@ class QuestionFragment(private val surveyId: Int) : BaseListFragment() {
                     2 -> //todo
                         textInput {
                             id("input")
-                            hint("Respuesta")
+                            hint(getString(R.string.hint_monitoring_answer))
+                            inputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME)
                             onBind { model, view, position ->
                                 view.dataBinding.root.answerTextInput.requestFocus()
                                 view.dataBinding.root.answerTextInput.addTextChangedListener {
@@ -82,22 +89,32 @@ class QuestionFragment(private val surveyId: Int) : BaseListFragment() {
 
             view?.navigation_forward_button_1?.setOnClickListener {
                 if (surveyViewModel.isAnswered(currentQuestion.question.id)) {
-
+                    surveyViewModel.listOfAnsweredQuestions += surveyViewModel.currentPosition
                     val hasNext = surveyViewModel.nextQuestion()
-                    if (!hasNext)
-                        Snackbar.make(view!!, "Los datos se guardan", Snackbar.LENGTH_LONG).show()
-                    (activity as MainActivity).replaceFragments(
-                        if (hasNext) QuestionFragment(
-                            surveyId
-                        ) else MonitoringOverviewFragment(),
-                        if (hasNext) "QUESTION_TAG" else "MONITORING_OVERVIEW_TAG"
-                    )
+                    if (hasNext) {
+                        val action = QuestionFragmentDirections.actionQuestionFragmentSelf(surveyId)
+                        findNavController().navigate(action)
+                    } else {
+                        Snackbar.make(view!!.rootView.findViewById(R.id.nav_host_fragment), getString(R.string.message_monitoring_completed), Snackbar.LENGTH_LONG).show()
+                        (activity as MainActivity).show_bottom_navigation()
+                        findNavController().navigate(R.id.monitoringOverviewFragment)
+                    }
                 } else {
                     Snackbar.make(
                         view!!,
-                        "Por favor seleccione una opción de respuesta!",
+                        getString(R.string.message_monitoring_answer_required),
                         Snackbar.LENGTH_LONG
                     ).show()
+                }
+            }
+
+            view?.navigation_forward_button_left?.isGone = surveyViewModel.currentPosition == 0
+
+            view?.navigation_forward_button_left?.setOnClickListener {
+                if (surveyViewModel.currentPosition != 0) {
+                    surveyViewModel.previousQuestion()
+                    val action = QuestionFragmentDirections.actionQuestionFragmentSelf(surveyId)
+                    findNavController().navigate(action)
                 }
             }
         })

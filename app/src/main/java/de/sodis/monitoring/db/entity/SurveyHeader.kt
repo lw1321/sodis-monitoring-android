@@ -16,8 +16,6 @@ import de.sodis.monitoring.api.model.SurveyHeaderJson
 data class SurveyHeader(
     @PrimaryKey
     val id: Int,
-    val instructions: String? = null,
-    val otherHeaderInfo: String? = null,
     val surveyName: String,
     val technologyId: Int
 )

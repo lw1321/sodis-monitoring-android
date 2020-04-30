@@ -1,4 +1,34 @@
 <resources>
     <string name="app_name">Monitoreo</string>
-    <string name="text_input_hidden">Respuesta</string>
+    <string name="tab_village_overview">Villages</string>
+    <string name="tab_monitoring">Monitoring</string>
+    <string name="tab_task">Task</string>
+    <string name="tab_history">History</string>
+    <string name="general_data_old_people">Mayores de 50 Años</string>
+    <string name="general_data_adult">Mayores de 15 a 49 Años</string>
+    <string name="gerneral_data_young">Niños de 6 a 14 Años</string>
+    <string name="general_data_women">Mujeres</string>
+    <string name="general_data_men">Hombres</string>
+    <string name="general_data_child">Menores de 0 a 5 Años</string>
+    <string name="hint_register_first_name">primer nombre</string>
+    <string name="hint_register_surname">nombre</string>
+    <string name="button_register">registro</string>
+    <string name="register_whats_your_name">Como te llamas ?</string>
+    <string name="message_monitoring_completed">Los datos se guardan</string>
+    <string name="message_monitoring_answer_required">Por favor seleccione una opción de respuesta!</string>
+    <string name="hint_monitoring_answer">Respuesta</string>
+    <string name="monitoring_interviewee">Interrogado</string>
+    <string name="message_monitoring_interviewee_not_selected">Ingrese el nombre del encuestado</string>
+    <string name="registration_welcome">Welcome</string>
+    <string name="registration_choose_local_expert">Local Expert</string>
+    <string name="registration_choose_sodis">Sodis</string>
+    <string name="email">Email</string>
+    <string name="password">Password</string>
+    <string name="registration_title">Registration</string>
+    <string name="registration_successfull">Registro exitoso!</string>
+    <string name="invalid_email_message">Please enter a valid Mail</string>
+    <string name="password_too_short_message">Passwort  muss mindestens 7 zeichen lang sein</string>
+    <string name="name_empty_message">Name can not be empty</string>
+    <string name="download_FINISHED">lOADING SUCCESSFULLY FINISHED</string>
+    <string name="history">History</string>
 </resources>

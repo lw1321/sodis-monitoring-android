@@ -12,10 +12,12 @@ class MyViewModelFactory(private val mApplication: Application, private val mPar
             modelClass === MonitoringOverviewModel::class.java -> MonitoringOverviewModel(mApplication) as T
             modelClass === IntervieweeModel::class.java -> IntervieweeModel(mApplication) as T
             modelClass === TaskViewModel::class.java -> TaskViewModel(mApplication) as T
+            modelClass === SurveyHistoryViewModel::class.java -> SurveyHistoryViewModel(mApplication) as T
             modelClass === SurveyViewModel::class.java -> SurveyViewModel(
                 mApplication,
                 mParams[0] as Int
             ) as T
+            modelClass === RegisterViewModel::class.java -> RegisterViewModel(mApplication) as T
             modelClass === RootViewModel::class.java -> RootViewModel(mApplication) as T
             else -> super.create(modelClass)
         }

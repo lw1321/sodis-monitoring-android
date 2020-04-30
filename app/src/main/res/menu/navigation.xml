@@ -2,17 +2,17 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/dashboard"
-        android:icon="@drawable/ic_emoji_happy"
-        android:title="Dashboard"/>
+        android:icon="@drawable/ic_village"
+        android:title="@string/tab_village_overview"/>
 
     <item
         android:id="@+id/monitoring"
-        android:icon="@drawable/ic_emoji_sad"
-        android:title="Monitoring"/>
+        android:icon="@drawable/ic_survey_black"
+        android:title="@string/tab_monitoring"/>
 
     <item
-        android:id="@+id/task"
-        android:icon="@drawable/ic_emoji_sad"
-        android:title="Task"/>
+        android:id="@+id/monitoring_history"
+        android:icon="@drawable/ic_history_black"
+        android:title="@string/tab_history"/>
 
 </menu>

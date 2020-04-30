@@ -12,6 +12,7 @@ import androidx.work.WorkManager
 import de.sodis.monitoring.api.MonitoringApi
 import de.sodis.monitoring.db.MonitoringDatabase
 import de.sodis.monitoring.db.entity.Answer
+import de.sodis.monitoring.db.entity.CompletedSurvey
 import de.sodis.monitoring.db.entity.Interviewee
 import de.sodis.monitoring.db.response.QuestionAnswer
 import de.sodis.monitoring.db.response.SurveyHeaderResponse
@@ -49,6 +50,8 @@ class SurveyViewModel(
             intervieweeDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).intervieweeDao(),
             monitoringApi = MonitoringApi(),
             villageDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).villageDao(),
+            userDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).userDao(),
+            sectorDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).sectorDao(),
             technologyDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).technologyDao(),
             intervieweeTechnologyDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).intervieweeTechnologyDao(),
             taskDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).taskDao()
@@ -75,6 +78,7 @@ class SurveyViewModel(
             questionImageDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).questionImageDao(),
             answerDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).answerDao(),
             optionChoiceDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).optionChoiceDao(),
+            completedSurveyDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).completedSurveyDao(),
             monitoringApi = MonitoringApi()
         )
 
@@ -82,6 +86,8 @@ class SurveyViewModel(
      * current position in questionaire
      */
     var currentPosition: Int = 0
+
+    var listOfAnsweredQuestions: List<Int> = mutableListOf()
 
     var answerMap = mutableMapOf<Int, Answer>()
 
@@ -115,13 +121,11 @@ class SurveyViewModel(
     fun setAnswer(id: Int, answer: String, optionChoiceId: Int) {
         //request questionOption for the answer
         answerMap[id] = Answer(
-            intervieweeId = interviewee!!.id,
             answerText = answer,
-            timeStamp = Timestamp(System.currentTimeMillis()).toString(),
-            answerNumeric = null,
-            answerYn = null,
             id = null,
-            questionOptionId = optionChoiceId
+            questionOptionId = optionChoiceId,
+            completedSurveyId = null, //todo
+            answerYn = null//todo differe yn/text
         )
     }
 
@@ -132,7 +136,14 @@ class SurveyViewModel(
         if (currentPosition == (surveyQuestions.size - 1)) {
             //done with the survey, save the input
             viewModelScope.launch(Dispatchers.IO) {
-                questionRepository.saveQuestions(answerMap)
+                questionRepository.saveQuestions(
+                    answerMap,
+                    CompletedSurvey(
+                        intervieweeId = interviewee!!.id,
+                        timeStamp = Timestamp(System.currentTimeMillis()).toString(),
+                        surveyHeaderId = surveyHeader.value!!.surveyHeader.id
+                    )
+                )
                 answerMap.clear()
                 interviewee = null
             }
@@ -143,6 +154,7 @@ class SurveyViewModel(
             WorkManager.getInstance(mApplication.applicationContext).enqueue(uploadWorkRequest)
 
             currentPosition = 0
+            listOfAnsweredQuestions = mutableListOf()
             return false
         }
         currentPosition++
@@ -159,8 +171,19 @@ class SurveyViewModel(
     }
 
     fun setSurveyId(surveyId: Int) {
-         createQuestionList(surveyId)
+        createQuestionList(surveyId)
     }
 
     fun isAnswered(id: Int): Boolean = answerMap.containsKey(id)
+
+    fun previousQuestion(): Boolean{
+        if(currentPosition != 0) {
+            val lastPosition = listOfAnsweredQuestions.last()
+            answerMap.remove(questionItemList.value!![lastPosition].question.id)
+            listOfAnsweredQuestions = listOfAnsweredQuestions.subList(0,listOfAnsweredQuestions.size-1)
+            currentPosition = lastPosition
+            return true
+        }
+        return false
+    }
 }

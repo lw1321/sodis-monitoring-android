@@ -8,14 +8,10 @@ import de.sodis.monitoring.db.entity.Answer
 
 @Dao
 interface AnswerDao {
-
+//todo insertAll
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(answer: Answer)
 
-    @Query("SELECT * FROM Answer WHERE submitted = 0")
-    fun getAllUnsubmitted(): List<Answer>
-
-    @Query("UPDATE ANSWER SET submitted=1 WHERE id IN (:ids)")
-    fun setSubmitted(ids: List<Int>)
-
+    @Query("SELECT * FROM Answer WHERE completedSurveyId=:completedSurveyId")
+    fun getAnswersByCompletedSurveyId(completedSurveyId: Int):List<Answer>
 }

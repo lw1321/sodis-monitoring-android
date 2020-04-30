@@ -1,46 +1,38 @@
 package de.sodis.monitoring
 
 import android.os.Bundle
-import android.transition.Visibility
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.findNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
-import de.sodis.monitoring.ui.fragment.IntervieweeOverviewFragment
-import de.sodis.monitoring.ui.fragment.MonitoringOverviewFragment
-import de.sodis.monitoring.ui.fragment.RegistrationFragment
-import de.sodis.monitoring.ui.fragment.TaskOverviewFragment
 import de.sodis.monitoring.viewmodel.RootViewModel
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.continuable_list.*
 
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.dashboard -> {
-                replaceFragments(IntervieweeOverviewFragment(), "INTERVIEWEE_OVERVIEW")
-                supportActionBar!!.title = "Dashboard"
+                findNavController(R.id.nav_host_fragment).navigate(R.id.intervieweeOverviewFragment)
+                supportActionBar!!.title = getString(R.string.tab_village_overview)
             }
             R.id.monitoring -> {
-                replaceFragments(MonitoringOverviewFragment(), "MONITORING_OVERVIEW")
-                supportActionBar!!.title = "Monitoreo"
+                findNavController(R.id.nav_host_fragment).navigate(R.id.monitoringOverviewFragment)
+                supportActionBar!!.title = getString(R.string.tab_monitoring)
             }
-            R.id.task -> {
-                replaceFragments(TaskOverviewFragment(), "Task_OVERVIEW")
-                supportActionBar!!.title = "Tasks"
+            R.id.monitoring_history-> {
+                findNavController(R.id.nav_host_fragment).navigate(R.id.monitoringHistoryFragment)
+                supportActionBar!!.title = getString(R.string.tab_history)
             }
-
         }
         return true
     }
 
 
     private lateinit var bottomNavigation: BottomNavigationView
-    private lateinit var rootViewModel: RootViewModel
     private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,55 +40,62 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
 
         setContentView(R.layout.activity_main)
-        rootViewModel = this.run {
-            ViewModelProviders.of(this).get(RootViewModel::class.java)
-        }
         //setup bottom navigation bar interaction listener
         bottomNavigation = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         bottomNavigation.setOnNavigationItemSelectedListener(this)
 
-
-        replaceFragments(IntervieweeOverviewFragment(), "TAG_MONITORING_OVERVIEW")
+        findNavController(R.id.nav_host_fragment).navigate(R.id.intervieweeOverviewFragment)
         supportActionBar!!.title = "Dashboard"
 
         // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance()
+
+
+
+
     }
+
 
     override fun onStart() {
         super.onStart()
         if (auth.currentUser == null) {
             //todo store token, store name?!
             supportActionBar!!.title = "Registration"
-            this.replaceFragments(RegistrationFragment(), "TAG_REGISTRATION")
-        }
+            this.hide_bottom_navigation()
+            findNavController(R.id.nav_host_fragment).navigate(R.id.registrationOverviewwFragment)
+          }
     }
 
 
     override fun onBackPressed() {
         //only allow back press for convenience only on interviewee
-        val surveyFragment = supportFragmentManager.findFragmentByTag("SURVEY_TAG")
-        if (surveyFragment != null && surveyFragment.isVisible) {
-            //super.onBackPressed()//todo
+        val currFragmentId = findNavController(R.id.nav_host_fragment).currentDestination!!.id
+        if (currFragmentId == R.id.intervieweeDetailFragment || currFragmentId == R.id.surveyFragment) {
+            super.onBackPressed()
+        }
+        if (currFragmentId == R.id.surveyFragment) {
+            this.show_bottom_navigation()
         }
     }
 
 
 }
 
-public fun MainActivity.replaceFragments(fragmentNew: Fragment, tag: String) {
-    if (tag == "QUESTION_TAG" || tag == "TAG_REGISTRATION" ||tag == "SURVEY_TAG"
-    ) {
-        this.bottom_navigation.visibility = View.GONE//TODO navigation controler action based
-    }
-    else{
-        this.bottom_navigation.visibility = View.VISIBLE
-    }
 
-    val transaction = supportFragmentManager.beginTransaction()
-    transaction.setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out);
-    transaction.replace(R.id.fragment_container, fragmentNew, tag)
-    transaction.addToBackStack(null)
-    transaction.commit()
+public fun MainActivity.hideProgressBar() {
+    this.progress_bar.visibility = View.GONE
+}
+
+public fun MainActivity.showProgressBar(value: Int) {
+    this.progress_bar.visibility = View.VISIBLE
+    this.progress_bar.progress = value
+}
+
+public fun MainActivity.hide_bottom_navigation() {
+    this.bottom_navigation.visibility = View.GONE
+}
+
+public fun MainActivity.show_bottom_navigation() {
+    this.bottom_navigation.visibility = View.VISIBLE
 }
 

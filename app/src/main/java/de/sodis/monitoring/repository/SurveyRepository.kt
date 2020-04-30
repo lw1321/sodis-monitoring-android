@@ -31,34 +31,11 @@ class SurveyRepository(
     private val monitoringApi: MonitoringApi
 ) {
 
-    //TODO extract method to bitmap extension?!
-    // Method to save an bitmap to a file
-    private fun bitmapToFile(bitmap: Bitmap, context: Context): String? {
-        // Get the context wrapper
-        val wrapper = ContextWrapper(context.applicationContext)
-
-        // Initialize a new file instance to save bitmap object
-        val file = File(wrapper.getDir("Images", Context.MODE_PRIVATE), "${UUID.randomUUID()}.jpg")
-
-        try {
-            // Compress the bitmap and save in jpg format
-            val stream: OutputStream = FileOutputStream(file)
-            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
-            stream.flush()
-            stream.close()
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-
-        // Return the saved bitmap uri
-        return Uri.parse(file.absolutePath).encodedPath
-    }
-
     /**
      * If internet connection is available, load all surveys and save it in the local database.
      * Also load and save the associated images in the internal storage.
      */
-    suspend fun loadSurveys(context: Context) {
+    suspend fun loadSurveys() {
         val response = monitoringApi.getSurveys()
 
         //loop through surveys
@@ -78,8 +55,6 @@ class SurveyRepository(
                 SurveyHeader(
                     id = surveyHeaderJson.id,
                     surveyName = surveyHeaderJson.surveyName,
-                    instructions = surveyHeaderJson.instructions,
-                    otherHeaderInfo = surveyHeaderJson.otherHeaderInfo,
                     technologyId = surveyHeaderJson.technology.id
                 )
             )
@@ -91,32 +66,11 @@ class SurveyRepository(
                     SurveySection(
                         id = surveySectionJson.id,
                         sectionName = surveySectionJson.sectionName,
-                        sectionSubheading = surveySectionJson.sectionSubheading,
-                        sectionTitle = surveySectionJson.sectionTitle,
                         surveyHeaderId = surveyHeaderJson.id
                     )
                 )
                 //loop through questions
                 for (questionJson: SurveyHeaderJson.SurveySectionJson.QuestionJson in surveySectionJson.questions) {
-
-                    //check if image exists. Room returns count, less memory than query the object.
-                    if (questionImageDao.exists(questionJson.questionImage.id) == 0) {
-                        //load bitmap from url
-                        val bitmap = Coil.get(questionJson.questionImage.url).toBitmap()
-
-                        //write bitmap to file
-                        val absolutePath = bitmapToFile(bitmap, context)
-
-                        //get file path
-                        //Save Images
-                        questionImageDao.insert(
-                            QuestionImage(
-                                id = questionJson.questionImage.id,
-                                url = questionJson.questionImage.url,
-                                path = absolutePath
-                            )
-                        )
-                    }
                     //Save Input Types
                     if (inputTypeDao.exists(questionJson.inputType.id) == 0) {
                         //save input type
@@ -136,7 +90,6 @@ class SurveyRepository(
                             inputTypeId = questionJson.inputType.id,
                             questionImageId = questionJson.questionImage.id,
                             questionName = questionJson.questionName,
-                            questionSubtext = questionJson.questionSubtext,
                             surveySectionId = surveySectionJson.id
                         )
                     )
