@@ -44,7 +44,7 @@
                 app:srcCompat="@drawable/ic_camera_alt_black_24dp" />
 
             <TextView
-                android:id="@+id/surveyHeaderTitle"
+                android:id="@+id/firstText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:padding="@dimen/padding_edge"

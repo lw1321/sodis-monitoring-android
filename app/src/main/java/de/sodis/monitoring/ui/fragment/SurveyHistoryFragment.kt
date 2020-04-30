@@ -9,6 +9,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import de.sodis.monitoring.default
+import de.sodis.monitoring.history
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
 import de.sodis.monitoring.viewmodel.SurveyHistoryViewModel
 import kotlinx.android.synthetic.main.continuable_list.view.*
@@ -28,9 +29,10 @@ class SurveyHistoryFragment : BaseListFragment() {
 
             recyclerView.withModels {
                 it.forEach {
-                    default {
+                    history {
                         id(it.id)
-                        text(it.name + " / " + it.surveyName)
+                        firstText(it.name )
+                        secondText(it.surveyName)
                         onClick { _ ->
                             val action = SurveyHistoryFragmentDirections.actionMonitoringHistoryFragmentToQuestionFragment(it.id)
                             findNavController().navigate(action)
@@ -38,7 +40,6 @@ class SurveyHistoryFragment : BaseListFragment() {
                     }
                 }
             }
-
         })
 
     }
