@@ -7,8 +7,12 @@ import java.util.*
 @Entity(tableName = "TodoPoint")
 @TypeConverters(CalendarConverter::class)
 data class TodoPoint(
+
+
+
+
     @PrimaryKey(autoGenerate = true)
-    val id: Int,
+    val id: Int?,
 
     @ColumnInfo(name = "done")
     var done: Boolean? = false,
@@ -23,7 +27,7 @@ data class TodoPoint(
     var donedate: Calendar?,
 
     @ColumnInfo(name = "family")
-    var family: Int,
+    var family: Int?,
 
     @ColumnInfo(name = "text")
     var text: String

@@ -53,6 +53,10 @@ class IntervieweeModel(application: Application) : AndroidViewModel(application)
         }
     }
 
+    fun getByID(intervieweeId: Int): Interviewee {
+        return intervieweeRepository.getIntervieweeByID(intervieweeId)
+    }
+
     fun updateInterviewee(interviewee: Interviewee) {
         intervieweeDetail.value!!.interviewee = interviewee
         modiefied = true

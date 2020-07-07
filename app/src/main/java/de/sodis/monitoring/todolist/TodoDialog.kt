@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.DialogFragment
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import de.sodis.monitoring.R
@@ -19,6 +20,9 @@ import de.sodis.monitoring.db.MonitoringDatabase
 import de.sodis.monitoring.db.entity.Interviewee
 import de.sodis.monitoring.db.entity.TodoPoint
 import de.sodis.monitoring.repository.IntervieweeRepository
+import de.sodis.monitoring.viewmodel.IntervieweeModel
+import de.sodis.monitoring.viewmodel.MyViewModelFactory
+import de.sodis.monitoring.viewmodel.TodoPointModel
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -26,7 +30,15 @@ import kotlin.concurrent.thread
 
 class TodoDialog(var todoPoint: TodoPoint?, applicationContext: Context): DialogFragment() {
 
+    private val intervieweeModel: IntervieweeModel by lazy {
+        ViewModelProviders.of(this, MyViewModelFactory(activity!!.application, emptyList()))
+            .get(IntervieweeModel::class.java)
+    }
 
+    private val todoPointModel: TodoPointModel by lazy {
+        ViewModelProviders.of(this, MyViewModelFactory(activity!!.application, emptyList()))
+            .get(TodoPointModel::class.java)
+    }
 
     lateinit var searchEditText: EditText
     lateinit var searchRecyclerView: RecyclerView
@@ -38,7 +50,7 @@ class TodoDialog(var todoPoint: TodoPoint?, applicationContext: Context): Dialog
 
     var due: Calendar
     var intervieweeChosen: Interviewee?
-    var intervieweeResults: List<Interviewee>
+    lateinit var intervieweeResults: List<Interviewee>
 
     lateinit var  datePickerDialog: DatePickerDialog
 
@@ -47,29 +59,11 @@ class TodoDialog(var todoPoint: TodoPoint?, applicationContext: Context): Dialog
     var onCancelPressed: View.OnClickListener
 
     var onSavePressed: View.OnClickListener
-    val monitoringDatabase = MonitoringDatabase.getDatabase(applicationContext)
-
-    val intervieweeRepository: IntervieweeRepository = IntervieweeRepository(
-        intervieweeDao = monitoringDatabase.intervieweeDao(),
-        villageDao = monitoringDatabase.villageDao(),
-        sectorDao = monitoringDatabase.sectorDao(),
-        userDao = monitoringDatabase.userDao(),
-        intervieweeTechnologyDao = monitoringDatabase.intervieweeTechnologyDao(),
-        technologyDao = monitoringDatabase.technologyDao(),
-        taskDao = monitoringDatabase.taskDao(),
-        monitoringApi = MonitoringApi()
-    )
 
     init {
         due = Calendar.getInstance()
         intervieweeChosen = null
-        var toset = intervieweeRepository.getAll().value
-        if(toset!=null) {
-            intervieweeResults = toset
-        }
-        else {
-            intervieweeResults = listOf()
-        }
+
         onCancelPressed = View.OnClickListener {
             dismiss()
         }
@@ -80,7 +74,13 @@ class TodoDialog(var todoPoint: TodoPoint?, applicationContext: Context): Dialog
     }
 
     fun saveAndDismiss (){
-        //todo:
+        var intervieweeidtoset: Int? = null
+        if(intervieweeChosen!=null) {
+            intervieweeidtoset = intervieweeChosen!!.id
+        }
+            todoPoint = TodoPoint(
+                null, false, Calendar.getInstance(), due, null, intervieweeidtoset, titleText.text.toString())
+        todoPointModel.todoPointRepository.insertTodoPoint(todoPoint!!)
         dismiss()
     }
 
@@ -108,6 +108,21 @@ class TodoDialog(var todoPoint: TodoPoint?, applicationContext: Context): Dialog
         savedInstanceState: Bundle?
     ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
+        intervieweeChosen = null
+        if(todoPoint?.family!=null) {
+            intervieweeChosen = intervieweeModel.getByID(todoPoint!!.family!!)
+        }
+        var toset = intervieweeModel.intervieweeList.value
+        if(toset!=null) {
+            intervieweeResults = toset
+            println("toSet != null: " + toset.size.toString())
+        }
+        else {
+            intervieweeResults = listOf()
+        }
+
+
+
         datePickerDialog = DatePickerDialog(
                 context,
         DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
@@ -154,7 +169,7 @@ class TodoDialog(var todoPoint: TodoPoint?, applicationContext: Context): Dialog
         dueText = view.findViewById(R.id.tododialog_due)
         dueText.setText(SimpleDateFormat("dd.MM.yyyy").format(due.time))
         cancelButton = view.findViewById(R.id.tododialog_cancel)
-        continueButton = view.findViewById(R.id.tododialog_cancel)
+        continueButton = view.findViewById(R.id.tododialog_save)
         dueText.setOnClickListener(dueTextOnClickListener)
         cancelButton.setOnClickListener(onCancelPressed)
         continueButton.setOnClickListener(onSavePressed)

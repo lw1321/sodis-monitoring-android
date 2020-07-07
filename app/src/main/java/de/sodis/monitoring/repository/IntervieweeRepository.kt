@@ -113,6 +113,10 @@ class IntervieweeRepository(
         return intervieweeDao.searchByName(name)
     }
 
+    fun getIntervieweeByID(intervieweeId: Int): Interviewee {
+        return intervieweeDao.getById(intervieweeId)
+    }
+
     /**
      * Full infos
      * interviewee, technologies, village

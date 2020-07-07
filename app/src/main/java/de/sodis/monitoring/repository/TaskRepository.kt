@@ -31,7 +31,7 @@ class TaskRepository(
         return taskDao.getAll()
     }
 
-    suspend fun getAllTasksByInterviewee(intervieweeId: Int): List<Task> {
+    fun getAllTasksByInterviewee(intervieweeId: Int): List<Task> {
         return taskDao.getTasksByInterviewee(intervieweeId)
     }
 

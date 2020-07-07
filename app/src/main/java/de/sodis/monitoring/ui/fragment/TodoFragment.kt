@@ -55,7 +55,9 @@ class TodoPointFragment: Fragment(
     }
 
     fun deletePoint(pos: Int) {
+        println("deletePoint: " + pos.toString())
         val toDelete = todoPoints.removeAt(pos)
+        todoListAdapter.notifyDataSetChanged()
         thread (start = true) {
             todoPointRepository.deleteTodoPoint(toDelete)
         }
