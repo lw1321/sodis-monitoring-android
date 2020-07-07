@@ -27,6 +27,10 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 findNavController(R.id.nav_host_fragment).navigate(R.id.monitoringHistoryFragment)
                 supportActionBar!!.title = getString(R.string.tab_history)
             }
+            R.id.tasks -> {
+                findNavController(R.id.nav_host_fragment).navigate(R.id.todoFragment)
+                supportActionBar!!.title = "Tasks"
+            }
         }
         return true
     }

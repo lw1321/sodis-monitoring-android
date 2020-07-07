@@ -9,8 +9,8 @@ import de.sodis.monitoring.db.dao.*
 import de.sodis.monitoring.db.entity.*
 
 @Database(
-    entities = [InputType::class, OptionChoice::class, Question::class, QuestionImage::class, QuestionOption::class, SurveyHeader::class, SurveySection::class, Interviewee::class, Answer::class, Village::class, Technology::class, IntervieweeTechnology::class, Task::class, Sector::class, User::class, CompletedSurvey::class],
-    version = 18
+    entities = [InputType::class, OptionChoice::class, Question::class, QuestionImage::class, QuestionOption::class, SurveyHeader::class, SurveySection::class, Interviewee::class, Answer::class, Village::class, Technology::class, IntervieweeTechnology::class, Task::class, Sector::class, User::class, CompletedSurvey::class, TodoPoint::class],
+    version = 19
 )
 abstract class MonitoringDatabase : RoomDatabase() {
     abstract fun inputTypeDao(): InputTypeDao
@@ -29,6 +29,7 @@ abstract class MonitoringDatabase : RoomDatabase() {
     abstract fun intervieweeTechnologyDao(): IntervieweeTechnologyDao
     abstract fun taskDao(): TaskDao
     abstract fun completedSurveyDao(): CompletedSurveyDao
+    abstract fun todoPointDao():TodoPointDao
 
     companion object {
         @Volatile

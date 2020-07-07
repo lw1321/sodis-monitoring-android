@@ -109,6 +109,10 @@ class IntervieweeRepository(
         return intervieweeDao.getByVillage(villageId)
     }
 
+    fun searchByName(name: String): List<Interviewee> {
+        return intervieweeDao.searchByName(name)
+    }
+
     /**
      * Full infos
      * interviewee, technologies, village
