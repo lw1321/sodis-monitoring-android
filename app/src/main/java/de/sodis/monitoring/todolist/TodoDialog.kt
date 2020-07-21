@@ -23,12 +23,13 @@ import de.sodis.monitoring.repository.IntervieweeRepository
 import de.sodis.monitoring.viewmodel.IntervieweeModel
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
 import de.sodis.monitoring.viewmodel.TodoPointModel
+import kotlinx.coroutines.selects.select
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.concurrent.thread
 
-class TodoDialog(var todoPoint: TodoPoint?, applicationContext: Context): DialogFragment() {
+class TodoDialog(val passedInterviewee: Interviewee?, val passedText: String?, applicationContext: Context): DialogFragment() {
 
     private val intervieweeModel: IntervieweeModel by lazy {
         ViewModelProviders.of(this, MyViewModelFactory(activity!!.application, emptyList()))
@@ -62,7 +63,7 @@ class TodoDialog(var todoPoint: TodoPoint?, applicationContext: Context): Dialog
 
     init {
         due = Calendar.getInstance()
-        intervieweeChosen = null
+        intervieweeChosen = passedInterviewee
 
         onCancelPressed = View.OnClickListener {
             dismiss()
@@ -75,12 +76,17 @@ class TodoDialog(var todoPoint: TodoPoint?, applicationContext: Context): Dialog
 
     fun saveAndDismiss (){
         var intervieweeidtoset: Int? = null
+        var villageidtoset: Int? = null
         if(intervieweeChosen!=null) {
             intervieweeidtoset = intervieweeChosen!!.id
+            if(intervieweeChosen!!.villageId!=null) {
+                villageidtoset = intervieweeChosen!!.villageId
+            }
         }
-            todoPoint = TodoPoint(
-                null, false, Calendar.getInstance(), due, null, intervieweeidtoset, titleText.text.toString())
-        todoPointModel.todoPointRepository.insertTodoPoint(todoPoint!!)
+            var todoPoint = TodoPoint(
+                null, false, Calendar.getInstance(), due, null, intervieweeidtoset, villageidtoset ,titleText.text.toString())
+        Thread(
+            Runnable { todoPointModel.insertTodoPoint(todoPoint!!) }).start()
         dismiss()
     }
 
@@ -100,6 +106,7 @@ class TodoDialog(var todoPoint: TodoPoint?, applicationContext: Context): Dialog
     }
 
     lateinit var searchAdapter: SearchAdapter
+    lateinit var onTouchListener:View.OnTouchListener
 
 
     override fun onCreateView(
@@ -108,18 +115,8 @@ class TodoDialog(var todoPoint: TodoPoint?, applicationContext: Context): Dialog
         savedInstanceState: Bundle?
     ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
-        intervieweeChosen = null
-        if(todoPoint?.family!=null) {
-            intervieweeChosen = intervieweeModel.getByID(todoPoint!!.family!!)
-        }
-        var toset = intervieweeModel.intervieweeList.value
-        if(toset!=null) {
-            intervieweeResults = toset
-            println("toSet != null: " + toset.size.toString())
-        }
-        else {
-            intervieweeResults = listOf()
-        }
+
+        intervieweeResults = listOf()
 
 
 
@@ -139,6 +136,12 @@ class TodoDialog(var todoPoint: TodoPoint?, applicationContext: Context): Dialog
         dueTextOnClickListener = View.OnClickListener {
             datePickerDialog.show()
         }
+        onTouchListener = View.OnTouchListener{
+            v, d ->
+            v.performClick()
+            datePickerDialog.show()
+            return@OnTouchListener true
+        }
         var view = inflater.inflate(R.layout.todo_dialog_layout, container, false)
         searchEditText = view.findViewById(R.id.tododialog_searchview)
         searchEditText.addTextChangedListener(object: TextWatcher {
@@ -155,6 +158,9 @@ class TodoDialog(var todoPoint: TodoPoint?, applicationContext: Context): Dialog
             }
 
         })
+        if(passedInterviewee!=null) {
+            searchEditText.setText(passedInterviewee.name)
+        }
 
 
         searchRecyclerView = view.findViewById(R.id.tododialog_recyclerview)
@@ -165,12 +171,20 @@ class TodoDialog(var todoPoint: TodoPoint?, applicationContext: Context): Dialog
             }
         }, null)
         searchRecyclerView.adapter = searchAdapter
+        intervieweeModel.intervieweeList.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            searchAdapter?.setDataSet(it)
+            searchAdapter?.filter.filter(searchEditText?.text)
+        })
         titleText = view.findViewById(R.id.tododialog_title)
+        if(passedText!=null){
+            titleText.setText(passedText)
+        }
         dueText = view.findViewById(R.id.tododialog_due)
         dueText.setText(SimpleDateFormat("dd.MM.yyyy").format(due.time))
         cancelButton = view.findViewById(R.id.tododialog_cancel)
         continueButton = view.findViewById(R.id.tododialog_save)
-        dueText.setOnClickListener(dueTextOnClickListener)
+        //dueText.setOnClickListener(dueTextOnClickListener)
+        dueText.setOnTouchListener(onTouchListener)
         cancelButton.setOnClickListener(onCancelPressed)
         continueButton.setOnClickListener(onSavePressed)
         return view
@@ -203,13 +217,26 @@ class SearchAdapter(interviewees: List<Interviewee>, val context: Context, val c
         override fun performFiltering(constraint: CharSequence?): FilterResults {
             var filteredToReturn:ArrayList<Array<Any>> = ArrayList()
             if(constraint.isNullOrEmpty()) {
-                filteredToReturn.addAll(originalInterviewees)
+                var  toRemove:ArrayList<Array<Any>> = originalInterviewees
+                val indexToAdd = toRemove.indexOfFirst {
+                    it[0] as Boolean
+                }
+                if(indexToAdd!=-1) {
+                    filteredToReturn.add(toRemove.removeAt(indexToAdd))
+                }
+                filteredToReturn.addAll(toRemove)
             }
             else {
                 for(array in originalInterviewees) {
-                    if((array[1] as Interviewee).name.toLowerCase().contains(constraint.toString().toLowerCase())) {
-                        filteredToReturn.add(array)
+                    if(array[0] as Boolean) {
+                        filteredToReturn.add(0, array)
                     }
+                    else {
+                        if((array[1] as Interviewee).name.toLowerCase().contains(constraint.toString().toLowerCase())) {
+                            filteredToReturn.add(array)
+                        }
+                    }
+
                 }
             }
             var filterResults = FilterResults()
@@ -230,6 +257,32 @@ class SearchAdapter(interviewees: List<Interviewee>, val context: Context, val c
 
     override fun getFilter(): Filter {
         return ourFilter
+    }
+
+    fun setDataSet(newInterviewees:List<Interviewee>) {
+        val selectedbeforeArray:Array<Any>? = originalInterviewees.firstOrNull {
+            it[0] as Boolean
+        }
+        var selectedbefore: Interviewee? = null
+        if(selectedbeforeArray!=null) {
+            if(selectedbeforeArray[1]!=null) {
+                selectedbefore = selectedbeforeArray[1] as Interviewee
+            }
+        }
+        this.originalInterviewees = ArrayList()
+        this.filteredInterviewees = ArrayList()
+        newInterviewees.forEach {
+            var isChecked = false
+            if(selectedbefore!=null) {
+                if(selectedbefore.id == it.id) {
+                    isChecked = true
+                }
+            }
+            var toAdd = arrayOf(isChecked, it)
+            originalInterviewees.add(toAdd)
+            filteredInterviewees.add(toAdd)
+        }
+        notifyDataSetChanged()
     }
 
 
@@ -253,7 +306,11 @@ class SearchAdapter(interviewees: List<Interviewee>, val context: Context, val c
         filteredInterviewees[position][0] = checked
         for(i in 0..(filteredInterviewees.size-1)) {
             if(i!=position) {
-                filteredInterviewees[i][0] = false
+                if(filteredInterviewees[i][0] as Boolean) {
+                    filteredInterviewees[i][0] = false
+                    notifyItemChanged(i)
+                }
+
             }
         }
         originalInterviewees.forEach {
@@ -278,7 +335,6 @@ class SearchAdapter(interviewees: List<Interviewee>, val context: Context, val c
         else {
             callBack.OnIntervieweeChosen(null)
         }
-
     }
 
 }

@@ -4,7 +4,21 @@ import androidx.room.*
 import java.util.*
 
 
-@Entity(tableName = "TodoPoint")
+@Entity(tableName = "TodoPoint",
+    foreignKeys = [
+        ForeignKey(
+            entity = Interviewee::class,
+            parentColumns = arrayOf("id"),
+            childColumns = arrayOf("family")
+        ),
+        ForeignKey(
+            entity = Village::class,
+            parentColumns = arrayOf("id"),
+            childColumns = arrayOf("village")
+        )
+    ]
+
+    )
 @TypeConverters(CalendarConverter::class)
 data class TodoPoint(
 
@@ -29,8 +43,12 @@ data class TodoPoint(
     @ColumnInfo(name = "family")
     var family: Int?,
 
+    @ColumnInfo(name = "village")
+    var village: Int?,
+
     @ColumnInfo(name = "text")
     var text: String
+
 
 
     )
@@ -58,6 +76,5 @@ class CalendarConverter {
                 return null
             }
         }
-
 
 }

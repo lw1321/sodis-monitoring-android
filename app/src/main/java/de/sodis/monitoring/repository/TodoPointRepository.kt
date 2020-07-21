@@ -4,17 +4,18 @@ import androidx.lifecycle.LiveData
 import de.sodis.monitoring.api.MonitoringApi
 import de.sodis.monitoring.db.dao.TodoPointDao
 import de.sodis.monitoring.db.entity.TodoPoint
+import java.util.*
 
 class TodoPointRepository (private val todoPointDao: TodoPointDao, private val monitoringApi: MonitoringApi) {
     fun getAllTodoPoints():LiveData<List<TodoPoint>> {
         return todoPointDao.getAll()
     }
 
-    fun getTodoPointsSortedByID():List<TodoPoint> {
+    fun getTodoPointsSortedByID():LiveData<List<TodoPoint>> {
         return todoPointDao.getTodoPointsSortedByInterviewee()
     }
 
-    fun getTodoPointsByDueDate():List<TodoPoint> {
+    fun getTodoPointsByDueDate():LiveData<List<TodoPoint>> {
         return todoPointDao.getTodoPointsSortedByDueDate()
     }
 
@@ -28,6 +29,30 @@ class TodoPointRepository (private val todoPointDao: TodoPointDao, private val m
 
     fun insertTodoPoint(todoPoint: TodoPoint) {
         return todoPointDao.insert(todoPoint)
+    }
+
+    fun getUndoneTodoPoints():LiveData<List<TodoPoint>> {
+        var calendar = Calendar.getInstance()
+        calendar.add(Calendar.DAY_OF_MONTH, -1)
+        return todoPointDao.getUndoneTodoPoints(calendar)
+    }
+
+    fun getUndoneTodoPointsByFamily():LiveData<List<TodoPoint>> {
+        var calendar = Calendar.getInstance()
+        calendar.add(Calendar.DAY_OF_MONTH, -1)
+        return todoPointDao.getUndoneTodoPointsSortedByFamily(calendar)
+    }
+
+    fun getUndoneTodoPointsByDueDate():LiveData<List<TodoPoint>> {
+        var calendar = Calendar.getInstance()
+        calendar.add(Calendar.DAY_OF_MONTH, -1)
+        return todoPointDao.getUndoneTodoPointsSortedByDueDate(calendar)
+    }
+
+    fun getUndoneTodoPointsByVillage():LiveData<List<TodoPoint>> {
+        var calendar = Calendar.getInstance()
+        calendar.add(Calendar.DAY_OF_MONTH, -1)
+        return todoPointDao.getUndoneTodoPointsSortedByVillage(calendar)
     }
 
 

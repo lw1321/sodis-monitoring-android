@@ -74,4 +74,8 @@ class IntervieweeModel(application: Application) : AndroidViewModel(application)
             intervieweeRepository.saveInterviewee(intervieweeDetail.value!!.interviewee)
         }
     }
+
+    fun getVillageByID(int: Int): Village {
+        return intervieweeRepository.getVillageByID(int)
+    }
 }

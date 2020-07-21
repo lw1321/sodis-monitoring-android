@@ -58,6 +58,10 @@ class RegistrationOverviewFragment : BaseListFragment() {
                 onClickEmailPasswordRegistration { _ ->
                     findNavController().navigate(R.id.registrationEmailPasswordFragment)
                 }
+                onLoginEmailPassword {
+                    _ ->
+                    findNavController().navigate(R.id.loginEmailPassword)
+                }
             }
         }
         return view

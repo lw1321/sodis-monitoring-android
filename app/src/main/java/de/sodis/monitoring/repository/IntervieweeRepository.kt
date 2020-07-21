@@ -105,6 +105,10 @@ class IntervieweeRepository(
         return villageDao.getAll()
     }
 
+    fun getVillageByID(id: Int): Village {
+        return villageDao.getById(id)
+    }
+
     fun getByVillage(villageId: Int): LiveData<List<Interviewee>> {
         return intervieweeDao.getByVillage(villageId)
     }

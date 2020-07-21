@@ -37,8 +37,10 @@ abstract class TodoSwipeHelper(context: Context, var recyclerView: RecyclerView,
     }
 
     private val onTouchListener = View.OnTouchListener {_, event ->
+        println("onTouchListener called");
         if(swipePosition<0) {return@OnTouchListener false}
-
+        if(recyclerView.findViewHolderForAdapterPosition(swipePosition) == null) {return@OnTouchListener false}
+        println("Swipeposition: " + swipePosition.toString())
         val point = Point(event.rawX.toInt(), event.rawY.toInt())
         val swipeViewHolder = recyclerView.findViewHolderForAdapterPosition(swipePosition)
         val swipedItem = swipeViewHolder!!.itemView

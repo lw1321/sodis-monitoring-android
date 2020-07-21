@@ -7,19 +7,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.view.isGone
-import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
-import de.sodis.monitoring.*
+import de.sodis.monitoring.R
+import de.sodis.monitoring.loginEmailPassword
+import de.sodis.monitoring.registerEmailPassword
 import de.sodis.monitoring.ui.fragment.BaseListFragment
-import de.sodis.monitoring.viewmodel.*
 import kotlinx.android.synthetic.main.continuable_list.view.*
 import kotlinx.android.synthetic.main.view_holder_register_email_password.view.*
-import kotlinx.android.synthetic.main.view_holder_register_name.view.*
 
-class RegistrationEmailPasswordFragment : BaseListFragment() {
-
+class LoginEmailPasswordFragment: BaseListFragment() {
 
     private lateinit var auth: FirebaseAuth
 
@@ -39,8 +37,8 @@ class RegistrationEmailPasswordFragment : BaseListFragment() {
         view?.navigation_forward_button_left?.isGone = true
 
         recyclerView.withModels {
-            registerEmailPassword {
-                id("registration")
+            loginEmailPassword {
+                id("loginEmailPassword")
                 onClick{ _ ->
                     //validation
                     val email = view!!.registration_email.text.toString()
@@ -64,12 +62,15 @@ class RegistrationEmailPasswordFragment : BaseListFragment() {
                             // ok all valid, lets create an account
                             //Sign in with email and password
 
-                            auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(activity!!) { task ->
+                            auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(activity!!) { task ->
                                 if (task.isSuccessful) {
-                                    // Sign in success, update UI request the name of the user and send it to the sodis api
-                                    findNavController().navigate(R.id.registrationNameFragment)
+                                    if(task.result!=null) {
+                                        if(task.result!!.user.uid!=null) {
+                                            findNavController().navigate(R.id.mainActivity)
+                                        }
+                                    }
+
                                 } else {
-                                    // If sign in fails, display a message to the user.
                                     Log.w("E", "registrationEmailPassword:failure", task.exception)
                                     Toast.makeText(
                                         activity!!.baseContext, "Authentication failed.",

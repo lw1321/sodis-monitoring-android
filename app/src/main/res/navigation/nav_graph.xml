@@ -14,6 +14,15 @@
             app:destination="@id/intervieweeDetailFragment" />
     </fragment>
     <fragment
+            android:id="@+id/loginEmailPassword"
+            android:name="de.sodis.monitoring.ui.fragment.registration.LoginEmailPasswordFragment"
+            android:label="LoginEmailPasswordFragment" >
+        <action
+                android:id="@+id/toLoginEmailPassword"
+                app:destination="@id/loginEmailPassword" />
+    </fragment>
+
+    <fragment
         android:id="@+id/intervieweeDetailFragment"
         android:name="de.sodis.monitoring.ui.fragment.IntervieweeDetailFragment"
         android:label="IntervieweeDetailFragment" >

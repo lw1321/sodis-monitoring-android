@@ -13,6 +13,10 @@
         <variable
             name="onClickEmailPasswordRegistration"
             type="android.view.View.OnClickListener" />
+
+        <variable
+                name="onLoginEmailPassword"
+                type="android.view.View.OnClickListener" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -61,6 +65,36 @@
             app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/registration_choose_local_expert" />
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginBottom="16dp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintTop_toBottomOf="@+id/registration_choose_sodis"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:text="Login"
+                android:id="@+id/login_label"
+                style="@style/TextAppearance.MaterialComponents.Headline4"
+            ></TextView>
+
+        <Button
+                android:id="@+id/login_choose_sodis"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                android:onClick="@{onLoginEmailPassword}"
+                android:text="@string/registration_choose_sodis"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/login_label" />
+
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

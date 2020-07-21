@@ -35,7 +35,7 @@ class TodoDeleteButton(val context: Context, val listener:TodoDeleteButtonListen
 
         p.color = Color.WHITE
 
-        val d = ContextCompat.getDrawable(context, R.drawable.handwaschstation_icon)
+        val d = ContextCompat.getDrawable(context, R.drawable.ic_delete)
         val bitmap = drawableToBitmap(d)
         c.drawBitmap(bitmap, (rectF.left+rectF.right)/2-bitmap.width/2, (rectF.top + rectF.bottom)/2-bitmap.height/2, p)
         clickRegion = rectF

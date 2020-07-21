@@ -94,18 +94,30 @@
 
             </TextView>
 
-                <EditText
+                <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Search"
-                        android:maxLines="1"
-                        android:layout_gravity="fill_vertical"
                         android:layout_marginBottom="8dp"
-                        android:layout_marginHorizontal="8dp"
-                        android:id="@+id/tododialog_searchview"
-                    android:layout_weight="0">
+                        android:layout_marginHorizontal="8dp">
 
-                </EditText>
+                    <EditText
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:hint="Search"
+                            android:maxLines="1"
+                            android:layout_gravity="fill_vertical"
+                            android:pointerIcon="text"
+                            android:drawableLeft="@drawable/ic_search"
+                            android:id="@+id/tododialog_searchview"
+                            android:layout_weight="8"></EditText>
+
+
+
+                </LinearLayout>
+
+
+
+
 
                 <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/tododialog_recyclerview"

@@ -40,7 +40,7 @@
                 <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="fällig am:"
+                        android:text="debido a:"
                         android:layout_gravity="start"
                         ></TextView>
 
@@ -67,7 +67,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="start"
-                        android:text="Familie:"
+                        android:id="@+id/familyDescriptionView"
+                        android:text="familia:"
                         ></TextView>
 
                 <TextView
@@ -76,6 +77,30 @@
                         android:layout_marginLeft="8dp"
                         android:layout_gravity="start"
                         android:id="@+id/familyView"
+                        android:textStyle="bold"></TextView>
+
+            </LinearLayout>
+
+            <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    >
+
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:id="@+id/villageDescriptionView"
+                        android:text="pueblo:"
+                        ></TextView>
+
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:layout_gravity="start"
+                        android:id="@+id/villageView"
                         android:textStyle="bold"></TextView>
 
             </LinearLayout>

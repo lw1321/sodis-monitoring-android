@@ -3,41 +3,57 @@ package de.sodis.monitoring.todolist
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.ViewGroup
+import android.widget.CheckBox
 import android.widget.RadioButton
 import androidx.annotation.NonNull
 import androidx.recyclerview.widget.RecyclerView
 import de.sodis.monitoring.R
 import de.sodis.monitoring.db.entity.TodoPoint
 import de.sodis.monitoring.repository.TodoPointRepository
+import de.sodis.monitoring.viewmodel.IntervieweeModel
+import de.sodis.monitoring.viewmodel.TodoPointModel
 import java.text.SimpleDateFormat
+import java.util.*
 import kotlin.concurrent.thread
 
-class TodoListAdapter(@NonNull todoPointS: List<TodoPoint>, @NonNull context: Context?, @NonNull todoPointRepository: TodoPointRepository): RecyclerView.Adapter<TodoListViewHolder>() {
+class TodoListAdapter(@NonNull todoPointS: List<TodoPoint>, @NonNull context: Context?, @NonNull todoPointModel: TodoPointModel, val intervieweeModel: IntervieweeModel): RecyclerView.Adapter<TodoListViewHolder>() {
     var context: Context?
     var todoPoints: List<TodoPoint>
-    var todoPointRepository: TodoPointRepository
+    val todoPointModel: TodoPointModel
+
+    fun setDataSet(todoPointsNew: List<TodoPoint>) {
+        todoPoints = todoPointsNew
+        notifyDataSetChanged()
+    }
 
     init {
         this.todoPoints = todoPointS
         this.context = context
-        this.todoPointRepository = todoPointRepository
+        this.todoPointModel = todoPointModel
     }
 
     val simpleDateFormat: SimpleDateFormat = SimpleDateFormat("dd.MM.yyyy")
 
     fun onRadioButtonClicked(view: View, position: Int) {
-        if (view is RadioButton) {
+        if (view is CheckBox) {
             val checked = view.isChecked
+            if(checked) {
+                todoPoints[position].donedate = Calendar.getInstance()
+            }
+            else {
+                todoPoints[position].donedate = null
+            }
             todoPoints[position].done = checked
             updateAsync(todoPoints[position])
         }
     }
 
     fun updateAsync(todoPoint: TodoPoint){
-        thread (start = true){
-            todoPointRepository.updateTodoPoint(todoPoint)
-        }
+        Thread(Runnable{
+            todoPointModel.updateTodoPoint(todoPoint)
+        }).start()
     }
 
 
@@ -60,7 +76,20 @@ class TodoListAdapter(@NonNull todoPointS: List<TodoPoint>, @NonNull context: Co
         }
         holder.contentField.text = todoPoints[position].text
         holder.dueField.text = simpleDateFormat.format(todoPoints[position].duedate?.time)
-        holder.familyField.text = todoPoints[position].family.toString()
+        if(todoPoints[position].family!=null) {
+            holder.familyField.text = intervieweeModel.getByID(todoPoints[position].family!!).name
+        }
+        else {
+            holder.familyDescriptionField.visibility = GONE
+            holder.familyField.visibility = GONE
+        }
+        if(todoPoints[position].village!=null) {
+            holder.villageField.text = intervieweeModel.getVillageByID(todoPoints[position].village!!).name
+        }else {
+            holder.villageDescriptionField.visibility = GONE
+            holder.villageField.visibility = GONE
+        }
+
     }
 
 }
