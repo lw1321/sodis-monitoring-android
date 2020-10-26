@@ -44,6 +44,10 @@ class SurveyHistoryViewModel(application: Application) : AndroidViewModel(applic
         }
     }
 
+    fun getCompleteSurveyList(completedSurveyID: Int): List<CompletedSurveyDetail> {
+        return surveyHistoryRepository.getCompletedSurvey(completedSurveyID)
+    }
+
     fun getCompletedSurvey(): List<CompletedSurveyDetail>? {
         return surveyCompletedList.value;
     }

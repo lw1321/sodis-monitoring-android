@@ -10,8 +10,10 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.NonNull
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import de.sodis.monitoring.MainActivity
 import de.sodis.monitoring.R
@@ -22,7 +24,7 @@ import de.sodis.monitoring.viewmodel.MyViewModelFactory
 import de.sodis.monitoring.viewmodel.SurveyHistoryViewModel
 
 
-class SurveyOverview: Fragment() {
+class SurveyOverviewFragment: Fragment() {
 
     private val surveyHistoryView: SurveyHistoryViewModel by lazy {
         ViewModelProviders.of(this, MyViewModelFactory(activity!!.application, emptyList()))
@@ -46,22 +48,48 @@ class SurveyOverview: Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         completedSurveyID = args.completedSurveyID
-        surveyHistoryView.setCompletedSurveyId(completedSurveyId = completedSurveyID)
-        questionList = surveyHistoryView.getCompletedSurvey()
+
+
+
+        surveyHistoryView.setCompletedSurveyId(completedSurveyId = this.completedSurveyID)
+
+        print(message = "surveyhistoryViewNummer vor init: " + completedSurveyID.toString())
 
     }
+
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        mainView = inflater.inflate(R.layout.survey_overview, container)
+
+        questionList = surveyHistoryView.getCompletedSurvey()
+
+        val observer = Observer<List<CompletedSurveyDetail>> {
+            newList ->
+            if(newList !=null) {
+                questionList = newList
+                surveyOverviewAdapter.updateQuestions(questionList!!)
+            }
+
+        }
+        surveyHistoryView.surveyCompletedList.observe(viewLifecycleOwner , observer)
+
+        println(message = "onCreatView wird ausgeführt")
+        mainView = inflater.inflate(R.layout.survey_overview, container, false)
+
         if(questionList == null) {
+            println(message = "questionList ist null")
             questionList = listOf()
         }
         recyclerView = mainView.findViewById(R.id.question_recyclerview)
+        recyclerView.layoutManager = LinearLayoutManager(context)
+
+
         surveyOverviewAdapter =
             SurveyOverviewAdapter(
                 context,
@@ -69,7 +97,7 @@ class SurveyOverview: Fragment() {
             )
 
         recyclerView.adapter = surveyOverviewAdapter
-
+        println(message = "main View wird zurückgegeben")
         return mainView
     }
 
@@ -84,9 +112,16 @@ class SurveyOverview: Fragment() {
 
 class SurveyOverviewAdapter(@NonNull context: Context?, questions: List<CompletedSurveyDetail>): RecyclerView.Adapter<SurveyOverviewViewHolder>() {
 
+
+
     var questions: List<CompletedSurveyDetail>
 
     var context: Context?
+
+    fun updateQuestions(newList:List<CompletedSurveyDetail>) {
+        questions = newList
+        super.notifyDataSetChanged()
+    }
 
     init {
         this.context = context
@@ -109,27 +144,31 @@ class SurveyOverviewAdapter(@NonNull context: Context?, questions: List<Complete
     override fun onBindViewHolder(holder: SurveyOverviewViewHolder, position: Int) {
         var question: Question = questions[position].question
         holder.questionTextView.text = question.questionName
-        holder.imageView.setImageResource(question.questionImageId)
+        holder.imageView.visibility = View.GONE
+
+
+        /*try {
+            holder.imageView.setImageResource(question.questionImageId)
+        }catch(error:Error) {
+
+        }*/
+
 
         var answer: Answer = questions[position].answer
         if(answer.answerText!=null) {
             holder.answerTextView.text = answer.answerText
-        }
-        else {
-            holder.emojiView.visibility = View.GONE
-        }
-
-        if(answer.answerYn!=null) {
-            if(answer.answerYn!!) {
+            if(answer.answerText == "Si") {
                 holder.emojiView.setImageResource(R.drawable.ic_emoji_happy)
             }
             else {
                 holder.emojiView.setImageResource(R.drawable.ic_emoji_sad)
             }
+
         }
         else {
-            holder.emojiView.visibility = View.GONE
+            holder.answerTextView.visibility = View.GONE
         }
+
 
     }
 }

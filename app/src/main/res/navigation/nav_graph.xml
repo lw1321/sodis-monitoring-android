@@ -15,9 +15,9 @@
     </fragment>
 
     <fragment
-        android:id="@+id/SurveyOverview"
+        android:id="@+id/surveyOverviewFragment"
         android:name="de.sodis.monitoring.ui.fragment.SurveyOverviewFragment"
-        android:label="SurveyOverview">
+        android:label="SurveyOverviewFragment">
         <argument
             android:name="completedSurveyID"
             app:argType="integer"
@@ -97,7 +97,7 @@
             app:destination="@id/questionHistoryFragment" />
         <action
             android:id="@+id/action_monitoringHistoryFragment_to_SurveyOverview"
-            app:destination="@+id/SurveyOverview"
+            app:destination="@+id/surveyOverviewFragment"
             />
     </fragment>
     <fragment
