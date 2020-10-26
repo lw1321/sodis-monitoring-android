@@ -34,7 +34,7 @@ class SurveyHistoryFragment : BaseListFragment() {
                         firstText(it.surveyName )
                         secondText(it.name)
                         onClick { _ ->
-                            val action = SurveyHistoryFragmentDirections.actionMonitoringHistoryFragmentToQuestionFragment(it.id)
+                            val action = SurveyHistoryFragmentDirections.actionMonitoringHistoryFragmentToSurveyOverview(it.id)
                             findNavController().navigate(action)
                         }
                     }

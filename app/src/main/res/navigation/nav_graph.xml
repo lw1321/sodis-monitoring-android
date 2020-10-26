@@ -13,6 +13,18 @@
             android:id="@+id/action_intervieweeOverviewFragment_to_intervieweeDetailFragment"
             app:destination="@id/intervieweeDetailFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/survey_overview"
+        android:name="de.sodis.monitoring.survey_overview.SurveyOverview"
+        android:label="SurveyOverview">
+        <argument
+            android:name="completedSurveyID"
+            app:argType="integer"
+            android:defaultValue="0" />
+
+    </fragment>
+
     <fragment
             android:id="@+id/loginEmailPassword"
             android:name="de.sodis.monitoring.ui.fragment.registration.LoginEmailPasswordFragment"
@@ -83,6 +95,10 @@
         <action
             android:id="@+id/action_monitoringHistoryFragment_to_questionFragment"
             app:destination="@id/questionHistoryFragment" />
+        <action
+            android:id="@+id/action_monitoringHistoryFragment_to_SurveyOverview"
+            app:destination="@+id/survey_overview"
+            />
     </fragment>
     <fragment
             android:id="@+id/todoFragment"

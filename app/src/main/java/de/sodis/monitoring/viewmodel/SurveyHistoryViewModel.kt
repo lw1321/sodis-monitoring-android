@@ -44,6 +44,10 @@ class SurveyHistoryViewModel(application: Application) : AndroidViewModel(applic
         }
     }
 
+    fun getCompletedSurvey(): List<CompletedSurveyDetail>? {
+        return surveyCompletedList.value;
+    }
+
     fun previousQuestion() {
         currentPosition--
     }
