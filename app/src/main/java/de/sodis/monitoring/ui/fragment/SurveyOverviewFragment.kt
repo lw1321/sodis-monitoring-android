@@ -1,28 +1,28 @@
-package de.sodis.monitoring.survey_overview
+package de.sodis.monitoring.ui.fragment
 
 import android.content.Context
 import android.os.Bundle
-import android.util.AttributeSet
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.annotation.NonNull
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
+import de.sodis.monitoring.MainActivity
 import de.sodis.monitoring.R
 import de.sodis.monitoring.db.entity.Answer
 import de.sodis.monitoring.db.entity.Question
 import de.sodis.monitoring.db.response.CompletedSurveyDetail
-import de.sodis.monitoring.todolist.TodoListViewHolder
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
 import de.sodis.monitoring.viewmodel.SurveyHistoryViewModel
 
 
-class SurveyOverview(val completedSurveyID: Int): Fragment() {
+class SurveyOverview: Fragment() {
 
     private val surveyHistoryView: SurveyHistoryViewModel by lazy {
         ViewModelProviders.of(this, MyViewModelFactory(activity!!.application, emptyList()))
@@ -36,14 +36,20 @@ class SurveyOverview(val completedSurveyID: Int): Fragment() {
 
     lateinit var recyclerView: RecyclerView
 
+    var completedSurveyID: Int  = 0
+
+    val args: SurveyOverviewFragmentArgs by navArgs()
+
     lateinit var surveyOverviewAdapter: SurveyOverviewAdapter
 
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        completedSurveyID = args.completedSurveyID
         surveyHistoryView.setCompletedSurveyId(completedSurveyId = completedSurveyID)
         questionList = surveyHistoryView.getCompletedSurvey()
-        super.onCreate(savedInstanceState)
+
     }
 
     override fun onCreateView(
@@ -56,12 +62,23 @@ class SurveyOverview(val completedSurveyID: Int): Fragment() {
             questionList = listOf()
         }
         recyclerView = mainView.findViewById(R.id.question_recyclerview)
-        surveyOverviewAdapter = SurveyOverviewAdapter(context, questionList!!)
+        surveyOverviewAdapter =
+            SurveyOverviewAdapter(
+                context,
+                questionList!!
+            )
 
         recyclerView.adapter = surveyOverviewAdapter
 
+        return mainView
+    }
 
-        return super.onCreateView(inflater, container, savedInstanceState)
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        val imm: InputMethodManager =
+            (activity as MainActivity).getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view!!.windowToken, 0)
+
     }
 }
 
@@ -80,7 +97,9 @@ class SurveyOverviewAdapter(@NonNull context: Context?, questions: List<Complete
         var toReturnView: View = LayoutInflater.from(context).inflate(
             R.layout.view_holder_survey_overview_item, parent, false
         )
-        return SurveyOverviewViewHolder(toReturnView)
+        return SurveyOverviewViewHolder(
+            toReturnView
+        )
     }
 
     override fun getItemCount(): Int {
