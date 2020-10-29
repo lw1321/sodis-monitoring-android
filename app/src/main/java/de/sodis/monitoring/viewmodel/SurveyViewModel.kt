@@ -1,6 +1,10 @@
 package de.sodis.monitoring.viewmodel
 
+import android.Manifest
 import android.app.Application
+import android.content.pm.PackageManager
+import android.location.Location
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
@@ -9,6 +13,8 @@ import androidx.work.Constraints
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationServices
 import de.sodis.monitoring.api.MonitoringApi
 import de.sodis.monitoring.db.MonitoringDatabase
 import de.sodis.monitoring.db.entity.Answer
@@ -38,22 +44,28 @@ class SurveyViewModel(
      * Selected interviewee
      */
     var interviewee: Interviewee? = null
+
     /**
      * List of all interviewee
      */
     lateinit var intervieweeList: LiveData<List<Interviewee>>
+
     /**
      * Repository for interviewee actions
      */
     private val intervieweeRepository =
         IntervieweeRepository(
-            intervieweeDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).intervieweeDao(),
+            intervieweeDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
+                .intervieweeDao(),
             monitoringApi = MonitoringApi(),
-            villageDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).villageDao(),
+            villageDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
+                .villageDao(),
             userDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).userDao(),
             sectorDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).sectorDao(),
-            technologyDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).technologyDao(),
-            intervieweeTechnologyDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).intervieweeTechnologyDao(),
+            technologyDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
+                .technologyDao(),
+            intervieweeTechnologyDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
+                .intervieweeTechnologyDao(),
             taskDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).taskDao()
         )
     lateinit var surveyHeader: LiveData<SurveyHeaderResponse>
@@ -64,23 +76,36 @@ class SurveyViewModel(
      * holds all ui relevant informations for the questions
      */
     val questionItemList: MediatorLiveData<List<QuestionAnswer>> = MediatorLiveData()
+
     /**
      * Repository for interviewee actions
      */
     private val surveyHeaderRepository =
         SurveyHeaderRepository(
-            surveyHeaderDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).surveyHeaderDao()
+            surveyHeaderDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
+                .surveyHeaderDao()
         )
     private val questionRepository =
         QuestionRepository(
-            questionDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).questionDao(),
-            questionOptionDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).questionOptionDao(),
-            questionImageDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).questionImageDao(),
+            questionDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
+                .questionDao(),
+            questionOptionDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
+                .questionOptionDao(),
+            questionImageDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
+                .questionImageDao(),
             answerDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).answerDao(),
-            optionChoiceDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).optionChoiceDao(),
-            completedSurveyDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).completedSurveyDao(),
+            optionChoiceDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
+                .optionChoiceDao(),
+            completedSurveyDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
+                .completedSurveyDao(),
             monitoringApi = MonitoringApi()
         )
+
+    /**
+     *Location Client, will be initialized when permission is granted
+     */
+    private lateinit var fusedLocationClient: FusedLocationProviderClient
+
 
     /**
      * current position in questionaire
@@ -136,16 +161,26 @@ class SurveyViewModel(
         if (currentPosition == (surveyQuestions.size - 1)) {
             //done with the survey, save the input
             viewModelScope.launch(Dispatchers.IO) {
-                questionRepository.saveQuestions(
-                    answerMap,
-                    CompletedSurvey(
-                        intervieweeId = interviewee!!.id,
-                        timeStamp = Timestamp(System.currentTimeMillis()).toString(),
-                        surveyHeaderId = surveyHeader.value!!.surveyHeader.id
-                    )
-                )
-                answerMap.clear()
-                interviewee = null
+                // GET last know location
+                if (ContextCompat.checkSelfPermission(
+                        getApplication<Application>().applicationContext,
+                        Manifest.permission.ACCESS_FINE_LOCATION
+                    ) == PackageManager.PERMISSION_GRANTED
+                ) {
+                    fusedLocationClient =
+                        LocationServices.getFusedLocationProviderClient(mApplication.applicationContext)
+                    fusedLocationClient.lastLocation
+                        .addOnSuccessListener { location: Location? ->
+                            // Got last known location. In some rare situations this can be null.
+                            saveSurvey(location!!.latitude, location.longitude)
+                        }.addOnFailureListener { it ->
+                            //Loation Request failed, save survey without location
+                            saveSurvey()
+                        }
+                } else {
+                    //Location not granted, save survey without location
+                    saveSurvey()
+                }
             }
             //start worker manager
             val uploadWorkRequest = OneTimeWorkRequestBuilder<UploadWorker>().setConstraints(
@@ -170,17 +205,37 @@ class SurveyViewModel(
         return true
     }
 
+    private fun saveSurvey(latitude: Double? = null, longitude: Double? = null)
+    {
+        viewModelScope.launch(Dispatchers.IO) {
+            questionRepository.saveQuestions(
+                answerMap,
+                CompletedSurvey(
+                    intervieweeId = interviewee!!.id,
+                    timeStamp = Timestamp(System.currentTimeMillis()).toString(),
+                    surveyHeaderId = surveyHeader.value!!.surveyHeader.id,
+                    latitude = latitude,
+                    longitude = longitude
+                )
+            )
+            answerMap.clear()
+            interviewee = null
+        }
+
+    }
+
     fun setSurveyId(surveyId: Int) {
         createQuestionList(surveyId)
     }
 
     fun isAnswered(id: Int): Boolean = answerMap.containsKey(id)
 
-    fun previousQuestion(): Boolean{
-        if(currentPosition != 0) {
+    fun previousQuestion(): Boolean {
+        if (currentPosition != 0) {
             val lastPosition = listOfAnsweredQuestions.last()
             answerMap.remove(questionItemList.value!![lastPosition].question.id)
-            listOfAnsweredQuestions = listOfAnsweredQuestions.subList(0,listOfAnsweredQuestions.size-1)
+            listOfAnsweredQuestions =
+                listOfAnsweredQuestions.subList(0, listOfAnsweredQuestions.size - 1)
             currentPosition = lastPosition
             return true
         }

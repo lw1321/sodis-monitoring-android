@@ -24,7 +24,7 @@ data class CompletedSurvey(
     val intervieweeId: Int,
     val surveyHeaderId: Int,
     val timeStamp: String,
-    var submitted: Boolean = false
-//TODO GPS position
-
+    var submitted: Boolean = false,
+    val latitude: Double? = null,
+    val longitude: Double? = null
 )
