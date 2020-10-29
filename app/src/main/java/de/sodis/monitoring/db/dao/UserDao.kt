@@ -20,4 +20,7 @@ interface UserDao {
 
     @Query("SELECT COUNT(*) FROM User WHERE id=:localExpertId")
     fun count(localExpertId: Int): Int
+
+    @Query("DELETE FROM USER")
+    fun deleteAll()
 }

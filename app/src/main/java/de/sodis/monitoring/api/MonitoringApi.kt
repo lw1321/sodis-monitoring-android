@@ -3,6 +3,7 @@ package de.sodis.monitoring.api
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import de.sodis.monitoring.Config
 import de.sodis.monitoring.api.model.*
+import de.sodis.monitoring.db.entity.Stats
 import de.sodis.monitoring.db.entity.User
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -64,6 +65,10 @@ class MonitoringApi {
 
     suspend fun getQuestionImages(): List<SurveyHeaderJson.SurveySectionJson.QuestionJson.QuestionImageJson> {
         return monitoringApi.getAllQuestionImages()
+    }
+
+    suspend fun getStats(): Stats {
+        return monitoringApi.getStats()
     }
 
 }

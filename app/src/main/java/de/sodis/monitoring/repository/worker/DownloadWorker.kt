@@ -43,11 +43,6 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) :
                 userDao = monitoringDatabase.userDao(),
                 taskDao = monitoringDatabase.taskDao()
             )
-        val taskRepository =
-            TaskRepository(
-                taskDao = monitoringDatabase.taskDao(),
-                monitoringApi = MonitoringApi()
-            )
         val userRepository =
             UserRepository(
                 monitoringApi = MonitoringApi(),
@@ -58,6 +53,11 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) :
             questionImageDao = monitoringDatabase.questionImageDao()
         )
 
+        val statsRepository = StatsRepository(
+            monitoringApi = MonitoringApi(),
+            statsDao = monitoringDatabase.statsDao()
+        )
+
         return try {
             val progressStarting = workDataOf(Progress to 0)
             val progress20 = workDataOf(Progress to 20)
@@ -65,19 +65,26 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) :
             val progress60 = workDataOf(Progress to 60)
             val progress80 = workDataOf(Progress to 80)
             val progressFinished = workDataOf(Progress to 100)
-
             setProgress(progressStarting)
-            userRepository.loadAllUsers()
-            setProgress(progress20)
-            intervieweeRepository.loadAll()
-            setProgress(progress40)
-            questionImageRepository.downloadMetaData()
-            setProgress(progress60)
-            surveyRepository.loadSurveys()
-            setProgress(progress80)
-            questionImageRepository.downloadQuestionImages(applicationContext)
+            //check if there are new data
+            if (statsRepository.dataUpdateAvailable()) {
+                //ok cool there is new data. Let's sync it!
+                userRepository.loadAllUsers()
+                setProgress(progress20)
+                intervieweeRepository.loadAll()
+                setProgress(progress40)
+                questionImageRepository.downloadMetaData()
+                setProgress(progress60)
+                surveyRepository.loadSurveys()
+                setProgress(progress80)
+                questionImageRepository.downloadQuestionImages(applicationContext)
+                setProgress(progressFinished)
+                //taskRepository.downloadTasks() //just offline tasks for now
+                statsRepository.updateLastSyncTime()
+                Result.success()
+            }
+            //Local data is already up to date!
             setProgress(progressFinished)
-            //taskRepository.downloadTasks() //just offline tasks for now
             Result.success()
         } catch (e: Exception) {
             Crashlytics.logException(e)

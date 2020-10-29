@@ -1,10 +1,7 @@
 package de.sodis.monitoring.db.dao
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import de.sodis.monitoring.db.entity.SurveyHeader
 import de.sodis.monitoring.db.response.SurveyHeaderResponse
 
@@ -14,6 +11,9 @@ interface SurveyHeaderDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(surveyHeader: SurveyHeader)
 
+    @Delete
+    fun deleteAll(surveyheader: List<SurveyHeader>)
+
     @Query("SELECT * FROM SurveyHeader")
     fun getAll(): LiveData<List<SurveyHeader>>
 
@@ -22,4 +22,11 @@ interface SurveyHeaderDao {
 
     @Query("SELECT * FROM SurveyHeader WHERE id=:surveyHeaderId")
     fun getByIdSync(surveyHeaderId: Int): SurveyHeaderResponse
+
+    @Query("DELETE FROM SurveyHeader WHERE id not in (:ids)")
+    fun deleteAllExcluded(ids: List<Int>)
+
+
+
+
 }
