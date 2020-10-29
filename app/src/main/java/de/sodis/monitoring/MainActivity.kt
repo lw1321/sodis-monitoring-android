@@ -87,12 +87,6 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 print("progress:$value")
                 showProgressBar(value)
                 if (value == 100) {
-                    //register user on Sodis API
-                    Snackbar.make(
-                        findViewById(R.id.nav_host_fragment),
-                        getString(R.string.registration_successfull),
-                        Snackbar.LENGTH_LONG
-                    ).show()
                     this.hideProgressBar()
                 }
             }

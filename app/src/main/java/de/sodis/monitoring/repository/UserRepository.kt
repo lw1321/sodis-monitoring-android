@@ -21,7 +21,6 @@ class UserRepository(
         // EDGE CASE: - User was deleted on server, should also be deleted here.
         // SOLUTION: - DELETE EVERYTHING (DUMB)
         //  SELECT ALL USERS WHICH ARE NOT IN USERDAO
-        userDao.deleteAll()
         usersList.forEach {
             userDao.insert(it)
         }

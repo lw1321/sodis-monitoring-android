@@ -24,6 +24,6 @@ class StatsRepository(private val monitoringApi: MonitoringApi, private val stat
         //edge case
         //TODO - new data available between last check and now. Solution: save the server modificationDate
         val stats = Stats(id = 0, modificationDate = System.currentTimeMillis())
-        statsDao.update(stat = stats)
+        statsDao.insert(stat = stats)
     }
 }
