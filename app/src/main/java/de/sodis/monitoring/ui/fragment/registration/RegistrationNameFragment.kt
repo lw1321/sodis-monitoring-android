@@ -83,7 +83,6 @@ class RegistrationNameFragment : BaseListFragment() {
                                         Snackbar.LENGTH_LONG
                                     ).show()
                                     (activity as MainActivity).hideProgressBar()
-                                    findNavController().navigate(R.id.mainActivity)
                                 }
                             }
                         })

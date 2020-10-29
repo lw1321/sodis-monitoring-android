@@ -5,14 +5,29 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
+import de.sodis.monitoring.repository.worker.DownloadWorker
+import de.sodis.monitoring.viewmodel.MyViewModelFactory
 import de.sodis.monitoring.viewmodel.RootViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
+
+    private lateinit var bottomNavigation: BottomNavigationView
+    private lateinit var auth: FirebaseAuth
+    private val rootViewModel: RootViewModel by lazy {
+        this.run {
+            ViewModelProviders.of(this, MyViewModelFactory(application, emptyList()))
+                .get(RootViewModel::class.java)
+        }!!
+    }
+
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.dashboard -> {
@@ -23,7 +38,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 findNavController(R.id.nav_host_fragment).navigate(R.id.monitoringOverviewFragment)
                 supportActionBar!!.title = getString(R.string.tab_monitoring)
             }
-            R.id.monitoring_history-> {
+            R.id.monitoring_history -> {
                 findNavController(R.id.nav_host_fragment).navigate(R.id.monitoringHistoryFragment)
                 supportActionBar!!.title = getString(R.string.tab_history)
             }
@@ -35,9 +50,6 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         return true
     }
 
-
-    private lateinit var bottomNavigation: BottomNavigationView
-    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,8 +67,6 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         auth = FirebaseAuth.getInstance()
 
 
-
-
     }
 
 
@@ -67,7 +77,25 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             supportActionBar!!.title = "Registration"
             this.hide_bottom_navigation()
             findNavController(R.id.nav_host_fragment).navigate(R.id.registrationOverviewwFragment)
-          }
+        }
+        rootViewModel.requestData()
+        rootViewModel.workInfoByIdLiveData.observe(this, Observer {
+            if (it != null) {
+                val progress = it.progress
+                val value = progress.getInt(DownloadWorker.Progress, 0)
+                print("progress:$value")
+                showProgressBar(value)
+                if (value == 100) {
+                    //register user on Sodis API
+                    Snackbar.make(
+                        findViewById(R.id.nav_host_fragment),
+                        getString(R.string.registration_successfull),
+                        Snackbar.LENGTH_LONG
+                    ).show()
+                    this.hideProgressBar()
+                }
+            }
+        })
     }
 
 
