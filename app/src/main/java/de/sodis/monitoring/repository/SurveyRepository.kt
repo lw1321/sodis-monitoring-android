@@ -36,6 +36,12 @@ class SurveyRepository(
      * Also load and save the associated images in the internal storage.
      */
     suspend fun loadSurveys() {
+
+        //TODO save the surveyheaderIds, surveySectionIds and questionIds, afterwards delete all other.
+        val headerIds = mutableListOf<Int>()
+        val sectionIds = mutableListOf<Int>()
+        val questionIds = mutableListOf<Int>()
+
         val response = monitoringApi.getSurveys()
                 //loop through surveys
         for (surveyHeaderJson: SurveyHeaderJson in response) {
@@ -58,7 +64,8 @@ class SurveyRepository(
                     technologyId = surveyHeaderJson.technology.id
                 )
             )
-
+            //add to temp lits
+            headerIds.add(surveyHeaderJson.id)
             //loop through sections
             for (surveySectionJson: SurveyHeaderJson.SurveySectionJson in surveyHeaderJson.surveySection) {
                 //save SurveySections
@@ -69,6 +76,9 @@ class SurveyRepository(
                         surveyHeaderId = surveyHeaderJson.id
                     )
                 )
+                //add to temp lits
+                sectionIds.add(surveySectionJson.id)
+
                 //loop through questions
                 for (questionJson: SurveyHeaderJson.SurveySectionJson.QuestionJson in surveySectionJson.questions) {
                     //Save Input Types
@@ -93,6 +103,9 @@ class SurveyRepository(
                             surveySectionId = surveySectionJson.id
                         )
                     )
+                    //add to temp lits
+                    questionIds.add(questionJson.id)
+
                     //Loop through question options
                     for (questionOptionJson: SurveyHeaderJson.SurveySectionJson.QuestionJson.QuestionOptionJson in questionJson.questionOptions) {
                         //check if option choice exist
@@ -116,6 +129,10 @@ class SurveyRepository(
                 }
             }
         }
+        //ok insert done. Now lets delete the outdated data
+        surveyHeaderDao.deleteAllExcluded(headerIds)
+        surveySectionDao.deleteAllExcluded(sectionIds)
+        questionDao.deleteAllExcluded(questionIds)
     }
 
     /**

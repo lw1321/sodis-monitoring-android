@@ -23,4 +23,10 @@ interface SurveyHeaderDao {
     @Query("SELECT * FROM SurveyHeader WHERE id=:surveyHeaderId")
     fun getByIdSync(surveyHeaderId: Int): SurveyHeaderResponse
 
+    @Query("DELETE FROM SurveyHeader WHERE id not in (:ids)")
+    fun deleteAllExcluded(ids: List<Int>)
+
+
+
+
 }

@@ -19,6 +19,7 @@ interface QuestionDao {
     @Query("SELECT * FROM Question JOIN QuestionOption ON QuestionOption.questionId=Question.id WHERE QuestionOption.id=:questionOptionId")
     fun getByQuestionOptionId(questionOptionId: Int): Question
 
-    @Delete
-    fun deletAll(questions: List<Question>)
+    @Query("DELETE FROM Question WHERE id not in (:ids)")
+    fun deleteAllExcluded(ids: List<Int>)
+
 }
