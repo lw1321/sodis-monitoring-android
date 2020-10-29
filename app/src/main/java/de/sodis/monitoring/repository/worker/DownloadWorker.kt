@@ -80,6 +80,7 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) :
                 questionImageRepository.downloadQuestionImages(applicationContext)
                 setProgress(progressFinished)
                 //taskRepository.downloadTasks() //just offline tasks for now
+                statsRepository.updateLastSyncTime()
                 Result.success()
             }
             //Local data is already up to date!
