@@ -13,6 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
+        android:id="@id/surveyOverviewItem_LinearLayout"
         >
 
         <LinearLayout
@@ -27,6 +28,7 @@
                 android:id="@+id/question_overview_question"
                 android:layout_marginBottom="12dp"
                 android:textFontWeight="700"
+                android:textStyle="bold"
                 >
 
             </TextView>
@@ -65,6 +67,14 @@
 
 
     </LinearLayout>
+
+    <View
+        android:layout_marginTop="16dp"
+        android:id="@+id/survey_overview_list_divider"
+        app:layout_constraintTop_toBottomOf="@id/surveyOverviewItem_LinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider" />
 
 
 

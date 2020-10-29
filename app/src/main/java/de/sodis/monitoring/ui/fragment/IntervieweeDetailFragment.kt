@@ -273,10 +273,14 @@ class IntervieweeDetailFragment : BaseListFragment() {
                         name(techno.name)
                         taskName(taskStatus ?: "")
                         onClick { _ ->
-                            if (taskStatus == null) {
+                            if (taskStatus != null) { //todo: zu ungleich null ändern
                                 IntervieweeDetailFragmentDirections.actionIntervieweeDetailFragmentToSurveyFragment(
                                     taskFilteredList.first().surveyHeaderId!!
                                 )
+                            }
+                            else {
+                                val snackbar: Snackbar = Snackbar.make(view!!, "No disponsible", Snackbar.LENGTH_SHORT)
+                                snackbar.show()
                             }
                         }
                         onBind { model, view, position ->

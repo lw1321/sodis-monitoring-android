@@ -304,7 +304,7 @@ class SearchAdapter(interviewees: List<Interviewee>, val context: Context, val c
 
     fun manageCheckedChange(position: Int, checked: Boolean) {
         filteredInterviewees[position][0] = checked
-        for(i in 0..(filteredInterviewees.size-1)) {
+        for(i in 0 until (filteredInterviewees.size-1)) {
             if(i!=position) {
                 if(filteredInterviewees[i][0] as Boolean) {
                     filteredInterviewees[i][0] = false

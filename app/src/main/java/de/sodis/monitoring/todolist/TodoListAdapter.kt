@@ -77,14 +77,24 @@ class TodoListAdapter(@NonNull todoPointS: List<TodoPoint>, @NonNull context: Co
         holder.contentField.text = todoPoints[position].text
         holder.dueField.text = simpleDateFormat.format(todoPoints[position].duedate?.time)
         if(todoPoints[position].family!=null) {
-            holder.familyField.text = intervieweeModel.getByID(todoPoints[position].family!!).name
+            Thread(Runnable {
+                var ts = intervieweeModel.getByID(todoPoints[position].family!!).name
+                holder.familyField.text = ts
+            }).start();
+
+
+
+
         }
         else {
             holder.familyDescriptionField.visibility = GONE
             holder.familyField.visibility = GONE
         }
         if(todoPoints[position].village!=null) {
-            holder.villageField.text = intervieweeModel.getVillageByID(todoPoints[position].village!!).name
+            Thread(Runnable{
+                holder.villageField.text = intervieweeModel.getVillageByID(todoPoints[position].village!!).name
+            }).start()
+
         }else {
             holder.villageDescriptionField.visibility = GONE
             holder.villageField.visibility = GONE
