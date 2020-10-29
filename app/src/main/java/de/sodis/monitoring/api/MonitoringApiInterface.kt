@@ -1,6 +1,7 @@
 package de.sodis.monitoring.api
 
 import de.sodis.monitoring.api.model.*
+import de.sodis.monitoring.db.entity.Stats
 import de.sodis.monitoring.db.entity.User
 import retrofit2.http.*
 
@@ -38,4 +39,7 @@ interface MonitoringApiInterface {
     suspend fun postCompletedSurveys(@Body completedSurveyJson: List<CompletedSurveyJson>): List<CompletedSurveyJson>
     @GET("question-images")
     suspend fun getAllQuestionImages(): List<SurveyHeaderJson.SurveySectionJson.QuestionJson.QuestionImageJson>
+
+    @GET("stats")
+    suspend fun getStats(): Stats
 }

@@ -12,6 +12,7 @@ import androidx.room.PrimaryKey
             childColumns = arrayOf("intervieweeId")
         ),
         ForeignKey(
+            onDelete = ForeignKey.SET_NULL,
             entity = SurveyHeader::class,
             parentColumns = arrayOf("id"),
             childColumns = arrayOf("surveyHeaderId")

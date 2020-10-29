@@ -37,11 +37,11 @@ class SurveyRepository(
      */
     suspend fun loadSurveys() {
         val response = monitoringApi.getSurveys()
-
-        //loop through surveys
+                //loop through surveys
         for (surveyHeaderJson: SurveyHeaderJson in response) {
             //save survey Header
             //Save Input Types
+
             if (technologyDao.count(surveyHeaderJson.technology.id) == 0) {
                 //save input type
                 technologyDao.insert(

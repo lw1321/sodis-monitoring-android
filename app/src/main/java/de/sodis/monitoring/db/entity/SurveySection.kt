@@ -7,7 +7,8 @@ import androidx.room.PrimaryKey
 @Entity(foreignKeys = [ForeignKey(
     entity = SurveyHeader::class,
     parentColumns = arrayOf("id"),
-    childColumns = arrayOf("surveyHeaderId")
+    childColumns = arrayOf("surveyHeaderId"),
+    onDelete = ForeignKey.CASCADE
 )])
 data class SurveySection(
     @PrimaryKey val id: Int,

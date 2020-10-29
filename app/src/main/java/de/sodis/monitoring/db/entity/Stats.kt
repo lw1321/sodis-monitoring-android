@@ -7,5 +7,5 @@ import androidx.room.PrimaryKey
 data class Stats(
     @PrimaryKey
     val id: Int,
-    val modificationDate: Long
+    var modificationDate: Long
 )

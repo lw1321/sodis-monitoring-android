@@ -17,6 +17,6 @@ data class Answer(
     @PrimaryKey(autoGenerate = true) val id: Int?,
     val answerText: String?,
     val answerYn: Boolean?,
-    val questionOptionId: Int,
+    val questionOptionId: Int,//TODO ADD FK!!
     var completedSurveyId: Int?
 )

@@ -10,7 +10,7 @@ import de.sodis.monitoring.repository.QuestionRepository
 
 class UploadWorker(appContext: Context, workerParams: WorkerParameters) :
     CoroutineWorker(appContext, workerParams) {
-
+    //TODO upload new user data
     override suspend fun doWork(): Result {
         val questionRepository = QuestionRepository(
             questionDao = MonitoringDatabase.getDatabase(applicationContext).questionDao(),

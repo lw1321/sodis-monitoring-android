@@ -1,10 +1,7 @@
 package de.sodis.monitoring.db.dao
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import de.sodis.monitoring.db.entity.Question
 
 @Dao
@@ -21,4 +18,7 @@ interface QuestionDao {
 
     @Query("SELECT * FROM Question JOIN QuestionOption ON QuestionOption.questionId=Question.id WHERE QuestionOption.id=:questionOptionId")
     fun getByQuestionOptionId(questionOptionId: Int): Question
+
+    @Delete
+    fun deletAll(questions: List<Question>)
 }
