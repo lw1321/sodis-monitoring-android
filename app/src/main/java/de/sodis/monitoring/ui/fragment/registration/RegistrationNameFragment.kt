@@ -1,9 +1,11 @@
 package de.sodis.monitoring.ui.fragment.registration
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.core.view.isGone
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -56,7 +58,6 @@ class RegistrationNameFragment : BaseListFragment() {
             registerName {
                 id("registration")
                 onClick { _ ->
-                    val user = auth.currentUser
                     val lastName = view!!.registration_second_name.text
                     val firstName = view.registration_name.text
                     if (lastName.isEmpty() || firstName.isEmpty()) {
@@ -65,29 +66,26 @@ class RegistrationNameFragment : BaseListFragment() {
                             getString(R.string.name_empty_message),
                             Snackbar.LENGTH_LONG
                         ).show()
-                    } else {
-                        val type = if (user!!.isAnonymous) 0 else 1
-                        registerViewModel.register(firstName.toString(), lastName.toString(), type)
-                        rootViewModel.requestData()
-                        rootViewModel.workInfoByIdLiveData.observe(viewLifecycleOwner, Observer {
-                            if(it != null){
-                                val progress = it.progress
-                                val value = progress.getInt(DownloadWorker.Progress, 0)
-                                print("progress:$value")
-                                (activity as MainActivity).showProgressBar(value)
-                                if(value == 100){
-                                    //register user on Sodis API
-                                    Snackbar.make(
-                                        view!!,
-                                        getString(R.string.registration_successfull),
-                                        Snackbar.LENGTH_LONG
-                                    ).show()
-                                    (activity as MainActivity).hideProgressBar()
-                                }
+                    } else if (auth.currentUser == null) {
+                        //create anonymous user
+                        auth.signInAnonymously().addOnCompleteListener(activity!!) { task ->
+                            if (task.isSuccessful) {
+                                // Sign in success, update UI with the signed-in user's information
+                                registerViewModel.register(firstName.toString(), lastName.toString(), 0)
+                                findNavController().navigate(R.id.mainActivity)
+                            } else {
+                                // If sign in fails, display a message to the user.
+                                Log.w("E", "signInAnonymously:failure", task.exception)
+                                Toast.makeText(
+                                    activity!!.baseContext, "Authentication failed.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
-                        })
-
-
+                        }
+                    } else{
+                        //firebase type 1 user
+                        registerViewModel.register(firstName.toString(), lastName.toString(), 1)
+                        findNavController().navigate(R.id.mainActivity)
                     }
                 }
             }
