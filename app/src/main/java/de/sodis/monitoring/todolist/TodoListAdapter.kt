@@ -1,5 +1,7 @@
 package de.sodis.monitoring.todolist
 
+
+import android.app.Activity
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.RadioButton
 import androidx.annotation.NonNull
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import de.sodis.monitoring.R
 import de.sodis.monitoring.db.entity.TodoPoint
@@ -18,7 +21,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.concurrent.thread
 
-class TodoListAdapter(@NonNull todoPointS: List<TodoPoint>, @NonNull context: Context?, @NonNull todoPointModel: TodoPointModel, val intervieweeModel: IntervieweeModel): RecyclerView.Adapter<TodoListViewHolder>() {
+class TodoListAdapter(val activity: Activity, @NonNull todoPointS: List<TodoPoint>, @NonNull context: Context?, @NonNull todoPointModel: TodoPointModel, val intervieweeModel: IntervieweeModel): RecyclerView.Adapter<TodoListViewHolder>() {
     var context: Context?
     var todoPoints: List<TodoPoint>
     val todoPointModel: TodoPointModel
@@ -79,7 +82,9 @@ class TodoListAdapter(@NonNull todoPointS: List<TodoPoint>, @NonNull context: Co
         if(todoPoints[position].family!=null) {
             Thread(Runnable {
                 var ts = intervieweeModel.getByID(todoPoints[position].family!!).name
-                holder.familyField.text = ts
+                activity.runOnUiThread(Runnable {
+                    holder.familyField.text = ts
+                })
             }).start();
 
 
@@ -92,7 +97,11 @@ class TodoListAdapter(@NonNull todoPointS: List<TodoPoint>, @NonNull context: Co
         }
         if(todoPoints[position].village!=null) {
             Thread(Runnable{
-                holder.villageField.text = intervieweeModel.getVillageByID(todoPoints[position].village!!).name
+                val ts = intervieweeModel.getVillageByID(todoPoints[position].village!!).name
+                activity.runOnUiThread(Runnable {
+                    holder.villageField.text = ts
+                })
+
             }).start()
 
         }else {

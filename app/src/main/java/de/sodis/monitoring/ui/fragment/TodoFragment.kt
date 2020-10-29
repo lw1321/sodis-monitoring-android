@@ -131,7 +131,7 @@ class TodoPointFragment: Fragment(
                 )
             }
         }
-        this.todoListAdapter = TodoListAdapter(todoPoints, context, todoPointModel, intervieweeModel)
+        this.todoListAdapter = TodoListAdapter(activity!!, todoPoints, context, todoPointModel, intervieweeModel)
         this.recyclerView.adapter = this.todoListAdapter
         todoPointModel.undoneTodoPointsByDueDate.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             todoListAdapter.setDataSet(it)

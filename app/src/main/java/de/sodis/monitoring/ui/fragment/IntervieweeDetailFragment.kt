@@ -273,7 +273,7 @@ class IntervieweeDetailFragment : BaseListFragment() {
                         name(techno.name)
                         taskName(taskStatus ?: "")
                         onClick { _ ->
-                            if (taskStatus != null) { //todo: zu ungleich null ändern
+                            if (taskStatus != null) {
                                 IntervieweeDetailFragmentDirections.actionIntervieweeDetailFragmentToSurveyFragment(
                                     taskFilteredList.first().surveyHeaderId!!
                                 )
