@@ -1,21 +1,24 @@
 package de.sodis.monitoring
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import de.sodis.monitoring.repository.worker.DownloadWorker
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
 import de.sodis.monitoring.viewmodel.RootViewModel
 import kotlinx.android.synthetic.main.activity_main.*
+
 
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
 
@@ -72,6 +75,21 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
     override fun onStart() {
         super.onStart()
+        //TODO check and request user permission for fine location if not already granted
+        if (ContextCompat.checkSelfPermission(
+                application.applicationContext,
+                Manifest.permission.ACCESS_FINE_LOCATION
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            //permission granted
+            ActivityCompat.requestPermissions(
+                this@MainActivity, arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ), 0
+            )
+        }
+
+        //Registration/Login Process if no user//TODO test offline
         if (auth.currentUser == null) {
             //todo store token, store name?!
             supportActionBar!!.title = "Registration"
@@ -91,6 +109,36 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 }
             }
         })
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>, grantResults: IntArray
+    ) {
+        when (requestCode) {
+            0 -> {//access fine location
+                // If request is cancelled, the result arrays are empty.
+                if ((grantResults.isNotEmpty() &&
+                            grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                ) {
+                    // Permission is granted. Continue the action or workflow
+                    // in your app.
+                } else {
+                    // Explain to the user that the feature is unavailable because
+                    // the features requires a permission that the user has denied.
+                    // At the same time, respect the user's decision. Don't link to
+                    // system settings in an effort to convince the user to change
+                    // their decision.
+                }
+                return
+            }
+
+            // Add other 'when' lines to check for other
+            // permissions this app might request.
+            else -> {
+                // Ignore all other requests.
+            }
+        }
     }
 
 

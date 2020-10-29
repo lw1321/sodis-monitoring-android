@@ -79,16 +79,21 @@ class QuestionRepository(
                 answers = answers,
                 interviewee = CompletedSurveyJson.Interviewee(id = it.id),
                 creationDate = it.timeStamp,
-                surveyHeader = CompletedSurveyJson.SurveyHeader(it.surveyHeaderId)
+                surveyHeader = CompletedSurveyJson.SurveyHeader(it.surveyHeaderId),
+                latitude = it.latitude,
+                longitude = it.longitude!!
             )
             // 4. add the combined completed survey to a temp list
             tempCompletedSurveysList.add(completedSurveyJson);
         }
-        // 5. send temp list as body to POST completed-surveys
-        //todo "mapping" local and server ids
-        val postCompletedSurveys = monitoringApi.postCompletedSurveys(tempCompletedSurveysList)
-        // 6. If successfull set submitted to true for all completed surveys.
-        completedSurveyDao.setSubmitted(completedSurveys.map { completedSurvey -> completedSurvey.id!! })
+        if (tempCompletedSurveysList.size != 0) {
+            // 5. send temp list as body to POST completed-surveys
+            //todo "mapping" local and server ids
+            val postCompletedSurveys = monitoringApi.postCompletedSurveys(tempCompletedSurveysList)
+            // 6. If successfull set submitted to true for all completed surveys.
+            completedSurveyDao.setSubmitted(completedSurveys.map { completedSurvey -> completedSurvey.id!! })
+        }
+
     }
 }
 

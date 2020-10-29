@@ -4,7 +4,9 @@ data class CompletedSurveyJson(
     val answers: List<Answer>,
     val creationDate: String,
     val interviewee: Interviewee,
-    val surveyHeader: SurveyHeader
+    val surveyHeader: SurveyHeader,
+    val latitude: Double?,
+    val longitude: Double?
 ) {
     data class Answer(
         val answerYn: Boolean?,

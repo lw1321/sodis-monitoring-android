@@ -110,6 +110,11 @@ dependencies {
     // Testing Navigation
     androidTestImplementation "androidx.navigation:navigation-testing:$nav_version"
 
+    //location
+    //play-services
+    implementation 'com.google.android.gms:play-services-location:16.0.0'
+
+
 }
 
 
