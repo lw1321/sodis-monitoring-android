@@ -23,8 +23,8 @@ class SurveyHistoryViewModel(application: Application) : AndroidViewModel(applic
     var surveyHistoryList: LiveData<List<CompletedSurveyOverview>>
     var surveyCompletedList: MutableLiveData<List<CompletedSurveyDetail>>
 
-    private val monitoringDatabase = MonitoringDatabase.getDatabase(application.applicationContext)
-    private val surveyHistoryRepository =
+    val monitoringDatabase = MonitoringDatabase.getDatabase(application.applicationContext)
+    val surveyHistoryRepository =
         SurveyHistoryRepository(
             completedSurveyDao = monitoringDatabase.completedSurveyDao(),
             surveyHeaderDao = monitoringDatabase.surveyHeaderDao(),

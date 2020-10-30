@@ -18,13 +18,18 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import coil.api.load
 import de.sodis.monitoring.MainActivity
 import de.sodis.monitoring.R
+import de.sodis.monitoring.db.dao.QuestionImageDao
+import de.sodis.monitoring.db.dao.QuestionImageDao_Impl
 import de.sodis.monitoring.db.entity.Answer
 import de.sodis.monitoring.db.entity.Question
+import de.sodis.monitoring.db.entity.QuestionImage
 import de.sodis.monitoring.db.response.CompletedSurveyDetail
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
 import de.sodis.monitoring.viewmodel.SurveyHistoryViewModel
+import java.io.File
 
 
 class SurveyOverviewFragment: Fragment() {
@@ -47,6 +52,8 @@ class SurveyOverviewFragment: Fragment() {
 
     lateinit var surveyOverviewAdapter: SurveyOverviewAdapter
 
+    lateinit var imageDao: QuestionImageDao
+
 
 
 
@@ -59,12 +66,10 @@ class SurveyOverviewFragment: Fragment() {
         }*/
 
         completedSurveyID = args.completedSurveyID
-
+        imageDao = surveyHistoryView.monitoringDatabase.questionImageDao()
 
 
         surveyHistoryView.setCompletedSurveyId(completedSurveyId = this.completedSurveyID)
-
-        print(message = "surveyhistoryViewNummer vor init: " + completedSurveyID.toString())
 
     }
 
@@ -102,7 +107,8 @@ class SurveyOverviewFragment: Fragment() {
         surveyOverviewAdapter =
             SurveyOverviewAdapter(
                 context,
-                questionList!!
+                questionList!!,
+                imageDao
             )
 
         recyclerView.adapter = surveyOverviewAdapter
@@ -119,7 +125,7 @@ class SurveyOverviewFragment: Fragment() {
     }
 }
 
-class SurveyOverviewAdapter(@NonNull context: Context?, questions: List<CompletedSurveyDetail>): RecyclerView.Adapter<SurveyOverviewViewHolder>() {
+class SurveyOverviewAdapter(@NonNull context: Context?, questions: List<CompletedSurveyDetail>, val imageDao: QuestionImageDao): RecyclerView.Adapter<SurveyOverviewViewHolder>() {
 
 
 
@@ -151,10 +157,16 @@ class SurveyOverviewAdapter(@NonNull context: Context?, questions: List<Complete
     }
 
     override fun onBindViewHolder(holder: SurveyOverviewViewHolder, position: Int) {
-        var question: Question = questions[position].question
+        val question: Question = questions[position].question
         holder.questionTextView.text = question.questionName
-        holder.imageView.visibility = View.GONE
 
+        val questionImage: QuestionImage = imageDao.getById(question.questionImageId)
+        if(questionImage == null) {
+            holder.imageView.visibility = View.GONE
+        }
+        else {
+            holder.imageView.load(File(questionImage.path))
+        }
 
         /*try {
             holder.imageView.setImageResource(question.questionImageId)
@@ -163,7 +175,7 @@ class SurveyOverviewAdapter(@NonNull context: Context?, questions: List<Complete
         }*/
 
 
-        var answer: Answer = questions[position].answer
+        val answer: Answer = questions[position].answer
         if(answer.answerText!=null) {
             holder.answerTextView.text = answer.answerText
             if(answer.answerText == "Si") {
