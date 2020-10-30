@@ -23,6 +23,6 @@ data class IntervieweeTechnology(
     @PrimaryKey val id: Int,
     val intervieweeId: Int,
     val technologyId: Int,
-    val stateTechnology: Int,
-    val stateKnowledge: Int
+    var stateTechnology: Int,
+    var stateKnowledge: Int
 )

@@ -155,4 +155,8 @@ class IntervieweeRepository(
 
     }
 
+    fun getTechnologies(intervieweeId: Int): LiveData<List<IntervieweeTechnology>> {
+        return intervieweeTechnologyDao.getByIntervieweeLive(intervieweeId)
+    }
+
 }

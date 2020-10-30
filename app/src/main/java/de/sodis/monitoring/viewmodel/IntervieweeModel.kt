@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import de.sodis.monitoring.api.MonitoringApi
 import de.sodis.monitoring.db.MonitoringDatabase
 import de.sodis.monitoring.db.entity.Interviewee
+import de.sodis.monitoring.db.entity.IntervieweeTechnology
 import de.sodis.monitoring.db.entity.Sector
 import de.sodis.monitoring.db.entity.Village
 import de.sodis.monitoring.db.response.IntervieweeDetail
@@ -21,7 +22,7 @@ class IntervieweeModel(application: Application) : AndroidViewModel(application)
     var intervieweeList: LiveData<List<Interviewee>>
     var villageList: LiveData<List<Village>>
     var intervieweeDetail: MutableLiveData<IntervieweeDetail>
-
+    lateinit var technologyList: LiveData<List<IntervieweeTechnology>>
     var modiefied: Boolean = false
 
     private val monitoringDatabase = MonitoringDatabase.getDatabase(application.applicationContext)
@@ -49,7 +50,7 @@ class IntervieweeModel(application: Application) : AndroidViewModel(application)
 
     fun setInterviewee(intervieweeId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            intervieweeDetail.postValue(intervieweeRepository.getById(intervieweeId))
+            intervieweeDetail.postValue(intervieweeRepository.getById(intervieweeId = intervieweeId))
         }
     }
 

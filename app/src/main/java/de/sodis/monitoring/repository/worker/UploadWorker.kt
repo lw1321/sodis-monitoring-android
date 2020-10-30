@@ -14,12 +14,19 @@ class UploadWorker(appContext: Context, workerParams: WorkerParameters) :
     override suspend fun doWork(): Result {
         val questionRepository = QuestionRepository(
             questionDao = MonitoringDatabase.getDatabase(applicationContext).questionDao(),
-            questionOptionDao = MonitoringDatabase.getDatabase(applicationContext).questionOptionDao(),
-            questionImageDao = MonitoringDatabase.getDatabase(applicationContext).questionImageDao(),
+            questionOptionDao = MonitoringDatabase.getDatabase(applicationContext)
+                .questionOptionDao(),
+            questionImageDao = MonitoringDatabase.getDatabase(applicationContext)
+                .questionImageDao(),
             answerDao = MonitoringDatabase.getDatabase(applicationContext).answerDao(),
             optionChoiceDao = MonitoringDatabase.getDatabase(applicationContext).optionChoiceDao(),
-            completedSurveyDao = MonitoringDatabase.getDatabase(applicationContext).completedSurveyDao(),
-            monitoringApi = MonitoringApi()
+            completedSurveyDao = MonitoringDatabase.getDatabase(applicationContext)
+                .completedSurveyDao(),
+            monitoringApi = MonitoringApi(),
+            intervieweeTechnologyDao = MonitoringDatabase.getDatabase(applicationContext.applicationContext)
+                .intervieweeTechnologyDao(),
+            surveyHeaderDao = MonitoringDatabase.getDatabase(applicationContext.applicationContext)
+                .surveyHeaderDao()
         )
         return try {
             questionRepository.uploadQuestions()

@@ -93,7 +93,11 @@ class SurveyViewModel(
                 .optionChoiceDao(),
             completedSurveyDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
                 .completedSurveyDao(),
-            monitoringApi = MonitoringApi()
+            monitoringApi = MonitoringApi(),
+            intervieweeTechnologyDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
+                .intervieweeTechnologyDao(),
+            surveyHeaderDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
+                .surveyHeaderDao()
         )
 
     /**

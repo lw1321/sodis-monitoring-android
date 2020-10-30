@@ -101,7 +101,6 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
                     val answerToCheck: Answer =
                         surveyViewModel.answerToID(currentQuestion.question.id)!!
                     println("beantwortet")
-
                     if (currentQuestion.question.inputTypeId == 2 && (currentQuestion.question.questionName == "Solución" || currentQuestion.question.questionName == "solucion")) { //todo: anpassen wenn yes/no question geändert
                         val dialog = TodoDialog(
                             surveyViewModel.interviewee,
@@ -109,17 +108,17 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
                             context!!,
                             this
                         )
-
                         println("Dialog wird jetzt gezeigt")
                         dialog.show(childFragmentManager, "todo_in_survey")
-
-
                     } else {
                         surveyViewModel.listOfAnsweredQuestions += surveyViewModel.currentPosition
                         val hasNext = surveyViewModel.nextQuestion()
                         if (hasNext) {
                             val action =
-                                QuestionFragmentDirections.actionQuestionFragmentSelf(surveyId, intervieweeId = args.intervieweeId)
+                                QuestionFragmentDirections.actionQuestionFragmentSelf(
+                                    surveyId,
+                                    intervieweeId = args.intervieweeId
+                                )
                             findNavController().navigate(action)
                         } else {
                             Snackbar.make(
@@ -128,7 +127,10 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
                                 Snackbar.LENGTH_LONG
                             ).show()
                             (activity as MainActivity).show_bottom_navigation()
-                            val action = QuestionFragmentDirections.actionQuestionFragmentToIntervieweeDetailFragment(intervieweeId = args.intervieweeId)
+                            val action =
+                                QuestionFragmentDirections.actionQuestionFragmentToIntervieweeDetailFragment(
+                                    intervieweeId = args.intervieweeId
+                                )
                             findNavController().navigate(action)
                         }
                     }
@@ -148,7 +150,10 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
             view?.navigation_forward_button_left?.setOnClickListener {
                 if (surveyViewModel.currentPosition != 0) {
                     surveyViewModel.previousQuestion()
-                    val action = QuestionFragmentDirections.actionQuestionFragmentSelf(surveyId, intervieweeId = args.intervieweeId)
+                    val action = QuestionFragmentDirections.actionQuestionFragmentSelf(
+                        surveyId,
+                        intervieweeId = args.intervieweeId
+                    )
                     findNavController().navigate(action)
                 }
             }
@@ -161,7 +166,10 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
         surveyViewModel.listOfAnsweredQuestions += surveyViewModel.currentPosition
         val hasNext = surveyViewModel.nextQuestion()
         if (hasNext) {
-            val action = QuestionFragmentDirections.actionQuestionFragmentSelf(surveyId, intervieweeId = args.intervieweeId)
+            val action = QuestionFragmentDirections.actionQuestionFragmentSelf(
+                surveyId,
+                intervieweeId = args.intervieweeId
+            )
             findNavController().navigate(action)
         } else {
             Snackbar.make(
