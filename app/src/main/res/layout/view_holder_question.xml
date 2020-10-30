@@ -39,12 +39,11 @@
             android:minHeight="200dp"
             android:maxHeight="300dp"
             android:layout_marginTop="16dp"
-            android:scaleType="center"
             android:adjustViewBounds="true"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/question_header"
-            tools:srcCompat="@android:drawable/sym_def_app_icon" />
+            tools:srcCompat="@android:drawable/gallery_thumb" />
 
         <TextView
             android:layout_width="match_parent"

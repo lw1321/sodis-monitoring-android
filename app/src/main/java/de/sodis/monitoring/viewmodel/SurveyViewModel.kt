@@ -213,6 +213,7 @@ class SurveyViewModel(
                     longitude = longitude
                 )
             )
+
             answerMap.clear()
             interviewee = null
         }

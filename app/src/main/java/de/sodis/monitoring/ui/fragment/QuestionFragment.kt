@@ -42,6 +42,7 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         surveyId = args.surveyId
+        surveyViewModel.setSurveyId(surveyId)
         if (surveyViewModel.interviewee == null) {
             surveyViewModel.setInterviewee(args.intervieweeId)
         }
