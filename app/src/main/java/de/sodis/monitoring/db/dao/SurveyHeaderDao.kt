@@ -17,6 +17,9 @@ interface SurveyHeaderDao {
     @Query("SELECT * FROM SurveyHeader")
     fun getAll(): LiveData<List<SurveyHeader>>
 
+    @Query("SELECT * FROM SurveyHeader WHERE technologyId=:technologyId")
+    fun getAllFilteredTechnology(technologyId: Int): LiveData<List<SurveyHeader>>
+
     @Query("SELECT * FROM SurveyHeader WHERE id=:surveyHeaderId")
     fun getById(surveyHeaderId: Int): LiveData<SurveyHeaderResponse>
 
@@ -25,8 +28,6 @@ interface SurveyHeaderDao {
 
     @Query("DELETE FROM SurveyHeader WHERE id not in (:ids)")
     fun deleteAllExcluded(ids: List<Int>)
-
-
 
 
 }

@@ -18,6 +18,7 @@ import androidx.core.view.isGone
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
 import de.sodis.monitoring.*
@@ -273,15 +274,13 @@ class IntervieweeDetailFragment : BaseListFragment() {
                         name(techno.name)
                         taskName(taskStatus ?: "")
                         onClick { _ ->
-                            if (taskStatus != null) {
-                                IntervieweeDetailFragmentDirections.actionIntervieweeDetailFragmentToSurveyFragment(
-                                    taskFilteredList.first().surveyHeaderId!!
+                            //show surveys for the corresponding technoology
+                            val action =
+                                IntervieweeDetailFragmentDirections.actionIntervieweeDetailFragmentToMonitoringOverviewFragment(
+                                    intervieweeId = intervieweeId,
+                                    technologyId = techno.technologyId
                                 )
-                            }
-                            else {
-                                val snackbar: Snackbar = Snackbar.make(view!!, "No disponsible", Snackbar.LENGTH_SHORT)
-                                snackbar.show()
-                            }
+                            findNavController().navigate(action)
                         }
                         onBind { model, view, position ->
                             //TODO ist die Zuweisung der Farben richtig?

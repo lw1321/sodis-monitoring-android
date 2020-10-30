@@ -146,11 +146,8 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         //only allow back press for convenience only on interviewee
         val currFragmentId = findNavController(R.id.nav_host_fragment).currentDestination!!.id
         //TODO REFACTORING
-        if (currFragmentId == R.id.intervieweeDetailFragment || currFragmentId == R.id.surveyFragment || currFragmentId == R.id.loginEmailPassword || currFragmentId == R.id.registrationEmailPasswordFragment || currFragmentId == R.id.registrationNameFragment) {
+        if (currFragmentId == R.id.intervieweeDetailFragment  || currFragmentId == R.id.loginEmailPassword || currFragmentId == R.id.registrationEmailPasswordFragment || currFragmentId == R.id.registrationNameFragment || currFragmentId == R.id.monitoringHistoryFragment) {
             super.onBackPressed()
-        }
-        if (currFragmentId == R.id.surveyFragment) {
-            this.show_bottom_navigation()
         }
     }
 }

@@ -141,6 +141,13 @@ class SurveyRepository(
     fun getSurveyHeaders(): LiveData<List<SurveyHeader>> {
         return surveyHeaderDao.getAll()
     }
+    /**
+     * Provide a list of all in database stored survey headers.
+     */
+    fun getSurveyHeadersFilteredTechnology(technologyId: Int): LiveData<List<SurveyHeader>> {
+        return surveyHeaderDao.getAllFilteredTechnology(technologyId)
+    }
+
 
 
 }

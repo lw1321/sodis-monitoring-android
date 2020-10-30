@@ -33,7 +33,7 @@ import java.sql.Timestamp
 
 class SurveyViewModel(
     private val mApplication: Application,
-    surveyId: Int
+    surveyId: Int//TODO use args
 ) : AndroidViewModel(mApplication) {
 
     /**
@@ -44,11 +44,6 @@ class SurveyViewModel(
      * Selected interviewee
      */
     var interviewee: Interviewee? = null
-
-    /**
-     * List of all interviewee
-     */
-    lateinit var intervieweeList: LiveData<List<Interviewee>>
 
     /**
      * Repository for interviewee actions
@@ -121,7 +116,6 @@ class SurveyViewModel(
     }
 
     private fun createQuestionList(surveyId: Int) {
-        intervieweeList = intervieweeRepository.getAll()
         surveyHeader = surveyHeaderRepository.getSurveyById(surveyId)
 
         viewModelScope.launch(Dispatchers.Main) {
@@ -139,8 +133,10 @@ class SurveyViewModel(
         }
     }
 
-    fun setInterviewee(text: String) {
-        interviewee = intervieweeList.value!!.first { interviewee -> interviewee.name == text }
+    fun setInterviewee(id: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            interviewee = intervieweeRepository.getIntervieweeByID(id)
+        }
     }
 
     fun setAnswer(id: Int, answer: String, optionChoiceId: Int) {
@@ -205,8 +201,7 @@ class SurveyViewModel(
         return true
     }
 
-    private fun saveSurvey(latitude: Double? = null, longitude: Double? = null)
-    {
+    private fun saveSurvey(latitude: Double? = null, longitude: Double? = null) {
         viewModelScope.launch(Dispatchers.IO) {
             questionRepository.saveQuestions(
                 answerMap,
@@ -242,7 +237,7 @@ class SurveyViewModel(
         return false
     }
 
-    fun answerToID(id: Int):Answer? {
+    fun answerToID(id: Int): Answer? {
         return answerMap[id];
     }
 }

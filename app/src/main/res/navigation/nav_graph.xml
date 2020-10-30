@@ -8,7 +8,7 @@
     <fragment
         android:id="@+id/intervieweeOverviewFragment"
         android:name="de.sodis.monitoring.ui.fragment.IntervieweeOverviewFragment"
-        android:label="IntervieweeOverviewFragment" >
+        android:label="IntervieweeOverviewFragment">
         <action
             android:id="@+id/action_intervieweeOverviewFragment_to_intervieweeDetailFragment"
             app:destination="@id/intervieweeDetailFragment" />
@@ -20,31 +20,31 @@
         android:label="SurveyOverviewFragment">
         <argument
             android:name="completedSurveyID"
-            app:argType="integer"
-            android:defaultValue="0" />
+            android:defaultValue="0"
+            app:argType="integer" />
 
     </fragment>
 
     <fragment
-            android:id="@+id/loginEmailPassword"
-            android:name="de.sodis.monitoring.ui.fragment.registration.LoginEmailPasswordFragment"
-            android:label="LoginEmailPasswordFragment" >
+        android:id="@+id/loginEmailPassword"
+        android:name="de.sodis.monitoring.ui.fragment.registration.LoginEmailPasswordFragment"
+        android:label="LoginEmailPasswordFragment">
         <action
-                android:id="@+id/toLoginEmailPassword"
-                app:destination="@id/loginEmailPassword" />
+            android:id="@+id/toLoginEmailPassword"
+            app:destination="@id/loginEmailPassword" />
     </fragment>
 
     <fragment
         android:id="@+id/intervieweeDetailFragment"
         android:name="de.sodis.monitoring.ui.fragment.IntervieweeDetailFragment"
-        android:label="IntervieweeDetailFragment" >
+        android:label="IntervieweeDetailFragment">
         <argument
             android:name="intervieweeId"
-            app:argType="integer"
-            android:defaultValue="0" />
+            android:defaultValue="0"
+            app:argType="integer" />
         <action
-            android:id="@+id/action_intervieweeDetailFragment_to_surveyFragment"
-            app:destination="@id/surveyFragment" />
+            android:id="@+id/action_intervieweeDetailFragment_to_monitoringOverviewFragment"
+            app:destination="@id/monitoringOverviewFragment" />
     </fragment>
     <activity
         android:id="@+id/mainActivity"
@@ -54,7 +54,7 @@
     <fragment
         android:id="@+id/registrationOverviewwFragment"
         android:name="de.sodis.monitoring.ui.fragment.registration.RegistrationOverviewFragment"
-        android:label="RegistrationOverviewFragment" >
+        android:label="RegistrationOverviewFragment">
 
         <action
             android:id="@+id/action_registrationOverviewwFragment_to_registrationEmailPasswordFragment"
@@ -66,7 +66,7 @@
     <fragment
         android:id="@+id/registrationEmailPasswordFragment"
         android:name="de.sodis.monitoring.ui.fragment.registration.RegistrationEmailPasswordFragment"
-        android:label="RegistrationEmailPasswordFragment" >
+        android:label="RegistrationEmailPasswordFragment">
 
         <action
             android:id="@+id/action_registrationEmailPasswordFragment_to_registrationName"
@@ -75,40 +75,30 @@
     <fragment
         android:id="@+id/registrationNameFragment"
         android:name="de.sodis.monitoring.ui.fragment.registration.RegistrationNameFragment"
-        android:label="RegistrationNameFragment" >
+        android:label="RegistrationNameFragment">
         <action
             android:id="@+id/action_registrationNameFragment_to_mainActivity"
             app:destination="@id/mainActivity" />
     </fragment>
     <fragment
-        android:id="@+id/taskOverviewFragment"
-        android:name="de.sodis.monitoring.ui.fragment.TaskOverviewFragment"
-        android:label="TaskOverviewFragment" >
-        <action
-            android:id="@+id/action_taskOverviewFragment_to_surveyFragment"
-            app:destination="@id/surveyFragment" />
-    </fragment>
-    <fragment
         android:id="@+id/monitoringHistoryFragment"
         android:name="de.sodis.monitoring.ui.fragment.SurveyHistoryFragment"
-        android:label="MonitoringHistoryFragment" >
+        android:label="MonitoringHistoryFragment">
         <action
             android:id="@+id/action_monitoringHistoryFragment_to_questionFragment"
             app:destination="@id/questionHistoryFragment" />
         <action
             android:id="@+id/action_monitoringHistoryFragment_to_SurveyOverview"
-            app:destination="@+id/surveyOverviewFragment"
-            />
+            app:destination="@+id/surveyOverviewFragment" />
     </fragment>
     <fragment
-            android:id="@+id/todoFragment"
-            android:name="de.sodis.monitoring.ui.fragment.TodoPointFragment"
-            android:label="TodoPointFragment" >
-    </fragment>
+        android:id="@+id/todoFragment"
+        android:name="de.sodis.monitoring.ui.fragment.TodoPointFragment"
+        android:label="TodoPointFragment"></fragment>
     <fragment
         android:id="@+id/questionHistoryFragment"
         android:name="de.sodis.monitoring.ui.fragment.QuestionHistoryFragment"
-        android:label="questionHistoryFragment" >
+        android:label="questionHistoryFragment">
         <argument
             android:name="completedSurveyId"
             app:argType="integer" />
@@ -119,31 +109,33 @@
     <fragment
         android:id="@+id/monitoringOverviewFragment"
         android:name="de.sodis.monitoring.ui.fragment.MonitoringOverviewFragment"
-        android:label="MonitoringOverviewFragment" >
+        android:label="MonitoringOverviewFragment">
+
+        <argument
+            android:name="technologyId"
+            android:defaultValue="0"
+            app:argType="integer" />
+        <argument
+            android:name="intervieweeId"
+            android:defaultValue="0"
+            app:argType="integer" />
         <action
-            android:id="@+id/action_monitoringOverviewFragment_to_surveyFragment"
-            app:destination="@id/surveyFragment" />
+            android:id="@+id/action_monitoringOverviewFragment_to_questionFragment"
+            app:destination="@id/questionFragment" />
     </fragment>
     <fragment
         android:id="@+id/questionFragment"
         android:name="de.sodis.monitoring.ui.fragment.QuestionFragment"
-        android:label="QuestionFragment" >
+        android:label="QuestionFragment">
         <argument
             android:name="surveyId"
             app:argType="integer" />
         <action
             android:id="@+id/action_questionFragment_self"
             app:destination="@id/questionFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/surveyFragment"
-        android:name="de.sodis.monitoring.ui.fragment.SurveyFragment"
-        android:label="SurveyFragment" >
         <argument
-            android:name="surveyId"
-            app:argType="integer" />
-        <action
-            android:id="@+id/action_surveyFragment_to_questionFragment"
-            app:destination="@id/questionFragment" />
+            android:name="intervieweeId"
+            app:argType="integer"
+            android:defaultValue="0" />
     </fragment>
 </navigation>

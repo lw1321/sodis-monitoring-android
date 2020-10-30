@@ -4,5 +4,6 @@ data class IntervieweeTechnologyDetail (
     var id: Int,
     var stateKnowledge: Int,
     var stateTechnology: Int,
-    var name: String
+    var name: String,
+    var technologyId: Int
 )

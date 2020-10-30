@@ -9,8 +9,11 @@ import de.sodis.monitoring.db.entity.SurveyHeader
 import de.sodis.monitoring.repository.SurveyRepository
 
 class MonitoringOverviewModel(application: Application) : AndroidViewModel(application) {
+    fun setTechnology(technologyId: Int) {
+        surveyHeaderList = surveyRepository.getSurveyHeadersFilteredTechnology(technologyId)
+    }
 
-    var surveyHeaderList: LiveData<List<SurveyHeader>>
+    lateinit var surveyHeaderList: LiveData<List<SurveyHeader>>
     private val monitoringDatabase = MonitoringDatabase.getDatabase(application.applicationContext)
     private val surveyRepository =
         SurveyRepository(
@@ -24,8 +27,4 @@ class MonitoringOverviewModel(application: Application) : AndroidViewModel(appli
             technologyDao = monitoringDatabase.technologyDao(),
             monitoringApi = MonitoringApi()
         )
-
-    init {
-        surveyHeaderList = surveyRepository.getSurveyHeaders()
-    }
 }

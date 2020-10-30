@@ -25,7 +25,7 @@ import kotlinx.android.synthetic.main.view_holder_text_choice.view.*
 import kotlinx.android.synthetic.main.view_holder_text_input.view.*
 import java.io.File
 
-class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener{
+class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
 
 
     private lateinit var currentQuestion: QuestionAnswer
@@ -42,6 +42,9 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener{
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         surveyId = args.surveyId
+        if (surveyViewModel.interviewee == null) {
+            surveyViewModel.setInterviewee(args.intervieweeId)
+        }
         surveyViewModel.questionItemList.observe(this, Observer { list ->
             currentQuestion = list.get(index = surveyViewModel.currentPosition)
 
@@ -94,35 +97,39 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener{
 
             view?.navigation_forward_button_1?.setOnClickListener {
                 if (surveyViewModel.isAnswered(currentQuestion.question.id)) {
-                    val answerToCheck: Answer = surveyViewModel.answerToID(currentQuestion.question.id)!!
+                    val answerToCheck: Answer =
+                        surveyViewModel.answerToID(currentQuestion.question.id)!!
                     println("beantwortet")
 
-                    if(currentQuestion.question.inputTypeId == 2 && (currentQuestion.question.questionName == "Solución"||currentQuestion.question.questionName == "solucion")) { //todo: anpassen wenn yes/no question geändert
-                        val dialog = TodoDialog(surveyViewModel.interviewee, answerToCheck.answerText, context!!, this)
+                    if (currentQuestion.question.inputTypeId == 2 && (currentQuestion.question.questionName == "Solución" || currentQuestion.question.questionName == "solucion")) { //todo: anpassen wenn yes/no question geändert
+                        val dialog = TodoDialog(
+                            surveyViewModel.interviewee,
+                            answerToCheck.answerText,
+                            context!!,
+                            this
+                        )
 
                         println("Dialog wird jetzt gezeigt")
                         dialog.show(childFragmentManager, "todo_in_survey")
 
 
-                    }
-                    else {
+                    } else {
                         surveyViewModel.listOfAnsweredQuestions += surveyViewModel.currentPosition
                         val hasNext = surveyViewModel.nextQuestion()
                         if (hasNext) {
-                            val action = QuestionFragmentDirections.actionQuestionFragmentSelf(surveyId)
+                            val action =
+                                QuestionFragmentDirections.actionQuestionFragmentSelf(surveyId)
                             findNavController().navigate(action)
                         } else {
-                            Snackbar.make(view!!.rootView.findViewById(R.id.nav_host_fragment), getString(R.string.message_monitoring_completed), Snackbar.LENGTH_LONG).show()
+                            Snackbar.make(
+                                view!!.rootView.findViewById(R.id.nav_host_fragment),
+                                getString(R.string.message_monitoring_completed),
+                                Snackbar.LENGTH_LONG
+                            ).show()
                             (activity as MainActivity).show_bottom_navigation()
                             findNavController().navigate(R.id.monitoringOverviewFragment)
                         }
                     }
-
-
-
-
-
-
 
 
                 } else {
@@ -155,7 +162,11 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener{
             val action = QuestionFragmentDirections.actionQuestionFragmentSelf(surveyId)
             findNavController().navigate(action)
         } else {
-            Snackbar.make(view!!.rootView.findViewById(R.id.nav_host_fragment), getString(R.string.message_monitoring_completed), Snackbar.LENGTH_LONG).show()
+            Snackbar.make(
+                view!!.rootView.findViewById(R.id.nav_host_fragment),
+                getString(R.string.message_monitoring_completed),
+                Snackbar.LENGTH_LONG
+            ).show()
             (activity as MainActivity).show_bottom_navigation()
             findNavController().navigate(R.id.monitoringOverviewFragment)
         }
