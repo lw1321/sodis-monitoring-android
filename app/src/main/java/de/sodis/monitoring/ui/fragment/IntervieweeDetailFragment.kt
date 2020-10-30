@@ -49,9 +49,8 @@ class IntervieweeDetailFragment : BaseListFragment() {
         intervieweeModel.setInterviewee(intervieweeId)
         intervieweeModel.intervieweeDetail.observe(this, Observer { intervieweeD ->
             recyclerView.withModels {
-                pictureHeader {
+                picture {
                     id("pictureHeader${intervieweeId}")
-                    text(intervieweeD.interviewee.name)
                     onClick { _ ->
                         dispatchTakePictureIntent()
                     }
@@ -94,7 +93,7 @@ class IntervieweeDetailFragment : BaseListFragment() {
 //                                    view.dataBinding.root.imageView.setImageBitmap(bitmap)
                             view.dataBinding.root.imageView.setImageDrawable(roundedBitmapDrawable)
                         } else {
-                            view.dataBinding.root.imageView.setImageResource(R.drawable.ic_add_a_photo_black_24dp)
+                            view.dataBinding.root.imageView.setImageResource(R.drawable.ic_add_a_photo_black_24dp)//TODO add C for Carlos etc
                         }
 
                     }
