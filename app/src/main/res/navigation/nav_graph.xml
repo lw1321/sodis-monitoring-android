@@ -137,5 +137,8 @@
             android:name="intervieweeId"
             app:argType="integer"
             android:defaultValue="0" />
+        <action
+            android:id="@+id/action_questionFragment_to_intervieweeDetailFragment"
+            app:destination="@id/intervieweeDetailFragment" />
     </fragment>
 </navigation>

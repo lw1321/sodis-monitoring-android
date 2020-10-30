@@ -118,7 +118,7 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
                         val hasNext = surveyViewModel.nextQuestion()
                         if (hasNext) {
                             val action =
-                                QuestionFragmentDirections.actionQuestionFragmentSelf(surveyId)
+                                QuestionFragmentDirections.actionQuestionFragmentSelf(surveyId, intervieweeId = args.intervieweeId)
                             findNavController().navigate(action)
                         } else {
                             Snackbar.make(
@@ -127,7 +127,8 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
                                 Snackbar.LENGTH_LONG
                             ).show()
                             (activity as MainActivity).show_bottom_navigation()
-                            findNavController().navigate(R.id.monitoringOverviewFragment)
+                            val action = QuestionFragmentDirections.actionQuestionFragmentToIntervieweeDetailFragment(intervieweeId = args.intervieweeId)
+                            findNavController().navigate(action)
                         }
                     }
 
@@ -146,7 +147,7 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
             view?.navigation_forward_button_left?.setOnClickListener {
                 if (surveyViewModel.currentPosition != 0) {
                     surveyViewModel.previousQuestion()
-                    val action = QuestionFragmentDirections.actionQuestionFragmentSelf(surveyId)
+                    val action = QuestionFragmentDirections.actionQuestionFragmentSelf(surveyId, intervieweeId = args.intervieweeId)
                     findNavController().navigate(action)
                 }
             }
@@ -159,7 +160,7 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
         surveyViewModel.listOfAnsweredQuestions += surveyViewModel.currentPosition
         val hasNext = surveyViewModel.nextQuestion()
         if (hasNext) {
-            val action = QuestionFragmentDirections.actionQuestionFragmentSelf(surveyId)
+            val action = QuestionFragmentDirections.actionQuestionFragmentSelf(surveyId, intervieweeId = args.intervieweeId)
             findNavController().navigate(action)
         } else {
             Snackbar.make(
