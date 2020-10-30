@@ -2,6 +2,7 @@ package de.sodis.monitoring.todolist
 
 import android.app.DatePickerDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Editable
 import android.text.Layout
@@ -11,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -29,7 +31,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 import kotlin.concurrent.thread
 
-class TodoDialog(val passedInterviewee: Interviewee?, val passedText: String?, applicationContext: Context): DialogFragment() {
+class TodoDialog(val passedInterviewee: Interviewee?, val passedText: String?, applicationContext: Context, val onDismissListener: DialogInterface.OnDismissListener?): DialogFragment() {
 
     private val intervieweeModel: IntervieweeModel by lazy {
         ViewModelProviders.of(this, MyViewModelFactory(activity!!.application, emptyList()))
@@ -60,6 +62,8 @@ class TodoDialog(val passedInterviewee: Interviewee?, val passedText: String?, a
     var onCancelPressed: View.OnClickListener
 
     var onSavePressed: View.OnClickListener
+
+
 
     init {
         due = Calendar.getInstance()
@@ -108,7 +112,12 @@ class TodoDialog(val passedInterviewee: Interviewee?, val passedText: String?, a
     lateinit var searchAdapter: SearchAdapter
     lateinit var onTouchListener:View.OnTouchListener
 
-
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        if(onDismissListener!=null) {
+            onDismissListener.onDismiss(dialog)
+        }
+    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -144,6 +153,18 @@ class TodoDialog(val passedInterviewee: Interviewee?, val passedText: String?, a
         }
         var view = inflater.inflate(R.layout.todo_dialog_layout, container, false)
         searchEditText = view.findViewById(R.id.tododialog_searchview)
+        if(passedInterviewee!=null) {
+            searchEditText.setText(passedInterviewee.name)
+        }
+
+        searchRecyclerView = view.findViewById(R.id.tododialog_recyclerview)
+        searchRecyclerView.layoutManager = LinearLayoutManager(context)
+        searchAdapter = SearchAdapter(intervieweeResults, requireContext(), object:CallBackTodo{
+            override fun OnIntervieweeChosen(interviewee: Interviewee?) {
+                intervieweeChosen = interviewee
+            }
+        }, null)
+        searchRecyclerView.adapter = searchAdapter
         searchEditText.addTextChangedListener(object: TextWatcher {
             override fun afterTextChanged(s: Editable?) {
 
@@ -158,19 +179,10 @@ class TodoDialog(val passedInterviewee: Interviewee?, val passedText: String?, a
             }
 
         })
-        if(passedInterviewee!=null) {
-            searchEditText.setText(passedInterviewee.name)
-        }
 
 
-        searchRecyclerView = view.findViewById(R.id.tododialog_recyclerview)
-        searchRecyclerView.layoutManager = LinearLayoutManager(context)
-        searchAdapter = SearchAdapter(intervieweeResults, requireContext(), object:CallBackTodo{
-            override fun OnIntervieweeChosen(interviewee: Interviewee?) {
-                intervieweeChosen = interviewee
-            }
-        }, null)
-        searchRecyclerView.adapter = searchAdapter
+
+
         intervieweeModel.intervieweeList.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             searchAdapter?.setDataSet(it)
             searchAdapter?.filter.filter(searchEditText?.text)
@@ -304,7 +316,7 @@ class SearchAdapter(interviewees: List<Interviewee>, val context: Context, val c
 
     fun manageCheckedChange(position: Int, checked: Boolean) {
         filteredInterviewees[position][0] = checked
-        for(i in 0..(filteredInterviewees.size-1)) {
+        for(i in 0 until (filteredInterviewees.size-1)) {
             if(i!=position) {
                 if(filteredInterviewees[i][0] as Boolean) {
                     filteredInterviewees[i][0] = false

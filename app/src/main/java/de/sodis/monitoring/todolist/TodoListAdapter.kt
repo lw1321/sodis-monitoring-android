@@ -1,5 +1,7 @@
 package de.sodis.monitoring.todolist
 
+
+import android.app.Activity
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -8,6 +10,7 @@ import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.RadioButton
 import androidx.annotation.NonNull
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import de.sodis.monitoring.R
 import de.sodis.monitoring.db.entity.TodoPoint
@@ -18,7 +21,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.concurrent.thread
 
-class TodoListAdapter(@NonNull todoPointS: List<TodoPoint>, @NonNull context: Context?, @NonNull todoPointModel: TodoPointModel, val intervieweeModel: IntervieweeModel): RecyclerView.Adapter<TodoListViewHolder>() {
+class TodoListAdapter(val activity: Activity, @NonNull todoPointS: List<TodoPoint>, @NonNull context: Context?, @NonNull todoPointModel: TodoPointModel, val intervieweeModel: IntervieweeModel): RecyclerView.Adapter<TodoListViewHolder>() {
     var context: Context?
     var todoPoints: List<TodoPoint>
     val todoPointModel: TodoPointModel
@@ -77,14 +80,30 @@ class TodoListAdapter(@NonNull todoPointS: List<TodoPoint>, @NonNull context: Co
         holder.contentField.text = todoPoints[position].text
         holder.dueField.text = simpleDateFormat.format(todoPoints[position].duedate?.time)
         if(todoPoints[position].family!=null) {
-            holder.familyField.text = intervieweeModel.getByID(todoPoints[position].family!!).name
+            Thread(Runnable {
+                var ts = intervieweeModel.getByID(todoPoints[position].family!!).name
+                activity.runOnUiThread(Runnable {
+                    holder.familyField.text = ts
+                })
+            }).start();
+
+
+
+
         }
         else {
             holder.familyDescriptionField.visibility = GONE
             holder.familyField.visibility = GONE
         }
         if(todoPoints[position].village!=null) {
-            holder.villageField.text = intervieweeModel.getVillageByID(todoPoints[position].village!!).name
+            Thread(Runnable{
+                val ts = intervieweeModel.getVillageByID(todoPoints[position].village!!).name
+                activity.runOnUiThread(Runnable {
+                    holder.villageField.text = ts
+                })
+
+            }).start()
+
         }else {
             holder.villageDescriptionField.visibility = GONE
             holder.villageField.visibility = GONE

@@ -61,7 +61,7 @@ class TodoPointFragment: Fragment(
 
     init {
         onAddPressed = View.OnClickListener {
-            var dialog = TodoDialog(null, null,applicationContext)
+            var dialog = TodoDialog(null, null,applicationContext, null)
             dialog.show(childFragmentManager, "todo")
         }
     }
@@ -131,7 +131,7 @@ class TodoPointFragment: Fragment(
                 )
             }
         }
-        this.todoListAdapter = TodoListAdapter(todoPoints, context, todoPointModel, intervieweeModel)
+        this.todoListAdapter = TodoListAdapter(activity!!, todoPoints, context, todoPointModel, intervieweeModel)
         this.recyclerView.adapter = this.todoListAdapter
         todoPointModel.undoneTodoPointsByDueDate.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             todoListAdapter.setDataSet(it)

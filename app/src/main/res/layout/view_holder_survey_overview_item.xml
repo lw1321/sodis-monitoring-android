@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingHorizontal="16dp"
+    android:paddingVertical="4dp"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    >
+
+
+    <LinearLayout
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:id="@+id/surveyOverviewItem_LinearLayout"
+        android:gravity="center_vertical"
+
+        >
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_weight="2">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/question_overview_question"
+                android:layout_marginBottom="8dp"
+                android:textStyle="bold"
+                >
+
+            </TextView>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/question_overview_answer">
+
+            </TextView>
+
+        </LinearLayout>
+
+
+        <ImageView
+            android:layout_width="60dp"
+            android:id="@+id/question_overview_image"
+            android:layout_height="60dp"
+
+            app:srcCompat="@drawable/ic_emoji_happy"
+            android:layout_marginStart="12dp"
+            android:layout_marginLeft="12dp">
+
+        </ImageView>
+
+
+        <ImageView
+            android:layout_width="24dp"
+            android:id="@+id/question_overview_yes_no_image"
+            android:layout_height="24dp"
+            app:srcCompat="@drawable/ic_emoji_happy"
+            android:layout_marginStart="12dp"
+            android:layout_marginLeft="12dp">
+
+        </ImageView>
+
+
+
+
+    </LinearLayout>
+
+
+    <View
+        android:layout_marginTop="6dp"
+        android:layout_marginBottom="0dp"
+        android:padding="0dp"
+        android:id="@+id/survey_overview_list_divider"
+        app:layout_constraintTop_toBottomOf="@id/surveyOverviewItem_LinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="?android:attr/listDivider" />
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

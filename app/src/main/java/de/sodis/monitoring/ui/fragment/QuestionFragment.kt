@@ -1,7 +1,9 @@
 package de.sodis.monitoring.ui.fragment
 
+import android.content.DialogInterface
 import android.os.Bundle
 import android.text.InputType
+import android.view.View
 import androidx.core.view.isGone
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Observer
@@ -11,7 +13,10 @@ import androidx.navigation.fragment.navArgs
 import coil.api.load
 import com.google.android.material.snackbar.Snackbar
 import de.sodis.monitoring.*
+import de.sodis.monitoring.db.entity.Answer
+import de.sodis.monitoring.db.entity.QuestionOptionChoice
 import de.sodis.monitoring.db.response.QuestionAnswer
+import de.sodis.monitoring.todolist.TodoDialog
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
 import de.sodis.monitoring.viewmodel.SurveyViewModel
 import kotlinx.android.synthetic.main.continuable_list.view.*
@@ -20,7 +25,7 @@ import kotlinx.android.synthetic.main.view_holder_text_choice.view.*
 import kotlinx.android.synthetic.main.view_holder_text_input.view.*
 import java.io.File
 
-class QuestionFragment : BaseListFragment() {
+class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener{
 
 
     private lateinit var currentQuestion: QuestionAnswer
@@ -89,16 +94,37 @@ class QuestionFragment : BaseListFragment() {
 
             view?.navigation_forward_button_1?.setOnClickListener {
                 if (surveyViewModel.isAnswered(currentQuestion.question.id)) {
-                    surveyViewModel.listOfAnsweredQuestions += surveyViewModel.currentPosition
-                    val hasNext = surveyViewModel.nextQuestion()
-                    if (hasNext) {
-                        val action = QuestionFragmentDirections.actionQuestionFragmentSelf(surveyId)
-                        findNavController().navigate(action)
-                    } else {
-                        Snackbar.make(view!!.rootView.findViewById(R.id.nav_host_fragment), getString(R.string.message_monitoring_completed), Snackbar.LENGTH_LONG).show()
-                        (activity as MainActivity).show_bottom_navigation()
-                        findNavController().navigate(R.id.monitoringOverviewFragment)
+                    val answerToCheck: Answer = surveyViewModel.answerToID(currentQuestion.question.id)!!
+                    println("beantwortet")
+
+                    if(currentQuestion.question.inputTypeId == 2 && (currentQuestion.question.questionName == "Solución"||currentQuestion.question.questionName == "solucion")) { //todo: anpassen wenn yes/no question geändert
+                        val dialog = TodoDialog(surveyViewModel.interviewee, answerToCheck.answerText, context!!, this)
+
+                        println("Dialog wird jetzt gezeigt")
+                        dialog.show(childFragmentManager, "todo_in_survey")
+
+
                     }
+                    else {
+                        surveyViewModel.listOfAnsweredQuestions += surveyViewModel.currentPosition
+                        val hasNext = surveyViewModel.nextQuestion()
+                        if (hasNext) {
+                            val action = QuestionFragmentDirections.actionQuestionFragmentSelf(surveyId)
+                            findNavController().navigate(action)
+                        } else {
+                            Snackbar.make(view!!.rootView.findViewById(R.id.nav_host_fragment), getString(R.string.message_monitoring_completed), Snackbar.LENGTH_LONG).show()
+                            (activity as MainActivity).show_bottom_navigation()
+                            findNavController().navigate(R.id.monitoringOverviewFragment)
+                        }
+                    }
+
+
+
+
+
+
+
+
                 } else {
                     Snackbar.make(
                         view!!,
@@ -119,6 +145,20 @@ class QuestionFragment : BaseListFragment() {
             }
         })
 
+    }
+
+    override fun onDismiss(dialog: DialogInterface?) {
+        println("onDismissed called")
+        surveyViewModel.listOfAnsweredQuestions += surveyViewModel.currentPosition
+        val hasNext = surveyViewModel.nextQuestion()
+        if (hasNext) {
+            val action = QuestionFragmentDirections.actionQuestionFragmentSelf(surveyId)
+            findNavController().navigate(action)
+        } else {
+            Snackbar.make(view!!.rootView.findViewById(R.id.nav_host_fragment), getString(R.string.message_monitoring_completed), Snackbar.LENGTH_LONG).show()
+            (activity as MainActivity).show_bottom_navigation()
+            findNavController().navigate(R.id.monitoringOverviewFragment)
+        }
     }
 
 }

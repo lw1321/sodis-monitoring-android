@@ -23,8 +23,8 @@ class SurveyHistoryViewModel(application: Application) : AndroidViewModel(applic
     var surveyHistoryList: LiveData<List<CompletedSurveyOverview>>
     var surveyCompletedList: MutableLiveData<List<CompletedSurveyDetail>>
 
-    private val monitoringDatabase = MonitoringDatabase.getDatabase(application.applicationContext)
-    private val surveyHistoryRepository =
+    val monitoringDatabase = MonitoringDatabase.getDatabase(application.applicationContext)
+    val surveyHistoryRepository =
         SurveyHistoryRepository(
             completedSurveyDao = monitoringDatabase.completedSurveyDao(),
             surveyHeaderDao = monitoringDatabase.surveyHeaderDao(),
@@ -42,6 +42,14 @@ class SurveyHistoryViewModel(application: Application) : AndroidViewModel(applic
         viewModelScope.launch(Dispatchers.IO) {
             surveyCompletedList.postValue(surveyHistoryRepository.getCompletedSurvey(completedSurveyId))
         }
+    }
+
+    fun getCompleteSurveyList(completedSurveyID: Int): List<CompletedSurveyDetail> {
+        return surveyHistoryRepository.getCompletedSurvey(completedSurveyID)
+    }
+
+    fun getCompletedSurvey(): List<CompletedSurveyDetail>? {
+        return surveyCompletedList.value;
     }
 
     fun previousQuestion() {
