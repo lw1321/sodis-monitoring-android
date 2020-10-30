@@ -145,6 +145,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     override fun onBackPressed() {
         //only allow back press for convenience only on interviewee
         val currFragmentId = findNavController(R.id.nav_host_fragment).currentDestination!!.id
+        //TODO REFACTORING
         if (currFragmentId == R.id.intervieweeDetailFragment || currFragmentId == R.id.surveyFragment || currFragmentId == R.id.loginEmailPassword || currFragmentId == R.id.registrationEmailPasswordFragment || currFragmentId == R.id.registrationNameFragment) {
             super.onBackPressed()
         }
@@ -152,8 +153,6 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             this.show_bottom_navigation()
         }
     }
-
-
 }
 
 
