@@ -61,7 +61,7 @@ class TodoPointFragment: Fragment(
 
     init {
         onAddPressed = View.OnClickListener {
-            var dialog = TodoDialog(null, null,applicationContext)
+            var dialog = TodoDialog(null, null,applicationContext, null)
             dialog.show(childFragmentManager, "todo")
         }
     }

@@ -1,5 +1,6 @@
 package de.sodis.monitoring.ui.fragment
 
+import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -106,6 +107,7 @@ class SurveyOverviewFragment: Fragment() {
 
         surveyOverviewAdapter =
             SurveyOverviewAdapter(
+                activity!!,
                 context,
                 questionList!!,
                 imageDao
@@ -125,7 +127,7 @@ class SurveyOverviewFragment: Fragment() {
     }
 }
 
-class SurveyOverviewAdapter(@NonNull context: Context?, questions: List<CompletedSurveyDetail>, val imageDao: QuestionImageDao): RecyclerView.Adapter<SurveyOverviewViewHolder>() {
+class SurveyOverviewAdapter(val activity: Activity, @NonNull context: Context?, questions: List<CompletedSurveyDetail>, val imageDao: QuestionImageDao): RecyclerView.Adapter<SurveyOverviewViewHolder>() {
 
 
 
@@ -159,14 +161,22 @@ class SurveyOverviewAdapter(@NonNull context: Context?, questions: List<Complete
     override fun onBindViewHolder(holder: SurveyOverviewViewHolder, position: Int) {
         val question: Question = questions[position].question
         holder.questionTextView.text = question.questionName
+        Thread(Runnable {
+            val questionImage: QuestionImage = imageDao.getById(question.questionImageId)
+            if(questionImage == null) {
+                activity.runOnUiThread {
+                    holder.imageView.visibility = View.GONE
+                }
 
-        val questionImage: QuestionImage = imageDao.getById(question.questionImageId)
-        if(questionImage == null) {
-            holder.imageView.visibility = View.GONE
-        }
-        else {
-            holder.imageView.load(File(questionImage.path))
-        }
+            }
+            else {
+                activity.runOnUiThread {
+                    holder.imageView.load(File(questionImage.path))
+                }
+
+            }
+        }).start()
+
 
         /*try {
             holder.imageView.setImageResource(question.questionImageId)

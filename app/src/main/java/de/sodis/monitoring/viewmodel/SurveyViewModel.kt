@@ -186,4 +186,8 @@ class SurveyViewModel(
         }
         return false
     }
+
+    fun answerToID(id: Int):Answer? {
+        return answerMap[id];
+    }
 }
