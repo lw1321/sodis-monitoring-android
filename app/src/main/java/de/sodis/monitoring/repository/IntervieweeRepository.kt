@@ -168,7 +168,7 @@ class IntervieweeRepository(
         intervieweeDao.update(intervieweeByID)
     }
 
-    fun uploadProfilPictures() {
+    suspend fun uploadProfilPictures() {
         val allNotSynced = intervieweeDao.getAllNotSynced()
         allNotSynced.forEach { interviewee ->
             val postIntervieweImage = monitoringApi.postIntervieweImage(
@@ -176,6 +176,7 @@ class IntervieweeRepository(
                 intervieweeId = interviewee.id
             )
             interviewee.imageUrl = postIntervieweImage.imageUrl
+            interviewee.synced = true
             intervieweeDao.update(interviewee)
         }
     }

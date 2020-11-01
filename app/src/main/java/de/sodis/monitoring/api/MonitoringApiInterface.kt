@@ -5,6 +5,7 @@ import de.sodis.monitoring.db.entity.Interviewee
 import de.sodis.monitoring.db.entity.Stats
 import de.sodis.monitoring.db.entity.User
 import okhttp3.MultipartBody
+import retrofit2.Response
 import retrofit2.http.*
 
 interface MonitoringApiInterface {
@@ -48,11 +49,11 @@ interface MonitoringApiInterface {
 
     @Multipart
     @POST("interviewees/{intervieweeId}/image")
-    fun postIntervieweeImage(
+    suspend fun postIntervieweeImage(
         @Part
         image: MultipartBody.Part, @Path(
             value = "intervieweeId",
             encoded = false
         ) intervieweeId: Int
-    ): Interviewee
+    ): IntervieweeJson
 }

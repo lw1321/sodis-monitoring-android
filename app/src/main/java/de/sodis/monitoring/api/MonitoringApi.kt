@@ -79,14 +79,13 @@ class MonitoringApi {
         return monitoringApi.getStats()
     }
 
-    fun postIntervieweImage(imagePath: String?, intervieweeId: Int): Interviewee {
-        //todo load from file put in body?!
+    suspend fun postIntervieweImage(imagePath: String?, intervieweeId: Int): IntervieweeJson {
         val file = File(imagePath)
         val requestFile: RequestBody =
             RequestBody.create(MediaType.parse("multipart/form-data"), file)
         val body =
             MultipartBody.Part.createFormData("image", file.name, requestFile)
-        val ret =  monitoringApi.postIntervieweeImage(body, intervieweeId)
+        val ret = monitoringApi.postIntervieweeImage(body, intervieweeId)
         return ret
     }
 
