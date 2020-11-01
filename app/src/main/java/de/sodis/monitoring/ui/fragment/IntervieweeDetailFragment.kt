@@ -5,14 +5,18 @@ import android.content.DialogInterface
 import android.graphics.Color
 import android.app.Activity.RESULT_OK
 import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.graphics.*
 import android.graphics.Shader.TileMode
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.FileProvider
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.core.view.isGone
 import androidx.core.widget.addTextChangedListener
@@ -28,8 +32,9 @@ import kotlinx.android.synthetic.main.continuable_list.view.*
 import kotlinx.android.synthetic.main.view_holder_family_age_structure.view.*
 import kotlinx.android.synthetic.main.view_holder_picture.view.*
 import kotlinx.android.synthetic.main.view_holder_technology.view.*
-import java.io.ByteArrayOutputStream
-import java.io.FileNotFoundException
+import java.io.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class IntervieweeDetailFragment : BaseListFragment() {
@@ -252,28 +257,45 @@ class IntervieweeDetailFragment : BaseListFragment() {
         )
     }
 
-    val REQUEST_IMAGE_CAPTURE = 1
+    val REQUEST_TAKE_PHOTO = 1
 
     protected fun dispatchTakePictureIntent() {
         Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
             takePictureIntent.resolveActivity(activity!!.packageManager)?.also {
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+                // Create the File where the photo should go
+                val photoFile: File? = try {
+                    createImageFile()
+                } catch (ex: IOException) {
+                    // Error occurred while creating the File
+                    null
+                }
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoFile!!.toURI())
+                startActivityForResult(takePictureIntent, ä)
             }
         }
     }
 
+    lateinit var currentPhotoPath: String
+
+    @Throws(IOException::class)
+    private fun createImageFile(): File {
+        val wrapper = ContextWrapper(context!!.applicationContext)
+        val file = File(wrapper.getDir("Images", Context.MODE_PRIVATE), "${UUID.randomUUID()}.jpg")
+        currentPhotoPath = file.absolutePath
+        try {
+            // Compress the bitmap and save in jpg format
+            val stream: OutputStream = FileOutputStream(file)
+            stream.flush()
+            stream.close()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return file
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
             val imageBitmap = data!!.extras.get("data") as Bitmap
-            activity!!.applicationContext.openFileOutput(
-                "interviewee_${intervieweeId}.jpg",
-                Context.MODE_PRIVATE
-            ).use {
-                val blob = ByteArrayOutputStream()
-                //TODO set reasonable compression factor
-                imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, blob)
-                it.write(blob.toByteArray())
-            }
         }
     }
 
