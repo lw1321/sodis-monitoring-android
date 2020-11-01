@@ -39,5 +39,6 @@ data class Interviewee(
     val userId: Int?,
     val sectorId: Int?,
     var imagePath: String?=null,
-    var imageUrl: String?=null
+    var imageUrl: String?=null,
+    var synced: Boolean?=true
 )

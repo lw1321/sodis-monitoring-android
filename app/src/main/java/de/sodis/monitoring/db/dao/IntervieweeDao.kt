@@ -26,4 +26,7 @@ interface IntervieweeDao {
 
     @Update
     fun update(interviewee: Interviewee)
+
+    @Query("SELECT * FROM Interviewee WHERE synced=0")
+    fun getAllNotSynced(): List<Interviewee>
 }

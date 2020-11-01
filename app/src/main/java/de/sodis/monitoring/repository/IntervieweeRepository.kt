@@ -162,7 +162,21 @@ class IntervieweeRepository(
 
     fun updateImagePath(id: Int, currentPhotoPath: String) {
         val intervieweeByID = getIntervieweeByID(id)
+
         intervieweeByID.imagePath = currentPhotoPath
+        intervieweeByID.synced = false
         intervieweeDao.update(intervieweeByID)
+    }
+
+    fun uploadProfilPictures() {
+        val allNotSynced = intervieweeDao.getAllNotSynced()
+        allNotSynced.forEach { interviewee ->
+            val postIntervieweImage = monitoringApi.postIntervieweImage(
+                interviewee.imagePath,
+                intervieweeId = interviewee.id
+            )
+            interviewee.imageUrl = postIntervieweImage.imageUrl
+            intervieweeDao.update(interviewee)
+        }
     }
 }
