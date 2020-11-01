@@ -9,7 +9,13 @@
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        app:tabTextColor="@color/colorPrimaryWhite"
+        app:tabSelectedTextColor="@color/white"
+        app:tabIndicatorColor="@color/white"
+        app:tabRippleColor="@color/white"
+        android:backgroundTint="@color/colorPrimary"
+        >
     </com.google.android.material.tabs.TabLayout>
 
     <com.airbnb.epoxy.EpoxyRecyclerView
