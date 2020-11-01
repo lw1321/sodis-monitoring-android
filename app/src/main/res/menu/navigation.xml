@@ -4,12 +4,7 @@
         android:id="@+id/dashboard"
         android:icon="@drawable/ic_village"
         android:title="@string/tab_village_overview"/>
-
-    <item
-        android:id="@+id/monitoring"
-        android:icon="@drawable/ic_survey_black"
-        android:title="@string/tab_monitoring"/>
-
+    
     <item
         android:id="@+id/monitoring_history"
         android:icon="@drawable/ic_history_black"

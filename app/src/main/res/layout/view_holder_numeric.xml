@@ -17,9 +17,9 @@
     </data>
 
     <NumberPicker
-        max="100"
         android:id="@+id/number_picker"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
-        android:solidColor="@color/white" />
+        android:layout_height="150dp"
+        android:theme="@style/NumberPickerText"
+        android:solidColor="@color/colorGray" />
 </layout>
