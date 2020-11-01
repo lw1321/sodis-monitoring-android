@@ -30,5 +30,5 @@ data class Question(
     val inputTypeId: Int,
     val questionName: String,
     val surveySectionId: Int,
-    val questionImageId: Int
+    val questionImageId: Int?
 )

@@ -20,6 +20,7 @@ import de.sodis.monitoring.todolist.TodoDialog
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
 import de.sodis.monitoring.viewmodel.SurveyViewModel
 import kotlinx.android.synthetic.main.continuable_list.view.*
+import kotlinx.android.synthetic.main.view_holder_numeric.view.*
 import kotlinx.android.synthetic.main.view_holder_question.view.*
 import kotlinx.android.synthetic.main.view_holder_text_choice.view.*
 import kotlinx.android.synthetic.main.view_holder_text_input.view.*
@@ -55,7 +56,9 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
                     title(currentQuestion.title)
                     questionText(currentQuestion.question.questionName)
                     onBind { model, view, position ->
-                        view.dataBinding.root.question_image.load(File(currentQuestion.image.path))
+                        if (currentQuestion.image != null) {
+                            view.dataBinding.root.question_image.load(File(currentQuestion.image!!.path))
+                        }
                     }
                 }
                 when (currentQuestion.question.inputTypeId) {
@@ -87,6 +90,21 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
                                     currentQuestion.question.id,
                                     currentQuestion.answers[index].optionChoice.optionChoiceName,
                                     currentQuestion.answers[index].questionOption.id //todo
+                                )
+                            }
+                        }
+                    }
+
+                    3 -> numeric {
+                        id("numeric")
+                        onBind { model, view, position ->
+                            view.dataBinding.root.number_picker.maxValue = 10
+                            view.dataBinding.root.number_picker.minValue = 0
+                            view.dataBinding.root.number_picker.setOnValueChangedListener { picker, oldVal, newVal ->
+                                surveyViewModel.setAnswer(
+                                    currentQuestion.question.id,
+                                    newVal.toString(),
+                                    currentQuestion.answers.first().questionOption.id //todo
                                 )
                             }
                         }

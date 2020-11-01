@@ -8,5 +8,5 @@ data class QuestionAnswer(
     var title: String,
     val question: Question,
     val answers: List<QuestionOptionChoice>,
-    val image: QuestionImage
+    val image: QuestionImage?
 )

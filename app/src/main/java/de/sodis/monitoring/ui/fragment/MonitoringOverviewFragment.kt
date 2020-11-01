@@ -29,7 +29,16 @@ class MonitoringOverviewFragment : BaseListFragment() {
         super.onCreate(savedInstanceState)
         monitoringOverviewModel.setTechnology(args.technologyId)
         monitoringOverviewModel.surveyHeaderList.observe(this, Observer {
+            if (it.size == 1) {
+                //just one survey available in this category. Move forward!
+                val action =
+                    MonitoringOverviewFragmentDirections.actionMonitoringOverviewFragmentToQuestionFragment(
+                        it.first().id,
+                        args.intervieweeId
+                    )
+                findNavController().navigate(action)
 
+            }
             recyclerView.withModels {
                 it.forEach {
                     default {
@@ -37,7 +46,11 @@ class MonitoringOverviewFragment : BaseListFragment() {
                         text(it.surveyName)
                         onClick { _ ->
                             (activity as MainActivity).hide_bottom_navigation()
-                            val action = MonitoringOverviewFragmentDirections.actionMonitoringOverviewFragmentToQuestionFragment(it.id, args.intervieweeId)//TODO set survey, set intervieeee?!
+                            val action =
+                                MonitoringOverviewFragmentDirections.actionMonitoringOverviewFragmentToQuestionFragment(
+                                    it.id,
+                                    args.intervieweeId
+                                )
                             findNavController().navigate(action)
                         }
                     }

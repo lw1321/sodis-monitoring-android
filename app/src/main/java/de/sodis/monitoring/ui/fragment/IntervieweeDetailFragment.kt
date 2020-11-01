@@ -151,111 +151,22 @@ class IntervieweeDetailFragment : BaseListFragment() {
                                 + intervieweeD.interviewee.oldMenCount).toString()
                     )
                 }
-                familyAgeStructure {
-                    id("family")
-                    f0(intervieweeD.interviewee.girlsCount.toString())
-                    f1(intervieweeD.interviewee.youngWomenCount.toString())
-                    f2(intervieweeD.interviewee.womenCount.toString())
-                    f3(intervieweeD.interviewee.oldWomenCount.toString())
-                    m0(intervieweeD.interviewee.boysCount.toString())
-                    m1(intervieweeD.interviewee.youngMenCount.toString())
-                    m2(intervieweeD.interviewee.menCount.toString())
-                    m3(intervieweeD.interviewee.oldMenCount.toString())
-                    onBind { model, view, position ->
-
-                        view.dataBinding.root.editTextf0.addTextChangedListener {
-                            var count =
-                                view.dataBinding.root.editTextf0.text.toString().toIntOrNull() ?: 0
-                            val newInterviewee = intervieweeD.interviewee.copy(girlsCount = count)
-                            intervieweeModel.updateInterviewee(newInterviewee)
-                        }
-                        view.dataBinding.root.editTextf0.setOnFocusChangeListener { view, b ->
-                            if (!b) {
-                                recyclerView.requestModelBuild()
-                            }
-                        }
-                        view.dataBinding.root.editTextf1.addTextChangedListener {
-                            var count =
-                                view.dataBinding.root.editTextf1.text.toString().toIntOrNull() ?: 0
-                            val newInterviewee =
-                                intervieweeD.interviewee.copy(youngWomenCount = count)
-                            intervieweeModel.updateInterviewee(newInterviewee)
-                        }
-                        view.dataBinding.root.editTextf1.setOnFocusChangeListener { view, b ->
-                            if (!b) {
-                                recyclerView.requestModelBuild()
-                            }
-                        }
-                        view.dataBinding.root.editTextf2.addTextChangedListener {
-                            var count =
-                                view.dataBinding.root.editTextf2.text.toString().toIntOrNull() ?: 0
-                            val newInterviewee = intervieweeD.interviewee.copy(womenCount = count)
-                            intervieweeModel.updateInterviewee(newInterviewee)
-                        }
-                        view.dataBinding.root.editTextf2.setOnFocusChangeListener { view, b ->
-                            if (!b) {
-                                recyclerView.requestModelBuild()
-                            }
-                        }
-                        view.dataBinding.root.editTextf3.addTextChangedListener {
-                            var count =
-                                view.dataBinding.root.editTextf3.text.toString().toIntOrNull() ?: 0
-                            val newInterviewee =
-                                intervieweeD.interviewee.copy(oldWomenCount = count)
-                            intervieweeModel.updateInterviewee(newInterviewee)
-                        }
-                        view.dataBinding.root.editTextf3.setOnFocusChangeListener { view, b ->
-                            if (!b) {
-                                recyclerView.requestModelBuild()
-                            }
-                        }
-                        view.dataBinding.root.editTextm0.addTextChangedListener {
-                            var count =
-                                view.dataBinding.root.editTextm0.text.toString().toIntOrNull() ?: 0
-                            val newInterviewee = intervieweeD.interviewee.copy(boysCount = count)
-                            intervieweeModel.updateInterviewee(newInterviewee)
-                        }
-                        view.dataBinding.root.editTextm0.setOnFocusChangeListener { view, b ->
-                            if (!b) {
-                                recyclerView.requestModelBuild()
-                            }
-                        }
-                        view.dataBinding.root.editTextm1.addTextChangedListener {
-                            var count =
-                                view.dataBinding.root.editTextm1.text.toString().toIntOrNull() ?: 0
-                            val newInterviewee =
-                                intervieweeD.interviewee.copy(youngMenCount = count)
-                            intervieweeModel.updateInterviewee(newInterviewee)
-                        }
-                        view.dataBinding.root.editTextm1.setOnFocusChangeListener { view, b ->
-                            if (!b) {
-                                recyclerView.requestModelBuild()
-                            }
-                        }
-                        view.dataBinding.root.editTextm2.addTextChangedListener {
-                            var count =
-                                view.dataBinding.root.editTextm2.text.toString().toIntOrNull() ?: 0
-                            val newInterviewee = intervieweeD.interviewee.copy(menCount = count)
-                            intervieweeModel.updateInterviewee(newInterviewee)
-                        }
-                        view.dataBinding.root.editTextm2.setOnFocusChangeListener { view, b ->
-                            if (!b) {
-                                recyclerView.requestModelBuild()
-                            }
-                        }
-                        view.dataBinding.root.editTextm3.addTextChangedListener {
-                            var count =
-                                view.dataBinding.root.editTextm3.text.toString().toIntOrNull() ?: 0
-                            val newInterviewee = intervieweeD.interviewee.copy(oldMenCount = count)
-                            intervieweeModel.updateInterviewee(newInterviewee)
-                        }
-                        view.dataBinding.root.editTextm3.setOnFocusChangeListener { view, b ->
-                            if (!b) {
-                                recyclerView.requestModelBuild()
-                            }
-                        }
+                //general data
+                generalData {
+                    id("generalData")
+                    key("Datos Generales")
+                    onClick { _ ->
+                        //show survey for datos generales
+                        val action =
+                            IntervieweeDetailFragmentDirections.actionIntervieweeDetailFragmentToMonitoringOverviewFragment(
+                                6,// technology id of datos generales TODO replace hardcoded id
+                                args.intervieweeId
+                            )
+                        findNavController().navigate(action)
                     }
+
                 }
+
                 intervieweeD.intervieweeTechnologies.forEach { techno ->
                     //are there open tasks for this technology?
                     val taskFilteredList = intervieweeD.tasks.filter { task ->

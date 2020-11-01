@@ -20,7 +20,7 @@ data class SurveyHeaderJson(
             val dependentQuestionOptionId: Int,
             val id: Int,
             val inputType: InputTypeJson,
-            val questionImage: QuestionImageJson,
+            val questionImage: QuestionImageJson?,
             val questionName: String,
             val questionOptions: List<QuestionOptionJson>,
             val questionSubtext: String

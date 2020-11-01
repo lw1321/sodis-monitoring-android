@@ -228,7 +228,19 @@ class SurveyViewModel(
         createQuestionList(surveyId)
     }
 
-    fun isAnswered(id: Int): Boolean = answerMap.containsKey(id)
+    fun isAnswered(id: Int): Boolean {
+        if (questionItemList.value!![currentPosition].question.inputTypeId == 3) {//numeric if not answered, set 0 todo question
+            setAnswer(
+                questionItemList.value!![currentPosition].question.id,
+                0.toString(),
+                questionItemList.value!![currentPosition].answers.first().questionOption.id
+            )
+        }
+        if (answerMap.containsKey(id)) {
+            return true
+        }
+        return true
+    }
 
     fun previousQuestion(): Boolean {
         if (currentPosition != 0) {

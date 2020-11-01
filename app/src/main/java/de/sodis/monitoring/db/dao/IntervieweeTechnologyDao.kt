@@ -15,7 +15,7 @@ interface IntervieweeTechnologyDao {
     fun getByInterviewee(intervieweeId: Int): List<IntervieweeTechnologyDetail>
 
     @Query("SELECT * FROM IntervieweeTechnology WHERE intervieweeId=:intervieweeId AND technologyId=:technologyId")
-    fun getByIntervieweeAndTechnoology(intervieweeId: Int, technologyId: Int): IntervieweeTechnology
+    fun getByIntervieweeAndTechnoology(intervieweeId: Int, technologyId: Int): IntervieweeTechnology?
 
     @Update
     fun update(intervieweeTechnology: IntervieweeTechnology)

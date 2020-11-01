@@ -41,7 +41,7 @@ class QuestionRepository(
                     )
                 )
             }
-            val image = questionImageDao.getById(question.questionImageId)
+            val image = question.questionImageId?.let { questionImageDao.getById(it) }
             questionAnswerList.add(
                 QuestionAnswer(
                     question = question,
@@ -62,7 +62,6 @@ class QuestionRepository(
         answerMap: MutableMap<Int, Answer>,
         completedSurvey: CompletedSurvey
     ) {
-        //TODO calculate status of technology
         /**
          * Statusnerechnung:
          * 0 = Keine Infos(Grau)
@@ -71,7 +70,8 @@ class QuestionRepository(
         3 = Nicht Vorhanden (Farbe rot) (Frage am Anfang existiert die Technologie?, Frage bisher nicht vorhanden.)//TODO Frage hinzufügen am Anfang des Fragebogens
          */
         //intervieweetechnology holen
-        val surveyHeader = surveyHeaderDao.getByIdSync(surveyHeaderId = completedSurvey.surveyHeaderId)
+        val surveyHeader =
+            surveyHeaderDao.getByIdSync(surveyHeaderId = completedSurvey.surveyHeaderId)
         val intervieweeTechnology = intervieweeTechnologyDao.getByIntervieweeAndTechnoology(
             completedSurvey.intervieweeId,
             surveyHeader.surveyHeader.technologyId
@@ -86,9 +86,11 @@ class QuestionRepository(
             //something is not "postiv" so lets set the status to 1
                 status = 1
         }
-        intervieweeTechnology.stateTechnology = status
-        //status speichern
-        intervieweeTechnologyDao.update(intervieweeTechnology)
+        if (intervieweeTechnology != null) {
+            intervieweeTechnology.stateTechnology = status
+            //status speichern
+            intervieweeTechnologyDao.update(intervieweeTechnology)
+        }
     }
 
     suspend fun uploadQuestions() {

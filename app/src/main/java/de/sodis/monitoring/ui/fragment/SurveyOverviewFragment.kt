@@ -162,7 +162,7 @@ class SurveyOverviewAdapter(val activity: Activity, @NonNull context: Context?, 
         val question: Question = questions[position].question
         holder.questionTextView.text = question.questionName
         Thread(Runnable {
-            val questionImage: QuestionImage = imageDao.getById(question.questionImageId)
+            val questionImage: QuestionImage? = question.questionImageId?.let { imageDao.getById(it) }
             if(questionImage == null) {
                 activity.runOnUiThread {
                     holder.imageView.visibility = View.GONE
