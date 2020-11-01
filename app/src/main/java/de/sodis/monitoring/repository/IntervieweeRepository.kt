@@ -46,49 +46,50 @@ class IntervieweeRepository(
                 }
             }
 
-            if(intervieweeDao.getById(interviewee.id) == null  || !intervieweeDao.getById(interviewee.id).changed) {//Todo update routine, when local changes distinguish from api and not published.
-                //insert interviewee
-                intervieweeDao.insert(
-                    Interviewee(
-                        id = interviewee.id,
-                        name = interviewee.name,
-                        villageId = interviewee.village.id,
-                        boysCount = interviewee.boysCount,
-                        girlsCount = interviewee.girlsCount,
-                        menCount = interviewee.menCount,
-                        womenCount = interviewee.womenCount,
-                        oldMenCount = interviewee.oldMenCount,
-                        oldWomenCount = interviewee.oldWomenCount,
-                        youngMenCount = interviewee.youngMenCount,
-                        youngWomenCount = interviewee.youngWomenCount,
-                        sectorId = interviewee.sector?.id,
-                        userId = interviewee.user?.id
-                    )
+            //insert interviewee
+            intervieweeDao.insert(
+                Interviewee(
+                    id = interviewee.id,
+                    name = interviewee.name,
+                    villageId = interviewee.village.id,
+                    girlsCount = interviewee.girlsCount,
+                    boysCount = interviewee.boysCount,
+                    youngMenCount = interviewee.youngMenCount,
+                    youngWomenCount = interviewee.youngWomenCount,
+                    oldMenCount = interviewee.oldMenCount,
+                    oldWomenCount = interviewee.oldWomenCount,
+                    menCount = interviewee.menCount,
+                    womenCount = interviewee.womenCount,
+                    userId = interviewee.user?.id,
+                    sectorId = interviewee.sector?.id,
+                    imagePath = null,//todo add attributes server side
+                    imageUrl = null
                 )
-                interviewee.intervieweeTechnologies.forEach {
-                    if (technologyDao.count(it.technology.id) == 0) {
-                        //save input type
-                        technologyDao.insert(
-                            Technology(
-                                id = it.technology.id,
-                                name = it.technology.name
-                            )
-                        )
-                    }
-                    intervieweeTechnologyDao.insert(
-                        IntervieweeTechnology(
-                            id = it.id,
-                            stateKnowledge = it.stateKnowledge,
-                            technologyId = it.technology.id,
-                            stateTechnology = it.stateTechnology,
-                            intervieweeId = interviewee.id
+            )
+            interviewee.intervieweeTechnologies.forEach {
+                if (technologyDao.count(it.technology.id) == 0) {
+                    //save input type
+                    technologyDao.insert(
+                        Technology(
+                            id = it.technology.id,
+                            name = it.technology.name
                         )
                     )
                 }
+                intervieweeTechnologyDao.insert(
+                    IntervieweeTechnology(
+                        id = it.id,
+                        stateKnowledge = it.stateKnowledge,
+                        technologyId = it.technology.id,
+                        stateTechnology = it.stateTechnology,
+                        intervieweeId = interviewee.id
+                    )
+                )
             }
-
         }
+
     }
+
 
     /*
     just basic info
@@ -132,7 +133,7 @@ class IntervieweeRepository(
         val village = villageDao.getById(interviewee.villageId)
         val sector = interviewee.sectorId?.let { sectorDao.getById(it) }
         var localExpert: User? = null
-        if(interviewee.userId != null){
+        if (interviewee.userId != null) {
             localExpert = userDao.getByLocalExpertId(interviewee.userId)
         }
         val taskList = taskDao.getTasksByInterviewee(intervieweeId)
@@ -141,7 +142,7 @@ class IntervieweeRepository(
             intervieweeTechnologies = intervieweeTechnologies,
             village = village,
             sector = sector,
-            user= localExpert,
+            user = localExpert,
             tasks = taskList
         )
     }
@@ -159,4 +160,9 @@ class IntervieweeRepository(
         return intervieweeTechnologyDao.getByIntervieweeLive(intervieweeId)
     }
 
+    fun updateImagePath(id: Int, currentPhotoPath: String) {
+        val intervieweeByID = getIntervieweeByID(id)
+        intervieweeByID.imagePath = currentPhotoPath
+        intervieweeDao.update(intervieweeByID)
+    }
 }

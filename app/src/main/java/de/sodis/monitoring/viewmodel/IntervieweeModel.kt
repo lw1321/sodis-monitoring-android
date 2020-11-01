@@ -69,14 +69,16 @@ class IntervieweeModel(application: Application) : AndroidViewModel(application)
 
     }
 
-    fun saveInterviewee() {
-        intervieweeDetail.value!!.interviewee.changed = true
-        viewModelScope.launch(Dispatchers.IO) {
-            intervieweeRepository.saveInterviewee(intervieweeDetail.value!!.interviewee)
-        }
-    }
-
     fun getVillageByID(int: Int): Village {
         return intervieweeRepository.getVillageByID(int)
+    }
+
+    fun storeImagePath(currentPhotoPath: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            intervieweeRepository.updateImagePath(
+                intervieweeDetail.value!!.interviewee.id,
+                currentPhotoPath
+            )
+        }
     }
 }

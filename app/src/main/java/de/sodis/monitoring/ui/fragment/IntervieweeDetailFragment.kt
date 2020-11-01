@@ -62,45 +62,14 @@ class IntervieweeDetailFragment : BaseListFragment() {
                         dispatchTakePictureIntent()
                     }
                     onBind { model, view, position ->
-                        val bitmapdata = try {
-                            context!!.openFileInput("interviewee_${intervieweeId}.jpg").readBytes()
-                        } catch (ex: FileNotFoundException) {
-                            null
-                        }
-                        if (bitmapdata != null) {
-                            val bitmap =
-                                BitmapFactory.decodeByteArray(bitmapdata, 0, bitmapdata.size)
-                            val size = Math.min(bitmap.width, bitmap.height)
-                            val cropedBitmap = if (bitmap.width < bitmap.height) {
-                                Bitmap.createBitmap(
-                                    bitmap,
-                                    0,
-                                    (bitmap.height - bitmap.width) / 2,
-                                    size,
-                                    size
-                                )
-                            } else {
-                                Bitmap.createBitmap(
-                                    bitmap,
-                                    (bitmap.width - bitmap.height) / 2,
-                                    0,
-                                    size,
-                                    size
-                                )
-                            }
+                        if (intervieweeD.interviewee.imagePath != null) {
+                            BitmapFactory.decodeFile(intervieweeD.interviewee.imagePath)
+                                ?.also { bitmap ->
+                                    view.dataBinding.root.imageView.setImageBitmap(bitmap)
 
-                            val roundedBitmapDrawable =
-                                RoundedBitmapDrawableFactory.create(resources, cropedBitmap)
-
-                            //cut corners
-                            roundedBitmapDrawable.cornerRadius = Math.min(
-                                bitmap.width,
-                                bitmap.height
-                            ) * 0.05f
-//                                    view.dataBinding.root.imageView.setImageBitmap(bitmap)
-                            view.dataBinding.root.imageView.setImageDrawable(roundedBitmapDrawable)
+                                }
                         } else {
-                            view.dataBinding.root.imageView.setImageResource(R.drawable.ic_add_a_photo_black_24dp)//TODO add C for Carlos etc
+                            view.dataBinding.root.imageView.setImageResource(R.drawable.sodis_logo)//TODO add C for Carlos etc
                         }
 
                     }
@@ -221,16 +190,6 @@ class IntervieweeDetailFragment : BaseListFragment() {
 
             }
             recyclerView.recycledViewPool.clear()
-            view?.navigation_forward_button_1?.setImageResource(R.drawable.ic_baseline_save_24)
-            view?.navigation_forward_button_1?.setOnClickListener {
-                intervieweeModel.saveInterviewee()
-                Snackbar.make(
-                    view!!,
-                    "Saved",
-                    Snackbar.LENGTH_LONG
-                ).show()
-            }
-
         })
     }
 
@@ -285,6 +244,8 @@ class IntervieweeDetailFragment : BaseListFragment() {
             //save the image path in our database..
             //set image to iamgeview
             if (currentPhotoPath != null) {
+                //store the file
+                intervieweeModel.storeImagePath(currentPhotoPath)
                 BitmapFactory.decodeFile(currentPhotoPath)?.also { bitmap ->
                     view!!.imageView.setImageBitmap(bitmap)
                 }
