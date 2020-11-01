@@ -1,5 +1,6 @@
 package de.sodis.monitoring.ui.fragment
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.graphics.Color
@@ -37,6 +38,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
+@Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 class IntervieweeDetailFragment : BaseListFragment() {
 
     private val intervieweeModel: IntervieweeModel by lazy {
@@ -174,7 +176,6 @@ class IntervieweeDetailFragment : BaseListFragment() {
                             findNavController().navigate(action)
                         }
                         onBind { model, view, position ->
-                            //TODO ist die Zuweisung der Farben richtig?
                             val bo = BitmapFactory.Options()
                             bo.inMutable = true
                             val b = BitmapFactory.decodeResource(
@@ -189,7 +190,6 @@ class IntervieweeDetailFragment : BaseListFragment() {
                                 },
                                 bo
                             )
-                            applyCircleGradient(b)
                             view.dataBinding.root.technolgyImage.setImageBitmap(b)
 
                             view.dataBinding.root.technolgyImage.setColorFilter(
@@ -234,33 +234,12 @@ class IntervieweeDetailFragment : BaseListFragment() {
         })
     }
 
-    private fun applyCircleGradient(b: Bitmap) {
-        val canvas = Canvas(b)
-        val gradient = LinearGradient(
-            0f,
-            0f,
-            0f,
-            b.height.toFloat(),
-            intArrayOf(Color.TRANSPARENT, Color.argb(70, 255, 255, 255)),
-            floatArrayOf(0.0f, 1f),
-            TileMode.CLAMP
-        )
-
-        val paint = Paint()
-        paint.shader = gradient
-
-        canvas.drawCircle(
-            b.width.toFloat() / 2.0f,
-            b.height.toFloat() / 2.0f,
-            b.width.toFloat() / 2.0f,
-            paint
-        )
-    }
 
     val REQUEST_TAKE_PHOTO = 1
 
-    protected fun dispatchTakePictureIntent() {
+    private fun dispatchTakePictureIntent() {
         Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+            // Ensure that there's a camera activity to handle the intent
             takePictureIntent.resolveActivity(activity!!.packageManager)?.also {
                 // Create the File where the photo should go
                 val photoFile: File? = try {
@@ -269,33 +248,47 @@ class IntervieweeDetailFragment : BaseListFragment() {
                     // Error occurred while creating the File
                     null
                 }
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoFile!!.toURI())
-                startActivityForResult(takePictureIntent, ä)
+                // Continue only if the File was successfully created
+                photoFile?.also {
+                    val photoURI: Uri = FileProvider.getUriForFile(
+                        activity!!,
+                        "com.example.android.fileprovider",
+                        it
+                    )
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                    startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO)
+                }
             }
         }
     }
+
 
     lateinit var currentPhotoPath: String
 
     @Throws(IOException::class)
     private fun createImageFile(): File {
-        val wrapper = ContextWrapper(context!!.applicationContext)
-        val file = File(wrapper.getDir("Images", Context.MODE_PRIVATE), "${UUID.randomUUID()}.jpg")
-        currentPhotoPath = file.absolutePath
-        try {
-            // Compress the bitmap and save in jpg format
-            val stream: OutputStream = FileOutputStream(file)
-            stream.flush()
-            stream.close()
-        } catch (e: IOException) {
-            e.printStackTrace()
+        // Create an image file name
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val storageDir: File = activity!!.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        return File.createTempFile(
+            "JPEG_${timeStamp}_", /* prefix */
+            ".jpg", /* suffix */
+            storageDir /* directory */
+        ).apply {
+            // Save a file: path for use with ACTION_VIEW intents
+            currentPhotoPath = absolutePath
         }
-        return file
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
-            val imageBitmap = data!!.extras.get("data") as Bitmap
+            //save the image path in our database..
+            //set image to iamgeview
+            if (currentPhotoPath != null) {
+                BitmapFactory.decodeFile(currentPhotoPath)?.also { bitmap ->
+                    view!!.imageView.setImageBitmap(bitmap)
+                }
+            }
         }
     }
 
