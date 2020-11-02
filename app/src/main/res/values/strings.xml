@@ -1,12 +1,12 @@
 <resources>
-    <string name="app_name">Monitoreo</string>
-    <string name="tab_village_overview">Villages</string>
-    <string name="tab_monitoring">Monitoring</string>
-    <string name="tab_task">Task</string>
-    <string name="tab_history">History</string>
-    <string name="general_data_old_people">Mayores de 50 Años</string>
-    <string name="general_data_adult">Mayores de 15 a 49 Años</string>
-    <string name="gerneral_data_young">Niños de 6 a 14 Años</string>
+    <string name="app_name" translatable="false">Monitoreo</string>
+    <string name="tab_village_overview" translatable="false">Villages</string>
+    <string name="tab_monitoring" translatable="false">Monitoring</string>
+    <string name="tab_task" translatable="false">Task</string>
+    <string name="tab_history" translatable="false">History</string>
+    <string name="general_data_old_people" translatable="false">Mayores de 50 Años</string>
+    <string name="general_data_adult" translatable="false">Mayores de 15 a 49 Años</string>
+    <string name="gerneral_data_young" translatable="false">Niños de 6 a 14 Años</string>
     <string name="general_data_women">Mujeres</string>
     <string name="general_data_men">Hombres</string>
     <string name="general_data_child">Menores de 0 a 5 Años</string>
@@ -31,4 +31,6 @@
     <string name="name_empty_message">Name can not be empty</string>
     <string name="download_FINISHED">lOADING SUCCESSFULLY FINISHED</string>
     <string name="history">History</string>
+    <string name="village">pueblo</string>
+    <string name="person">Persona</string>
 </resources>

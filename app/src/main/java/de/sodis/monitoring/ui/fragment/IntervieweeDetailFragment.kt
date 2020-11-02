@@ -31,6 +31,8 @@ import de.sodis.monitoring.viewmodel.IntervieweeModel
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
 import kotlinx.android.synthetic.main.continuable_list.view.*
 import kotlinx.android.synthetic.main.view_holder_family_age_structure.view.*
+import kotlinx.android.synthetic.main.view_holder_header.*
+import kotlinx.android.synthetic.main.view_holder_key_value.view.*
 import kotlinx.android.synthetic.main.view_holder_picture.view.*
 import kotlinx.android.synthetic.main.view_holder_technology.view.*
 import java.io.*
@@ -74,11 +76,22 @@ class IntervieweeDetailFragment : BaseListFragment() {
 
                     }
                 }
+                keyValue{
+                    id("keyValueName")
+                    key("Persona")
+                    value(intervieweeD.interviewee.name)
+                    onBind { model, view, position ->
+                        view.dataBinding.root.imageView2.setImageResource(R.drawable.ic_person_black_24dp)
+                    }
+                }
 
                 keyValue {
                     id("keyValueVillage")
-                    key("village")
+                    key(getString(R.string.village))
                     value(intervieweeD.village.name)
+                    onBind { model, view, position ->
+                        view.dataBinding.root.imageView2.setImageResource(R.drawable.ic_village)
+                    }
                 }
 
                 /**

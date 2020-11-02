@@ -88,5 +88,4 @@ class MonitoringApi {
         val ret = monitoringApi.postIntervieweeImage(body, intervieweeId)
         return ret
     }
-
 }
