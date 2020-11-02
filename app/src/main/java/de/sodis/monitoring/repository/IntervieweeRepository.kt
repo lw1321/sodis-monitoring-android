@@ -63,7 +63,7 @@ class IntervieweeRepository(
                     userId = interviewee.user?.id,
                     sectorId = interviewee.sector?.id,
                     imagePath = null,//todo add attributes server side
-                    imageUrl = null
+                    imageUrl = null//todo save image from url local
                 )
             )
             interviewee.intervieweeTechnologies.forEach {

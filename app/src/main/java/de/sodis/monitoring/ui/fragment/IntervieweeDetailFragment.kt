@@ -71,7 +71,7 @@ class IntervieweeDetailFragment : BaseListFragment() {
 
                                 }
                         } else {
-                            view.dataBinding.root.imageView.setImageResource(R.drawable.sodis_logo)//TODO add C for Carlos etc
+                            view.dataBinding.root.imageView.setImageResource(R.drawable.ic_person_black_24dp)//TODO add C for Carlos etc
                         }
 
                     }
@@ -107,7 +107,7 @@ class IntervieweeDetailFragment : BaseListFragment() {
                                 + intervieweeD.interviewee.oldMenCount).toString()
                     )
                     onBind { model, view, position ->
-                        view.dataBinding.root.imageView2.setImageResource(R.drawable.ic_village)
+                        view.dataBinding.root.imageView2.setImageResource(R.drawable.ic_family_silhouette_svgrepo_com)
                         view.dataBinding.root.imageEditable.visibility = View.VISIBLE
                         view.dataBinding.root.imageEditable.setOnClickListener {
                             val action =

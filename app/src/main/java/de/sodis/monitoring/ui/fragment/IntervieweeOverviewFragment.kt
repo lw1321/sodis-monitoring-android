@@ -56,7 +56,7 @@ class IntervieweeOverviewFragment : Fragment(), TabLayout.OnTabSelectedListener 
                             }
                             onBind { model, view, position ->
                                 if (it.imagePath == null) {
-                                    view.dataBinding.root.imageView.setImageResource(R.drawable.sodis_logo)
+                                    view.dataBinding.root.imageView.setImageResource(R.drawable.ic_person_black_24dp)
                                 }
                                 it.imagePath?.let {
                                     setPic(it, view.dataBinding.root.imageView)
