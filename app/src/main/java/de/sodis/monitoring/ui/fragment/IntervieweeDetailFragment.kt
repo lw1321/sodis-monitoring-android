@@ -76,7 +76,7 @@ class IntervieweeDetailFragment : BaseListFragment() {
 
                     }
                 }
-                keyValue{
+                keyValue {
                     id("keyValueName")
                     key("Persona")
                     value(intervieweeD.interviewee.name)
@@ -93,7 +93,23 @@ class IntervieweeDetailFragment : BaseListFragment() {
                         view.dataBinding.root.imageView2.setImageResource(R.drawable.ic_village)
                     }
                 }
-
+                keyValue {
+                    id("keyValueGeneral")
+                    key("Miembros de la familia")
+                    value(
+                        (intervieweeD.interviewee.boysCount
+                                + intervieweeD.interviewee.girlsCount
+                                + intervieweeD.interviewee.youngMenCount
+                                + intervieweeD.interviewee.youngWomenCount
+                                + intervieweeD.interviewee.womenCount
+                                + intervieweeD.interviewee.menCount
+                                + intervieweeD.interviewee.oldWomenCount
+                                + intervieweeD.interviewee.oldMenCount).toString()
+                    )
+                    onBind { model, view, position ->
+                        view.dataBinding.root.imageView2.setImageResource(R.drawable.ic_village)
+                    }
+                }
                 /**
                 keyValue {
                 id("keyValueLocalExpert")
