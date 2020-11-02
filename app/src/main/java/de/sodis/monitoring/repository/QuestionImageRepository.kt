@@ -32,7 +32,6 @@ class QuestionImageRepository(
 
         // Initialize a new file instance to save bitmap object
         val file = File(wrapper.getDir("Images", Context.MODE_PRIVATE), "${UUID.randomUUID()}.jpg")
-
         try {
             // Compress the bitmap and save in jpg format
             val stream: OutputStream = FileOutputStream(file)

@@ -43,7 +43,7 @@ class SurveyRepository(
         val questionIds = mutableListOf<Int>()
 
         val response = monitoringApi.getSurveys()
-                //loop through surveys
+        //loop through surveys
         for (surveyHeaderJson: SurveyHeaderJson in response) {
             //save survey Header
             //Save Input Types
@@ -53,7 +53,7 @@ class SurveyRepository(
                 technologyDao.insert(
                     Technology(
                         id = surveyHeaderJson.technology.id,
-                        name= surveyHeaderJson.technology.name
+                        name = surveyHeaderJson.technology.name
                     )
                 )
             }
@@ -98,10 +98,10 @@ class SurveyRepository(
                             dependentQuestionId = questionJson.dependentQuestionId,
                             dependentQuestionOptionId = questionJson.dependentQuestionOptionId,
                             inputTypeId = questionJson.inputType.id,
-                            questionImageId = questionJson.questionImage.id,
-                            questionName = questionJson.questionName,
-                            surveySectionId = surveySectionJson.id
-                        )
+                            questionImageId = questionJson.questionImage?.id,
+                        questionName = questionJson.questionName,
+                        surveySectionId = surveySectionJson.id
+                    )
                     )
                     //add to temp lits
                     questionIds.add(questionJson.id)
@@ -141,13 +141,13 @@ class SurveyRepository(
     fun getSurveyHeaders(): LiveData<List<SurveyHeader>> {
         return surveyHeaderDao.getAll()
     }
+
     /**
      * Provide a list of all in database stored survey headers.
      */
     fun getSurveyHeadersFilteredTechnology(technologyId: Int): LiveData<List<SurveyHeader>> {
         return surveyHeaderDao.getAllFilteredTechnology(technologyId)
     }
-
 
 
 }

@@ -93,7 +93,11 @@ class SurveyViewModel(
                 .optionChoiceDao(),
             completedSurveyDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
                 .completedSurveyDao(),
-            monitoringApi = MonitoringApi()
+            monitoringApi = MonitoringApi(),
+            intervieweeTechnologyDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
+                .intervieweeTechnologyDao(),
+            surveyHeaderDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
+                .surveyHeaderDao()
         )
 
     /**
@@ -213,6 +217,7 @@ class SurveyViewModel(
                     longitude = longitude
                 )
             )
+
             answerMap.clear()
             interviewee = null
         }
@@ -223,7 +228,20 @@ class SurveyViewModel(
         createQuestionList(surveyId)
     }
 
-    fun isAnswered(id: Int): Boolean = answerMap.containsKey(id)
+    fun isAnswered(id: Int): Boolean {
+        if (answerMap.containsKey(id)) {
+            return true
+        }
+        if (questionItemList.value!![currentPosition].question.inputTypeId == 3) {//numeric if not answered, set 0 todo question
+            setAnswer(
+                questionItemList.value!![currentPosition].question.id,
+                0.toString(),
+                questionItemList.value!![currentPosition].answers.first().questionOption.id
+            )
+            return true
+        }
+        return false
+    }
 
     fun previousQuestion(): Boolean {
         if (currentPosition != 0) {

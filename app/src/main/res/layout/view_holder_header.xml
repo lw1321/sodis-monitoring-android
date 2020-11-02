@@ -15,12 +15,12 @@
 
         <TextView
             android:id="@+id/headerTitle"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:layout_marginBottom="8dp"
-            android:textSize="35sp"
+            android:layout_margin="8dp"
+            android:textSize="45sp"
             android:textStyle="bold"
+            android:textColor="@color/colorPrimary"
             tools:text="@{text}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"

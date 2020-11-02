@@ -2,12 +2,20 @@ package de.sodis.monitoring.api
 
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import de.sodis.monitoring.Config
-import de.sodis.monitoring.api.model.*
+import de.sodis.monitoring.api.model.CompletedSurveyJson
+import de.sodis.monitoring.api.model.IntervieweeJson
+import de.sodis.monitoring.api.model.SurveyHeaderJson
+import de.sodis.monitoring.api.model.TaskJson
+import de.sodis.monitoring.db.entity.Interviewee
 import de.sodis.monitoring.db.entity.Stats
 import de.sodis.monitoring.db.entity.User
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.OkHttpClient
+import okhttp3.RequestBody
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import okhttp3.OkHttpClient
+import java.io.File
 
 
 class MonitoringApi {
@@ -71,4 +79,13 @@ class MonitoringApi {
         return monitoringApi.getStats()
     }
 
+    suspend fun postIntervieweImage(imagePath: String?, intervieweeId: Int): IntervieweeJson {
+        val file = File(imagePath)
+        val requestFile: RequestBody =
+            RequestBody.create(MediaType.parse("multipart/form-data"), file)
+        val body =
+            MultipartBody.Part.createFormData("image", file.name, requestFile)
+        val ret = monitoringApi.postIntervieweeImage(body, intervieweeId)
+        return ret
+    }
 }

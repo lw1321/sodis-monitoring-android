@@ -18,7 +18,7 @@ interface IntervieweeDao {
     @Query("SELECT * FROM Interviewee WHERE name LIKE ''%:name%''")
     fun searchByName(name: String): List<Interviewee>
 
-    @Query("SELECT * FROM Interviewee WHERE villageId=:villageId")
+    @Query("SELECT * FROM Interviewee WHERE villageId=:villageId ORDER BY name")
     fun getByVillage(villageId: Int): LiveData<List<Interviewee>>
 
     @Query("SELECT * FROM Interviewee WHERE id=:intervieweeId")
@@ -26,4 +26,7 @@ interface IntervieweeDao {
 
     @Update
     fun update(interviewee: Interviewee)
+
+    @Query("SELECT * FROM Interviewee WHERE synced=0")
+    fun getAllNotSynced(): List<Interviewee>
 }

@@ -16,7 +16,8 @@ data class IntervieweeJson(
     val menCount: Int,
     val womenCount: Int,
     val sector: Sector?,
-    val user: User?
+    val user: User?,
+    val imageUrl: String?
 ) {
     data class Village(
         val id: Int,

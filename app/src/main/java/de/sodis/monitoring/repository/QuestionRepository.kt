@@ -17,7 +17,9 @@ class QuestionRepository(
     private val answerDao: AnswerDao,
     private val optionChoiceDao: OptionChoiceDao,
     private val completedSurveyDao: CompletedSurveyDao,
-    private val monitoringApi: MonitoringApi
+    private val monitoringApi: MonitoringApi,
+    private val intervieweeTechnologyDao: IntervieweeTechnologyDao,
+    private val surveyHeaderDao: SurveyHeaderDao
 ) {
     /**
      * include answers
@@ -39,7 +41,7 @@ class QuestionRepository(
                     )
                 )
             }
-            val image = questionImageDao.getById(question.questionImageId)
+            val image = question.questionImageId?.let { questionImageDao.getById(it) }
             questionAnswerList.add(
                 QuestionAnswer(
                     question = question,
@@ -60,10 +62,34 @@ class QuestionRepository(
         answerMap: MutableMap<Int, Answer>,
         completedSurvey: CompletedSurvey
     ) {
+        /**
+         * Statusnerechnung:
+         * 0 = Keine Infos(Grau)
+        1 = Etwas passt nicht (Farbe gelb) (Mindestestens eine Frage wurde nicht mit Si/lachendem Smiiley beantwortet.
+        2 = Alles Super (Grün) (Alle Fragen positiv beantwortet)
+        3 = Nicht Vorhanden (Farbe rot) (Frage am Anfang existiert die Technologie?, Frage bisher nicht vorhanden.)//TODO Frage hinzufügen am Anfang des Fragebogens
+         */
+        //intervieweetechnology holen
+        val surveyHeader =
+            surveyHeaderDao.getByIdSync(surveyHeaderId = completedSurvey.surveyHeaderId)
+        val intervieweeTechnology = intervieweeTechnologyDao.getByIntervieweeAndTechnoology(
+            completedSurvey.intervieweeId,
+            surveyHeader.surveyHeader.technologyId
+        )
+        //status berechnen
+        var status = 2
         val completedSurveyId = completedSurveyDao.insert(completedSurvey)
         for ((k, v) in answerMap) {//todo insertAll
             v.completedSurveyId = completedSurveyId.toInt()
             answerDao.insert(v)
+            if (!v.answerText.equals("Si"))//TODO{
+            //something is not "postiv" so lets set the status to 1
+                status = 1
+        }
+        if (intervieweeTechnology != null) {
+            intervieweeTechnology.stateTechnology = status
+            //status speichern
+            intervieweeTechnologyDao.update(intervieweeTechnology)
         }
     }
 

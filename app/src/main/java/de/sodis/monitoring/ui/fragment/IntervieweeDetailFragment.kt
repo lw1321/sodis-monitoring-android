@@ -1,18 +1,23 @@
 package de.sodis.monitoring.ui.fragment
 
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.graphics.Color
 import android.app.Activity.RESULT_OK
 import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.graphics.*
 import android.graphics.Shader.TileMode
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.FileProvider
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.core.view.isGone
 import androidx.core.widget.addTextChangedListener
@@ -26,12 +31,16 @@ import de.sodis.monitoring.viewmodel.IntervieweeModel
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
 import kotlinx.android.synthetic.main.continuable_list.view.*
 import kotlinx.android.synthetic.main.view_holder_family_age_structure.view.*
+import kotlinx.android.synthetic.main.view_holder_header.*
+import kotlinx.android.synthetic.main.view_holder_key_value.view.*
 import kotlinx.android.synthetic.main.view_holder_picture.view.*
 import kotlinx.android.synthetic.main.view_holder_technology.view.*
-import java.io.ByteArrayOutputStream
-import java.io.FileNotFoundException
+import java.io.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 
+@Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 class IntervieweeDetailFragment : BaseListFragment() {
 
     private val intervieweeModel: IntervieweeModel by lazy {
@@ -49,98 +58,44 @@ class IntervieweeDetailFragment : BaseListFragment() {
         intervieweeModel.setInterviewee(intervieweeId)
         intervieweeModel.intervieweeDetail.observe(this, Observer { intervieweeD ->
             recyclerView.withModels {
-                pictureHeader {
+                picture {
                     id("pictureHeader${intervieweeId}")
-                    text(intervieweeD.interviewee.name)
                     onClick { _ ->
                         dispatchTakePictureIntent()
                     }
                     onBind { model, view, position ->
-                        val bitmapdata = try {
-                            context!!.openFileInput("interviewee_${intervieweeId}.jpg").readBytes()
-                        } catch (ex: FileNotFoundException) {
-                            null
-                        }
-                        if (bitmapdata != null) {
-                            val bitmap =
-                                BitmapFactory.decodeByteArray(bitmapdata, 0, bitmapdata.size)
-                            val size = Math.min(bitmap.width, bitmap.height)
-                            val cropedBitmap = if (bitmap.width < bitmap.height) {
-                                Bitmap.createBitmap(
-                                    bitmap,
-                                    0,
-                                    (bitmap.height - bitmap.width) / 2,
-                                    size,
-                                    size
-                                )
-                            } else {
-                                Bitmap.createBitmap(
-                                    bitmap,
-                                    (bitmap.width - bitmap.height) / 2,
-                                    0,
-                                    size,
-                                    size
-                                )
-                            }
+                        if (intervieweeD.interviewee.imagePath != null) {
+                            BitmapFactory.decodeFile(intervieweeD.interviewee.imagePath)
+                                ?.also { bitmap ->
+                                    view.dataBinding.root.imageView.setImageBitmap(bitmap)
 
-                            val roundedBitmapDrawable =
-                                RoundedBitmapDrawableFactory.create(resources, cropedBitmap)
-
-                            //cut corners
-                            roundedBitmapDrawable.cornerRadius = Math.min(
-                                bitmap.width,
-                                bitmap.height
-                            ) * 0.05f
-//                                    view.dataBinding.root.imageView.setImageBitmap(bitmap)
-                            view.dataBinding.root.imageView.setImageDrawable(roundedBitmapDrawable)
+                                }
                         } else {
-                            view.dataBinding.root.imageView.setImageResource(R.drawable.ic_add_a_photo_black_24dp)
+                            view.dataBinding.root.imageView.setImageResource(R.drawable.ic_person_black_24dp)//TODO add C for Carlos etc
                         }
 
+                    }
+                }
+                keyValue {
+                    id("keyValueName")
+                    key("Persona")
+                    value(intervieweeD.interviewee.name)
+                    onBind { model, view, position ->
+                        view.dataBinding.root.imageView2.setImageResource(R.drawable.ic_person_black_24dp)
                     }
                 }
 
                 keyValue {
                     id("keyValueVillage")
-                    key("village")
+                    key(getString(R.string.village))
                     value(intervieweeD.village.name)
-                }
-
-                if (intervieweeD.sector != null) {
-                    keyValue {
-                        id("keyValueSector")
-                        key("sector")
-                        value(intervieweeD.sector!!.name)
-                        onClick { _ ->
-                            activity?.let {
-                                val builder = AlertDialog.Builder(it).apply {
-                                    setTitle("Choose Sector")
-                                    setItems(intervieweeModel.getSectorsOfVillage(intervieweeD.interviewee.villageId),
-                                        DialogInterface.OnClickListener { dialog, which ->
-                                            // The 'which' argument contains the index position
-                                            // of the selected item
-                                        })
-                                }
-
-                                val dialog = builder.create()
-
-                                dialog.show()
-                            }
-
-
-                        }
+                    onBind { model, view, position ->
+                        view.dataBinding.root.imageView2.setImageResource(R.drawable.ic_village)
                     }
                 }
-
                 keyValue {
-                    id("keyValueLocalExpert")
-                    key("Local Expert")
-                    value(intervieweeD.user?.firstName + " " + intervieweeD.user?.lastName)
-                }
-
-                keyValue {
-                    id("keyValueCount")
-                    key("miembro de la familia")
+                    id("keyValueGeneral")
+                    key("Miembros de la familia")
                     value(
                         (intervieweeD.interviewee.boysCount
                                 + intervieweeD.interviewee.girlsCount
@@ -151,112 +106,40 @@ class IntervieweeDetailFragment : BaseListFragment() {
                                 + intervieweeD.interviewee.oldWomenCount
                                 + intervieweeD.interviewee.oldMenCount).toString()
                     )
-                }
-                familyAgeStructure {
-                    id("family")
-                    f0(intervieweeD.interviewee.girlsCount.toString())
-                    f1(intervieweeD.interviewee.youngWomenCount.toString())
-                    f2(intervieweeD.interviewee.womenCount.toString())
-                    f3(intervieweeD.interviewee.oldWomenCount.toString())
-                    m0(intervieweeD.interviewee.boysCount.toString())
-                    m1(intervieweeD.interviewee.youngMenCount.toString())
-                    m2(intervieweeD.interviewee.menCount.toString())
-                    m3(intervieweeD.interviewee.oldMenCount.toString())
                     onBind { model, view, position ->
-
-                        view.dataBinding.root.editTextf0.addTextChangedListener {
-                            var count =
-                                view.dataBinding.root.editTextf0.text.toString().toIntOrNull() ?: 0
-                            val newInterviewee = intervieweeD.interviewee.copy(girlsCount = count)
-                            intervieweeModel.updateInterviewee(newInterviewee)
-                        }
-                        view.dataBinding.root.editTextf0.setOnFocusChangeListener { view, b ->
-                            if (!b) {
-                                recyclerView.requestModelBuild()
-                            }
-                        }
-                        view.dataBinding.root.editTextf1.addTextChangedListener {
-                            var count =
-                                view.dataBinding.root.editTextf1.text.toString().toIntOrNull() ?: 0
-                            val newInterviewee =
-                                intervieweeD.interviewee.copy(youngWomenCount = count)
-                            intervieweeModel.updateInterviewee(newInterviewee)
-                        }
-                        view.dataBinding.root.editTextf1.setOnFocusChangeListener { view, b ->
-                            if (!b) {
-                                recyclerView.requestModelBuild()
-                            }
-                        }
-                        view.dataBinding.root.editTextf2.addTextChangedListener {
-                            var count =
-                                view.dataBinding.root.editTextf2.text.toString().toIntOrNull() ?: 0
-                            val newInterviewee = intervieweeD.interviewee.copy(womenCount = count)
-                            intervieweeModel.updateInterviewee(newInterviewee)
-                        }
-                        view.dataBinding.root.editTextf2.setOnFocusChangeListener { view, b ->
-                            if (!b) {
-                                recyclerView.requestModelBuild()
-                            }
-                        }
-                        view.dataBinding.root.editTextf3.addTextChangedListener {
-                            var count =
-                                view.dataBinding.root.editTextf3.text.toString().toIntOrNull() ?: 0
-                            val newInterviewee =
-                                intervieweeD.interviewee.copy(oldWomenCount = count)
-                            intervieweeModel.updateInterviewee(newInterviewee)
-                        }
-                        view.dataBinding.root.editTextf3.setOnFocusChangeListener { view, b ->
-                            if (!b) {
-                                recyclerView.requestModelBuild()
-                            }
-                        }
-                        view.dataBinding.root.editTextm0.addTextChangedListener {
-                            var count =
-                                view.dataBinding.root.editTextm0.text.toString().toIntOrNull() ?: 0
-                            val newInterviewee = intervieweeD.interviewee.copy(boysCount = count)
-                            intervieweeModel.updateInterviewee(newInterviewee)
-                        }
-                        view.dataBinding.root.editTextm0.setOnFocusChangeListener { view, b ->
-                            if (!b) {
-                                recyclerView.requestModelBuild()
-                            }
-                        }
-                        view.dataBinding.root.editTextm1.addTextChangedListener {
-                            var count =
-                                view.dataBinding.root.editTextm1.text.toString().toIntOrNull() ?: 0
-                            val newInterviewee =
-                                intervieweeD.interviewee.copy(youngMenCount = count)
-                            intervieweeModel.updateInterviewee(newInterviewee)
-                        }
-                        view.dataBinding.root.editTextm1.setOnFocusChangeListener { view, b ->
-                            if (!b) {
-                                recyclerView.requestModelBuild()
-                            }
-                        }
-                        view.dataBinding.root.editTextm2.addTextChangedListener {
-                            var count =
-                                view.dataBinding.root.editTextm2.text.toString().toIntOrNull() ?: 0
-                            val newInterviewee = intervieweeD.interviewee.copy(menCount = count)
-                            intervieweeModel.updateInterviewee(newInterviewee)
-                        }
-                        view.dataBinding.root.editTextm2.setOnFocusChangeListener { view, b ->
-                            if (!b) {
-                                recyclerView.requestModelBuild()
-                            }
-                        }
-                        view.dataBinding.root.editTextm3.addTextChangedListener {
-                            var count =
-                                view.dataBinding.root.editTextm3.text.toString().toIntOrNull() ?: 0
-                            val newInterviewee = intervieweeD.interviewee.copy(oldMenCount = count)
-                            intervieweeModel.updateInterviewee(newInterviewee)
-                        }
-                        view.dataBinding.root.editTextm3.setOnFocusChangeListener { view, b ->
-                            if (!b) {
-                                recyclerView.requestModelBuild()
-                            }
+                        view.dataBinding.root.imageView2.setImageResource(R.drawable.ic_family_silhouette_svgrepo_com)
+                        view.dataBinding.root.imageEditable.visibility = View.VISIBLE
+                        view.dataBinding.root.imageEditable.setOnClickListener {
+                            val action =
+                                IntervieweeDetailFragmentDirections.actionIntervieweeDetailFragmentToMonitoringOverviewFragment(
+                                    6,// technology id of datos generales TODO replace hardcoded id
+                                    args.intervieweeId
+                                )
+                            findNavController().navigate(action)
                         }
                     }
                 }
+                /**
+                keyValue {
+                id("keyValueLocalExpert")
+                key("Local Expert")
+                value(intervieweeD.user?.firstName + " " + intervieweeD.user?.lastName)
+                }
+
+                keyValue {
+                id("keyValueCount")
+                key("miembro de la familia")
+                value(
+                (intervieweeD.interviewee.boysCount
+                + intervieweeD.interviewee.girlsCount
+                + intervieweeD.interviewee.youngMenCount
+                + intervieweeD.interviewee.youngWomenCount
+                + intervieweeD.interviewee.womenCount
+                + intervieweeD.interviewee.menCount
+                + intervieweeD.interviewee.oldWomenCount
+                + intervieweeD.interviewee.oldMenCount).toString()
+                )
+                }**/
                 intervieweeD.intervieweeTechnologies.forEach { techno ->
                     //are there open tasks for this technology?
                     val taskFilteredList = intervieweeD.tasks.filter { task ->
@@ -283,7 +166,6 @@ class IntervieweeDetailFragment : BaseListFragment() {
                             findNavController().navigate(action)
                         }
                         onBind { model, view, position ->
-                            //TODO ist die Zuweisung der Farben richtig?
                             val bo = BitmapFactory.Options()
                             bo.inMutable = true
                             val b = BitmapFactory.decodeResource(
@@ -298,23 +180,22 @@ class IntervieweeDetailFragment : BaseListFragment() {
                                 },
                                 bo
                             )
-                            applyCircleGradient(b)
                             view.dataBinding.root.technolgyImage.setImageBitmap(b)
 
                             view.dataBinding.root.technolgyImage.setColorFilter(
                                 when (techno.stateTechnology) {
-                                    0 -> Color.GREEN
-                                    1 -> Color.RED
-                                    2 -> Color.YELLOW
-                                    else -> Color.GRAY
+                                    0 -> Color.GRAY
+                                    1 -> Color.YELLOW
+                                    2 -> Color.GREEN
+                                    else -> Color.RED
                                 }
                             )
                             view.dataBinding.root.technologyKnowledgeImage.setColorFilter(
                                 when (techno.stateKnowledge) {
-                                    0 -> Color.GREEN
-                                    1 -> Color.RED
-                                    2 -> Color.YELLOW
-                                    else -> Color.GRAY
+                                    0 -> Color.GRAY
+                                    1 -> Color.YELLOW
+                                    2 -> Color.GREEN
+                                    else -> Color.RED
                                 }
                             )
                             view.dataBinding.root.technologyTaskImage.setColorFilter(Color.YELLOW)
@@ -330,63 +211,65 @@ class IntervieweeDetailFragment : BaseListFragment() {
 
             }
             recyclerView.recycledViewPool.clear()
-            view?.navigation_forward_button_1?.setImageResource(R.drawable.ic_baseline_save_24)
-            view?.navigation_forward_button_1?.setOnClickListener {
-                intervieweeModel.saveInterviewee()
-                Snackbar.make(
-                    view!!,
-                    "Saved",
-                    Snackbar.LENGTH_LONG
-                ).show()
-            }
-
         })
     }
 
-    private fun applyCircleGradient(b: Bitmap) {
-        val canvas = Canvas(b)
-        val gradient = LinearGradient(
-            0f,
-            0f,
-            0f,
-            b.height.toFloat(),
-            intArrayOf(Color.TRANSPARENT, Color.argb(70, 255, 255, 255)),
-            floatArrayOf(0.0f, 1f),
-            TileMode.CLAMP
-        )
 
-        val paint = Paint()
-        paint.shader = gradient
+    val REQUEST_TAKE_PHOTO = 1
 
-        canvas.drawCircle(
-            b.width.toFloat() / 2.0f,
-            b.height.toFloat() / 2.0f,
-            b.width.toFloat() / 2.0f,
-            paint
-        )
-    }
-
-    val REQUEST_IMAGE_CAPTURE = 1
-
-    protected fun dispatchTakePictureIntent() {
+    private fun dispatchTakePictureIntent() {
         Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+            // Ensure that there's a camera activity to handle the intent
             takePictureIntent.resolveActivity(activity!!.packageManager)?.also {
-                startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+                // Create the File where the photo should go
+                val photoFile: File? = try {
+                    createImageFile()
+                } catch (ex: IOException) {
+                    // Error occurred while creating the File
+                    null
+                }
+                // Continue only if the File was successfully created
+                photoFile?.also {
+                    val photoURI: Uri = FileProvider.getUriForFile(
+                        activity!!,
+                        "com.example.android.fileprovider",
+                        it
+                    )
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                    startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO)
+                }
             }
         }
     }
 
+
+    lateinit var currentPhotoPath: String
+
+    @Throws(IOException::class)
+    private fun createImageFile(): File {
+        // Create an image file name
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val storageDir: File = activity!!.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        return File.createTempFile(
+            "JPEG_${timeStamp}_", /* prefix */
+            ".jpg", /* suffix */
+            storageDir /* directory */
+        ).apply {
+            // Save a file: path for use with ACTION_VIEW intents
+            currentPhotoPath = absolutePath
+        }
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            val imageBitmap = data!!.extras.get("data") as Bitmap
-            activity!!.applicationContext.openFileOutput(
-                "interviewee_${intervieweeId}.jpg",
-                Context.MODE_PRIVATE
-            ).use {
-                val blob = ByteArrayOutputStream()
-                //TODO set reasonable compression factor
-                imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, blob)
-                it.write(blob.toByteArray())
+        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
+            //save the image path in our database..
+            //set image to iamgeview
+            if (currentPhotoPath != null) {
+                //store the file
+                intervieweeModel.storeImagePath(currentPhotoPath)
+                BitmapFactory.decodeFile(currentPhotoPath)?.also { bitmap ->
+                    view!!.imageView.setImageBitmap(bitmap)
+                }
             }
         }
     }

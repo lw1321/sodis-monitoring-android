@@ -1,14 +1,9 @@
 package de.sodis.monitoring.repository
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import de.sodis.monitoring.db.dao.*
-import de.sodis.monitoring.db.entity.Answer
-import de.sodis.monitoring.db.entity.CompletedSurvey
-import de.sodis.monitoring.db.entity.Task
 import de.sodis.monitoring.db.response.CompletedSurveyDetail
 import de.sodis.monitoring.db.response.CompletedSurveyOverview
-import de.sodis.monitoring.db.response.QuestionAnswer
 
 class SurveyHistoryRepository(
     private val completedSurveyDao: CompletedSurveyDao,
@@ -32,17 +27,17 @@ class SurveyHistoryRepository(
         val surveyHeaderResponse = surveyHeaderDao.getByIdSync(completedSurvey.surveyHeaderId)
         val surveySectionList = surveyHeaderResponse!!.surveySectionList
         val answerList = answerDao.getAnswersByCompletedSurveyId(completedSurveyId)
-        answerList.forEach {answer ->
+        answerList.forEach { answer ->
             // get the depending question for the answer
             val question = questionDao.getByQuestionOptionId(answer.questionOptionId)
             //get the depending image for the question
-            val image = imageDao.getById(question.questionImageId)
+            val image = question.questionImageId?.let { imageDao.getById(it) }
             completedQuestionDetailList.add(
                 CompletedSurveyDetail(
-                    question=question,
-                    image = image,
+                    question = question,
+                    image = image ?: null,
                     title = surveySectionList.first {
-                        it.id==question.surveySectionId
+                        it.id == question.surveySectionId
                     }.sectionName!!,
                     answer = answer
                 )

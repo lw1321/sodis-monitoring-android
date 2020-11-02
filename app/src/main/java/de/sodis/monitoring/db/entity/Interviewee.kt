@@ -38,5 +38,7 @@ data class Interviewee(
     val womenCount: Int,
     val userId: Int?,
     val sectorId: Int?,
-    var changed: Boolean = false//todo modification date + id mapping
+    var imagePath: String?=null,
+    var imageUrl: String?=null,
+    var synced: Boolean?=true
 )

@@ -55,7 +55,7 @@ class QuestionHistoryFragment : BaseListFragment() {
                     title(currentQuestion.title)
                     questionText(currentQuestion.question.questionName)
                     onBind { model, view, position ->
-                        view.dataBinding.root.question_image.load(File(currentQuestion.image.path))
+                        view.dataBinding.root.question_image.load(File(currentQuestion.image?.path))
                     }
                 }
                 when (currentQuestion.question.inputTypeId) {
