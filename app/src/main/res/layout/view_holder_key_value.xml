@@ -71,5 +71,19 @@
             app:layout_constraintTop_toTopOf="parent"
             android:tint="@color/colorPrimary" />
 
+        <ImageView
+            android:visibility="gone"
+            android:id="@+id/imageEditable"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
+            android:tint="@color/colorPrimary"
+            app:srcCompat="@drawable/ic_survey_black"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

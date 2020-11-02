@@ -108,6 +108,15 @@ class IntervieweeDetailFragment : BaseListFragment() {
                     )
                     onBind { model, view, position ->
                         view.dataBinding.root.imageView2.setImageResource(R.drawable.ic_village)
+                        view.dataBinding.root.imageEditable.visibility = View.VISIBLE
+                        view.dataBinding.root.imageEditable.setOnClickListener {
+                            val action =
+                                IntervieweeDetailFragmentDirections.actionIntervieweeDetailFragmentToMonitoringOverviewFragment(
+                                    6,// technology id of datos generales TODO replace hardcoded id
+                                    args.intervieweeId
+                                )
+                            findNavController().navigate(action)
+                        }
                     }
                 }
                 /**
@@ -131,23 +140,6 @@ class IntervieweeDetailFragment : BaseListFragment() {
                 + intervieweeD.interviewee.oldMenCount).toString()
                 )
                 }**/
-
-                //general data
-                generalData {
-                    id("generalData")
-                    key("Datos Generales")
-                    onClick { _ ->
-                        //show survey for datos generales
-                        val action =
-                            IntervieweeDetailFragmentDirections.actionIntervieweeDetailFragmentToMonitoringOverviewFragment(
-                                6,// technology id of datos generales TODO replace hardcoded id
-                                args.intervieweeId
-                            )
-                        findNavController().navigate(action)
-                    }
-
-                }
-
                 intervieweeD.intervieweeTechnologies.forEach { techno ->
                     //are there open tasks for this technology?
                     val taskFilteredList = intervieweeD.tasks.filter { task ->
