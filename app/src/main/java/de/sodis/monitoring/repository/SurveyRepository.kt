@@ -109,7 +109,7 @@ class SurveyRepository(
                     //Loop through question options
                     for (questionOptionJson: SurveyHeaderJson.SurveySectionJson.QuestionJson.QuestionOptionJson in questionJson.questionOptions) {
                         //check if option choice exist
-                        if (optionChoiceDao.exists(questionOptionJson.optionChoice.id) == 0) {
+                        if (optionChoiceDao.exists(questionOptionJson.optionChoice.id) == 0) {//TODO
                             optionChoiceDao.insert(
                                 OptionChoice(
                                     id = questionOptionJson.optionChoice.id,
