@@ -120,8 +120,6 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
                                         }
                                     }
                                 }
-
-
                         }
 
                     3 -> numeric {
@@ -147,15 +145,13 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
                 if (surveyViewModel.isAnswered(currentQuestion.question.id)) {
                     val answerToCheck: Answer =
                         surveyViewModel.answerToID(currentQuestion.question.id)!!
-                    println("beantwortet")
-                    if (currentQuestion.question.inputTypeId == 2 && (currentQuestion.question.questionName == "Solución" || currentQuestion.question.questionName == "solucion")) { //todo: anpassen wenn yes/no question geändert
+                    if (surveyViewModel.createTodo()) { //todo: anpassen wenn yes/no question geändert
                         val dialog = TodoDialog(
                             surveyViewModel.interviewee,
                             answerToCheck.answerText,
                             context!!,
                             this
                         )
-                        println("Dialog wird jetzt gezeigt")
                         dialog.show(childFragmentManager, "todo_in_survey")
                     } else {
                         surveyViewModel.listOfAnsweredQuestions += surveyViewModel.currentPosition
