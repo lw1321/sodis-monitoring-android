@@ -220,8 +220,12 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
                 getString(R.string.message_monitoring_completed),
                 Snackbar.LENGTH_LONG
             ).show()
+            val action =
+                QuestionFragmentDirections.actionQuestionFragmentToIntervieweeDetailFragment(
+                    intervieweeId = args.intervieweeId
+                )
+            findNavController().navigate(action)
             (activity as MainActivity).show_bottom_navigation()
-            findNavController().navigate(R.id.monitoringOverviewFragment)
         }
     }
 
