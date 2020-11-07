@@ -258,4 +258,10 @@ class SurveyViewModel(
     fun answerToID(id: Int): Answer? {
         return answerMap[id];
     }
+
+
+    //returns true if the answer is "Escribir en la lista de tareas"
+    fun createTodo(): Boolean {
+       return answerMap[questionItemList.value!![currentPosition].question.id]!!.answerText.equals("Escribir en la lista de tareas") //todo be aware of translation changes...
+    }
 }

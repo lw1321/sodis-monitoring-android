@@ -21,18 +21,17 @@
         android:hint="@{hint}">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/answerTextInput"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:imeOptions="actionDone"
             android:inputType="@{inputType}"
             android:singleLine="false"
-            android:imeOptions="actionDone"
             android:text="@={text}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            />
+            app:layout_constraintTop_toTopOf="parent" />
     </com.google.android.material.textfield.TextInputLayout>
 
 </layout>

@@ -14,6 +14,7 @@ import coil.api.load
 import com.google.android.material.snackbar.Snackbar
 import de.sodis.monitoring.*
 import de.sodis.monitoring.db.entity.Answer
+import de.sodis.monitoring.db.entity.QuestionOption
 import de.sodis.monitoring.db.entity.QuestionOptionChoice
 import de.sodis.monitoring.db.response.QuestionAnswer
 import de.sodis.monitoring.todolist.TodoDialog
@@ -78,22 +79,48 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
                                 }
                             }
                         }
-                    1 -> textChoice {
-                        id("choice")
-                        option1(currentQuestion.answers[0].optionChoice.optionChoiceName)
-                        option2(currentQuestion.answers[1].optionChoice.optionChoiceName)
-                        onBind { model, view, position ->
-                            view.dataBinding.root.radio_group.clearCheck()
-                            view.dataBinding.root.radio_group.setOnCheckedChangeListener { group, checkedId ->
-                                val index = if (checkedId == R.id.optionButton) 0 else 1
-                                surveyViewModel.setAnswer(
-                                    currentQuestion.question.id,
-                                    currentQuestion.answers[index].optionChoice.optionChoiceName,
-                                    currentQuestion.answers[index].questionOption.id //todo
-                                )
+                    1 ->
+                        if (currentQuestion.answers.size == 2) {
+                            textChoice {
+                                id("choice")
+                                option1(currentQuestion.answers[0].optionChoice.optionChoiceName)
+                                option2(currentQuestion.answers[1].optionChoice.optionChoiceName)
+                                onBind { model, view, position ->
+                                    view.dataBinding.root.radio_group.clearCheck()
+                                    view.dataBinding.root.radio_group.setOnCheckedChangeListener { group, checkedId ->
+                                        val index = if (checkedId == R.id.optionButton) 0 else 1
+                                        surveyViewModel.setAnswer(
+                                            currentQuestion.question.id,
+                                            currentQuestion.answers[index].optionChoice.optionChoiceName,
+                                            currentQuestion.answers[index].questionOption.id //todo
+                                        )
+                                    }
+                                }
                             }
+                        } else if (currentQuestion.answers.size == 3) {
+                                multipleChoice3 {
+                                    id("choice")
+                                    option1(currentQuestion.answers[0].optionChoice.optionChoiceName)
+                                    option2(currentQuestion.answers[1].optionChoice.optionChoiceName)
+                                    option3(currentQuestion.answers[2].optionChoice.optionChoiceName)
+                                    onBind { model, view, position ->
+                                        view.dataBinding.root.radio_group.clearCheck()
+                                        view.dataBinding.root.radio_group.setOnCheckedChangeListener { group, checkedId ->
+                                            var index = -1
+                                            when(checkedId){
+                                                R.id.optionButton1->index=0
+                                                R.id.optionButton2->index=1
+                                                R.id.optionButton3->index=2
+                                            }
+                                            surveyViewModel.setAnswer(
+                                                currentQuestion.question.id,
+                                                currentQuestion.answers[index].optionChoice.optionChoiceName,
+                                                currentQuestion.answers[index].questionOption.id //todo
+                                            )
+                                        }
+                                    }
+                                }
                         }
-                    }
 
                     3 -> numeric {
                         id("numeric")
@@ -118,15 +145,13 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
                 if (surveyViewModel.isAnswered(currentQuestion.question.id)) {
                     val answerToCheck: Answer =
                         surveyViewModel.answerToID(currentQuestion.question.id)!!
-                    println("beantwortet")
-                    if (currentQuestion.question.inputTypeId == 2 && (currentQuestion.question.questionName == "Solución" || currentQuestion.question.questionName == "solucion")) { //todo: anpassen wenn yes/no question geändert
+                    if (surveyViewModel.createTodo()) { //todo: anpassen wenn yes/no question geändert
                         val dialog = TodoDialog(
                             surveyViewModel.interviewee,
                             answerToCheck.answerText,
                             context!!,
                             this
                         )
-                        println("Dialog wird jetzt gezeigt")
                         dialog.show(childFragmentManager, "todo_in_survey")
                     } else {
                         surveyViewModel.listOfAnsweredQuestions += surveyViewModel.currentPosition
