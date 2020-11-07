@@ -57,8 +57,9 @@ class IntervieweeDetailFragment : BaseListFragment() {
         intervieweeId = args.intervieweeId
         intervieweeModel.setInterviewee(intervieweeId)
         intervieweeModel.intervieweeDetail.observe(this, Observer { intervieweeD ->
+            recyclerView.recycledViewPool.clear()
             recyclerView.withModels {
-                picture {
+                picture {warum funktioniert es im debug modus aber nicht in real
                     id("pictureHeader${intervieweeId}")
                     onClick { _ ->
                         dispatchTakePictureIntent()
@@ -119,27 +120,7 @@ class IntervieweeDetailFragment : BaseListFragment() {
                         }
                     }
                 }
-                /**
-                keyValue {
-                id("keyValueLocalExpert")
-                key("Local Expert")
-                value(intervieweeD.user?.firstName + " " + intervieweeD.user?.lastName)
-                }
 
-                keyValue {
-                id("keyValueCount")
-                key("miembro de la familia")
-                value(
-                (intervieweeD.interviewee.boysCount
-                + intervieweeD.interviewee.girlsCount
-                + intervieweeD.interviewee.youngMenCount
-                + intervieweeD.interviewee.youngWomenCount
-                + intervieweeD.interviewee.womenCount
-                + intervieweeD.interviewee.menCount
-                + intervieweeD.interviewee.oldWomenCount
-                + intervieweeD.interviewee.oldMenCount).toString()
-                )
-                }**/
                 intervieweeD.intervieweeTechnologies.forEach { techno ->
                     //are there open tasks for this technology?
                     val taskFilteredList = intervieweeD.tasks.filter { task ->

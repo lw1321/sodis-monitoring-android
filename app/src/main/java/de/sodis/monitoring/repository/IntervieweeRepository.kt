@@ -147,6 +147,10 @@ class IntervieweeRepository(
         )
     }
 
+    fun getFamilyCount(intervieweeId: Int): LiveData<Int> {
+        return intervieweeDao.getFamilyCount(intervieweeId)
+    }
+
     fun saveInterviewee(interviewee: Interviewee) {
         intervieweeDao.insert(interviewee)
     }

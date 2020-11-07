@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.viewModelScope
 import de.sodis.monitoring.api.MonitoringApi
 import de.sodis.monitoring.db.MonitoringDatabase
@@ -19,11 +20,13 @@ import kotlinx.coroutines.launch
 
 class IntervieweeModel(application: Application) : AndroidViewModel(application) {
 
+    lateinit var familyCount: MutableLiveData<Int>
     var intervieweeList: LiveData<List<Interviewee>>
     var villageList: LiveData<List<Village>>
     var intervieweeDetail: MutableLiveData<IntervieweeDetail>
     lateinit var technologyList: LiveData<List<IntervieweeTechnology>>
     var modiefied: Boolean = false
+    var currentIntervieweeId = 0
 
     private val monitoringDatabase = MonitoringDatabase.getDatabase(application.applicationContext)
     private val intervieweeRepository =
@@ -49,6 +52,15 @@ class IntervieweeModel(application: Application) : AndroidViewModel(application)
     }
 
     fun setInterviewee(intervieweeId: Int) {
+        currentIntervieweeId = intervieweeId
+        intervieweeRepository.getFamilyCount(intervieweeId).observeForever(Observer {
+            if (intervieweeDetail.value != null) {
+                val value = intervieweeDetail.value
+                value!!.interviewee.menCount = it
+                intervieweeDetail.postValue(value)
+            }
+
+        })
         viewModelScope.launch(Dispatchers.IO) {
             intervieweeDetail.postValue(intervieweeRepository.getById(intervieweeId = intervieweeId))
         }

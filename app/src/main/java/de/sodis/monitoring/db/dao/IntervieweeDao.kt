@@ -29,4 +29,7 @@ interface IntervieweeDao {
 
     @Query("SELECT * FROM Interviewee WHERE synced=0")
     fun getAllNotSynced(): List<Interviewee>
+
+    @Query("SELECT menCount FROM Interviewee WHERE id=:intervieweeId")
+    fun getFamilyCount(intervieweeId: Int): LiveData<Int>
 }
