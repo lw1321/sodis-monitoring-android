@@ -34,7 +34,7 @@ data class Interviewee(
     val youngWomenCount: Int,
     val oldMenCount: Int,
     val oldWomenCount: Int,
-    val menCount: Int,
+    var menCount: Int,
     val womenCount: Int,
     val userId: Int?,
     val sectorId: Int?,

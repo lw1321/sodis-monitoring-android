@@ -8,6 +8,7 @@ import de.sodis.monitoring.api.model.CompletedSurveyJson
 import de.sodis.monitoring.db.dao.*
 import de.sodis.monitoring.db.entity.*
 import de.sodis.monitoring.db.response.QuestionAnswer
+import java.util.*
 
 
 class QuestionRepository(
@@ -19,6 +20,7 @@ class QuestionRepository(
     private val completedSurveyDao: CompletedSurveyDao,
     private val monitoringApi: MonitoringApi,
     private val intervieweeTechnologyDao: IntervieweeTechnologyDao,
+    private val intervieweeDao: IntervieweeDao,
     private val surveyHeaderDao: SurveyHeaderDao
 ) {
     /**
@@ -65,9 +67,8 @@ class QuestionRepository(
         /**
          * Statusnerechnung:
          * 0 = Keine Infos(Grau)
-        1 = Etwas passt nicht (Farbe gelb) (Mindestestens eine Frage wurde nicht mit Si/lachendem Smiiley beantwortet.
+        1 = Etwas passt nicht (Farbe rot) (Mindestestens eine Frage wurde nicht mit Si/lachendem Smiiley beantwortet.
         2 = Alles Super (Grün) (Alle Fragen positiv beantwortet)
-        3 = Nicht Vorhanden (Farbe rot) (Frage am Anfang existiert die Technologie?, Frage bisher nicht vorhanden.)//TODO Frage hinzufügen am Anfang des Fragebogens
          */
         //intervieweetechnology holen
         val surveyHeader =
@@ -76,20 +77,41 @@ class QuestionRepository(
             completedSurvey.intervieweeId,
             surveyHeader.surveyHeader.technologyId
         )
-        //status berechnen
-        var status = 2
-        val completedSurveyId = completedSurveyDao.insert(completedSurvey)
-        for ((k, v) in answerMap) {//todo insertAll
-            v.completedSurveyId = completedSurveyId.toInt()
-            answerDao.insert(v)
-            if (!v.answerText.equals("Si"))//TODO{
-            //something is not "postiv" so lets set the status to 1
-                status = 1
-        }
-        if (intervieweeTechnology != null) {
-            intervieweeTechnology.stateTechnology = status
-            //status speichern
-            intervieweeTechnologyDao.update(intervieweeTechnology)
+
+        if (surveyHeader.surveyHeader.surveyName == "Miembros de la familia") {//TODO
+            //update the family infos
+            val interviewee = intervieweeDao.getById(completedSurvey.intervieweeId)
+            val completedSurveyId = completedSurveyDao.insert(completedSurvey)
+            var ageSum = 0
+            for ((k, v) in answerMap) {//todo insertAll
+                v.completedSurveyId = completedSurveyId.toInt()
+                ageSum += v.answerText!!.toInt()
+                answerDao.insert(v)
+            }
+            interviewee.menCount = ageSum//todo just one attribute members remove others
+            intervieweeDao.update(interviewee)
+        } else {
+            //status berechnen
+            var status = 2
+            val completedSurveyId = completedSurveyDao.insert(completedSurvey)
+            for ((k, v) in answerMap) {//todo insertAll
+                v.completedSurveyId = completedSurveyId.toInt()
+                answerDao.insert(v)
+                if (!v.answerText.equals("Si"))//TODO{
+                //something is not "postiv" so lets set the status to 1
+                    status = 1
+            }
+            if (intervieweeTechnology != null) {
+                if (surveyHeader.surveyHeader.surveyName.toLowerCase(Locale.getDefault())
+                        .contains("practicas")
+                ) {
+                    intervieweeTechnology.stateKnowledge = status
+                } else {
+                    intervieweeTechnology.stateTechnology = status
+                }
+                //status speichern
+                intervieweeTechnologyDao.update(intervieweeTechnology)
+            }
         }
     }
 

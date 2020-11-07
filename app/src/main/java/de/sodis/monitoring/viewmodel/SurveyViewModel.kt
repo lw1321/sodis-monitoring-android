@@ -97,7 +97,9 @@ class SurveyViewModel(
             intervieweeTechnologyDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
                 .intervieweeTechnologyDao(),
             surveyHeaderDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
-                .surveyHeaderDao()
+                .surveyHeaderDao(),
+            intervieweeDao =    MonitoringDatabase.getDatabase(mApplication.applicationContext)
+                .intervieweeDao()
         )
 
     /**

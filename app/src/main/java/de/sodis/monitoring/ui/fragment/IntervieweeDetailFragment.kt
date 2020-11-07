@@ -185,17 +185,17 @@ class IntervieweeDetailFragment : BaseListFragment() {
                             view.dataBinding.root.technolgyImage.setColorFilter(
                                 when (techno.stateTechnology) {
                                     0 -> Color.GRAY
-                                    1 -> Color.YELLOW
+                                    1 -> Color.RED
                                     2 -> Color.GREEN
-                                    else -> Color.RED
+                                    else -> Color.GRAY
                                 }
                             )
                             view.dataBinding.root.technologyKnowledgeImage.setColorFilter(
                                 when (techno.stateKnowledge) {
                                     0 -> Color.GRAY
-                                    1 -> Color.YELLOW
+                                    1 -> Color.RED
                                     2 -> Color.GREEN
-                                    else -> Color.RED
+                                    else -> Color.GRAY
                                 }
                             )
                             view.dataBinding.root.technologyTaskImage.setColorFilter(Color.YELLOW)
