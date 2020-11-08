@@ -18,6 +18,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.FileProvider
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.core.view.isGone
 import androidx.core.widget.addTextChangedListener
@@ -166,7 +167,11 @@ class IntervieweeDetailFragment : BaseListFragment() {
                                 when (techno.stateTechnology) {
                                     0 -> Color.GRAY
                                     1 -> Color.RED
-                                    2 -> Color.GREEN
+                                    2 -> ResourcesCompat.getColor(
+                                        resources,
+                                        R.color.colorPrimary,
+                                        null
+                                    )
                                     else -> Color.GRAY
                                 }
                             )
@@ -174,7 +179,11 @@ class IntervieweeDetailFragment : BaseListFragment() {
                                 when (techno.stateKnowledge) {
                                     0 -> Color.GRAY
                                     1 -> Color.RED
-                                    2 -> Color.GREEN
+                                    2 -> ResourcesCompat.getColor(
+                                        resources,
+                                        R.color.colorPrimary,
+                                        null
+                                    )
                                     else -> Color.GRAY
                                 }
                             )
