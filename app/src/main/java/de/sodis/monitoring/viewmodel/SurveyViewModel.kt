@@ -98,7 +98,7 @@ class SurveyViewModel(
                 .intervieweeTechnologyDao(),
             surveyHeaderDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
                 .surveyHeaderDao(),
-            intervieweeDao =    MonitoringDatabase.getDatabase(mApplication.applicationContext)
+            intervieweeDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
                 .intervieweeDao()
         )
 
@@ -242,6 +242,10 @@ class SurveyViewModel(
             )
             return true
         }
+        //make razon questions optional, todo add bool requiered field to question
+        if ((questionItemList.value!![currentPosition].question.questionName == "Razón")) {
+            return true
+        }
         return false
     }
 
@@ -264,6 +268,12 @@ class SurveyViewModel(
 
     //returns true if the answer is "Escribir en la lista de tareas"
     fun createTodo(): Boolean {
-       return answerMap[questionItemList.value!![currentPosition].question.id]!!.answerText.equals("Escribir en la lista de tareas") //todo be aware of translation changes...
+        //optional questions
+        if (! answerMap.contains(questionItemList.value!![currentPosition].question.id)) {
+            return false
+        }
+        return answerMap[questionItemList.value!![currentPosition].question.id]!!.answerText.equals(
+            "Escribir en la lista de tareas"
+        ) //todo be aware of translation changes...
     }
 }

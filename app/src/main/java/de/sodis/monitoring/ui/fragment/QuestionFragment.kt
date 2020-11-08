@@ -143,9 +143,9 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
 
             view?.navigation_forward_button_1?.setOnClickListener {
                 if (surveyViewModel.isAnswered(currentQuestion.question.id)) {
-                    val answerToCheck: Answer =
-                        surveyViewModel.answerToID(currentQuestion.question.id)!!
                     if (surveyViewModel.createTodo()) { //todo: anpassen wenn yes/no question geändert
+                        val answerToCheck: Answer =
+                            surveyViewModel.answerToID(currentQuestion.question.id)!!
                         val dialog = TodoDialog(
                             surveyViewModel.interviewee,
                             answerToCheck.answerText,
