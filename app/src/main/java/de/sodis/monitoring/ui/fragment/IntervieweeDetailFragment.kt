@@ -57,9 +57,8 @@ class IntervieweeDetailFragment : BaseListFragment() {
         intervieweeId = args.intervieweeId
         intervieweeModel.setInterviewee(intervieweeId)
         intervieweeModel.intervieweeDetail.observe(this, Observer { intervieweeD ->
-            recyclerView.recycledViewPool.clear()
             recyclerView.withModels {
-                picture {warum funktioniert es im debug modus aber nicht in real
+                picture {
                     id("pictureHeader${intervieweeId}")
                     onClick { _ ->
                         dispatchTakePictureIntent()
@@ -132,7 +131,7 @@ class IntervieweeDetailFragment : BaseListFragment() {
                     }
                     taskFilteredList ?: "All good"
                     technology {
-                        id("technology")
+                        id("technology${techno.id}")
                         state(techno.stateTechnology.toString())
                         knowledgeState(techno.stateKnowledge.toString())
                         name(techno.name)

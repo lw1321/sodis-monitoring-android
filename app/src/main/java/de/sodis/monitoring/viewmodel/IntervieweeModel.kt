@@ -59,8 +59,21 @@ class IntervieweeModel(application: Application) : AndroidViewModel(application)
                 value!!.interviewee.menCount = it
                 intervieweeDetail.postValue(value)
             }
-
         })
+        intervieweeRepository.getTechnologies(intervieweeId)
+            .observeForever(Observer { updatedTechList ->
+                //update the intervieweedetails..
+                if (intervieweeDetail.value != null) {
+                    val value = intervieweeDetail.value
+                    value!!.intervieweeTechnologies.forEach { oldTechList ->
+                        //update states
+                        val newTechno = updatedTechList.first { techno -> techno.id == oldTechList.id }
+                        oldTechList.stateKnowledge =  newTechno.stateKnowledge
+                        oldTechList.stateTechnology = newTechno.stateTechnology
+                    }
+                    intervieweeDetail.postValue(value)
+                }
+            })
         viewModelScope.launch(Dispatchers.IO) {
             intervieweeDetail.postValue(intervieweeRepository.getById(intervieweeId = intervieweeId))
         }
