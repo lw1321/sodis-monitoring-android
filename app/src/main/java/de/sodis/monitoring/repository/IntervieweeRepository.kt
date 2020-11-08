@@ -21,31 +21,15 @@ class IntervieweeRepository(
 
     suspend fun loadAll() {
         //let's request a new list of interviewees to be sure our local data is up to data.
+        //load villages
+        val villageResponse = monitoringApi.getAllVillages()
+        villageResponse.forEach {
+            villageDao.insert(it)
+        }
+
         val respo = monitoringApi.getInterviewees()
 
         for (interviewee: IntervieweeJson in respo) {
-            //add village
-            if (villageDao.count(interviewee.village.id) == 0) {
-                villageDao.insert(
-                    Village(
-                        id = interviewee.village.id, name = interviewee.village.name
-                    )
-                )
-            }
-
-            if (interviewee.sector != null) {
-
-                if (sectorDao.count(interviewee.sector.id) == 0) {
-                    sectorDao.insert(
-                        Sector(
-                            id = interviewee.sector.id,
-                            name = interviewee.sector.name,
-                            villageId = interviewee.sector.village.id
-                        )
-                    )
-                }
-            }
-
             //insert interviewee
             intervieweeDao.insert(
                 Interviewee(

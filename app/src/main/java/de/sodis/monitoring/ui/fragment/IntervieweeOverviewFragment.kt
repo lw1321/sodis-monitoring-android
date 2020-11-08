@@ -32,7 +32,7 @@ class IntervieweeOverviewFragment : Fragment(), TabLayout.OnTabSelectedListener 
     }
 
     override fun onTabSelected(tab: TabLayout.Tab?) {
-        intervieweeModel.getByVillage((tab!!.tag as Int?)!!)
+        intervieweeModel.getByVillage((tab!!.tag as Int?)!!)//todo
             .observe(this, Observer { intervieweesVillageList ->
                 recyclerView.withModels {
                     intervieweesVillageList.forEach {

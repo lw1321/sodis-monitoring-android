@@ -9,13 +9,14 @@ import androidx.room.PrimaryKey
         ForeignKey(
             entity = Interviewee::class,
             parentColumns = arrayOf("id"),
-            childColumns = arrayOf("intervieweeId")
+            childColumns = arrayOf("intervieweeId"),
+            onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
-            onDelete = ForeignKey.SET_NULL,
             entity = SurveyHeader::class,
             parentColumns = arrayOf("id"),
-            childColumns = arrayOf("surveyHeaderId")
+            childColumns = arrayOf("surveyHeaderId"),
+            onDelete = ForeignKey.CASCADE
         )
     ]
 )
