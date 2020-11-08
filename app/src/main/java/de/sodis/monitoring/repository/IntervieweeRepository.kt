@@ -49,7 +49,7 @@ class IntervieweeRepository(
                     imagePath = null,//todo add attributes server side
                     imageUrl = null//todo save image from url local
                 )
-            )neue übersichtsseite für dörfer dann bei klick darauf anzeige der interviewee
+            )
             interviewee.intervieweeTechnologies.forEach {
                 if (technologyDao.count(it.technology.id) == 0) {
                     //save input type

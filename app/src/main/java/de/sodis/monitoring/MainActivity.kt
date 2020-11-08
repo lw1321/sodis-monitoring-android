@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.dashboard -> {
-                findNavController(R.id.nav_host_fragment).navigate(R.id.intervieweeOverviewFragment)
+                findNavController(R.id.nav_host_fragment).navigate(R.id.villageFragment)
                 supportActionBar!!.title = getString(R.string.tab_village_overview)
             }
             R.id.monitoring_history -> {
@@ -59,7 +59,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         bottomNavigation = findViewById<BottomNavigationView>(R.id.bottom_navigation)
         bottomNavigation.setOnNavigationItemSelectedListener(this)
 
-        findNavController(R.id.nav_host_fragment).navigate(R.id.intervieweeOverviewFragment)
+        findNavController(R.id.nav_host_fragment).navigate(R.id.villageFragment)
         supportActionBar!!.title = "Dashboard"
 
         // Initialize Firebase Auth

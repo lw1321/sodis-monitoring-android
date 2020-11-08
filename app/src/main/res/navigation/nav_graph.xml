@@ -9,6 +9,10 @@
         android:id="@+id/intervieweeOverviewFragment"
         android:name="de.sodis.monitoring.ui.fragment.IntervieweeOverviewFragment"
         android:label="IntervieweeOverviewFragment">
+        <argument
+            android:name="villageId"
+            app:argType="integer"
+            android:defaultValue="0" />
         <action
             android:id="@+id/action_intervieweeOverviewFragment_to_intervieweeDetailFragment"
             app:destination="@id/intervieweeDetailFragment" />
@@ -140,5 +144,14 @@
         <action
             android:id="@+id/action_questionFragment_to_intervieweeDetailFragment"
             app:destination="@id/intervieweeDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/villageFragment"
+        android:name="de.sodis.monitoring.ui.fragment.VillageFragment"
+        android:label="VillageFragment">
+
+        <action
+            android:id="@+id/action_villageFragment_to_intervieweeOverviewFragment"
+            app:destination="@id/intervieweeOverviewFragment" />
     </fragment>
 </navigation>
