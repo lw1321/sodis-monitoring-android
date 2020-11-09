@@ -34,6 +34,17 @@ class VillageFragment : BaseListFragment() {
     }
 
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val view = super.onCreateView(inflater, container, savedInstanceState)
+        view?.navigation_forward_button_1?.isGone = true
+        view?.navigation_forward_button_left?.isGone = true
+        (activity as MainActivity).show_bottom_navigation()
+        return view
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -56,4 +67,5 @@ class VillageFragment : BaseListFragment() {
             }
         })
     }
+
 }

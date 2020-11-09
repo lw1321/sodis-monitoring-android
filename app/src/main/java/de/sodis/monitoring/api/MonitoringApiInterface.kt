@@ -60,4 +60,7 @@ interface MonitoringApiInterface {
 
     @GET("villages")
     suspend fun getAllVillages(): List<Village>
+
+    @POST
+    suspend fun postInterviewee(@Body interviewee: Interviewee): Interviewee
 }

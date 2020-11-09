@@ -168,4 +168,7 @@ class IntervieweeRepository(
             intervieweeDao.update(interviewee)
         }
     }
+    suspend fun postInterviewee(){
+        intervieweeDao.getAllNotSynced()
+    }
 }

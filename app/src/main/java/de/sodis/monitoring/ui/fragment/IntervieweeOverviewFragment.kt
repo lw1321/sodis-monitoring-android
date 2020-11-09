@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -15,10 +16,13 @@ import androidx.navigation.navOptions
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.airbnb.epoxy.EpoxyRecyclerView
 import com.google.android.material.tabs.TabLayout
+import de.sodis.monitoring.MainActivity
 import de.sodis.monitoring.R
 import de.sodis.monitoring.pictureListItem
+import de.sodis.monitoring.show_bottom_navigation
 import de.sodis.monitoring.viewmodel.IntervieweeModel
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
+import kotlinx.android.synthetic.main.continuable_list.view.*
 import kotlinx.android.synthetic.main.list.view.*
 import kotlinx.android.synthetic.main.view_holder_picture_list_item.view.imageView
 import kotlinx.android.synthetic.main.view_holder_tab.*
@@ -102,5 +106,16 @@ class IntervieweeOverviewFragment : BaseListFragment() {
                 }
             })
 
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val view = super.onCreateView(inflater, container, savedInstanceState)
+        view?.navigation_forward_button_1?.isGone = true
+        view?.navigation_forward_button_left?.isGone = true
+        return view
     }
 }

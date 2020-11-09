@@ -90,7 +90,11 @@ class MonitoringApi {
         return ret
     }
 
-    suspend fun getAllVillages():List<Village>{
+    suspend fun getAllVillages(): List<Village> {
         return monitoringApi.getAllVillages()
+    }
+
+    suspend fun postInterviewee(interviewee: Interviewee): Interviewee {
+        return monitoringApi.postInterviewee(interviewee)
     }
 }

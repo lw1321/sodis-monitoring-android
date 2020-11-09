@@ -40,5 +40,8 @@ data class Interviewee(
     val sectorId: Int?,
     var imagePath: String?=null,
     var imageUrl: String?=null,
-    var synced: Boolean?=true
+    var synced: Boolean?=true,
+    wie mach ich das mit client id und server id.
+    probleme: Verbindungen andere tables,
+    Lösung: lokale Id erstellen server id abspeichern wenn hochgeladen. FK auf server_id ändern?
 )

@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         bottomNavigation.setOnNavigationItemSelectedListener(this)
 
         findNavController(R.id.nav_host_fragment).navigate(R.id.villageFragment)
-        supportActionBar!!.title = "Dashboard"
+        supportActionBar!!.title = getString(R.string.tab_village_overview)
 
         // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance()
@@ -142,7 +142,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         //only allow back press for convenience only on interviewee
         val currFragmentId = findNavController(R.id.nav_host_fragment).currentDestination!!.id
         //TODO REFACTORING
-        if (currFragmentId == R.id.intervieweeDetailFragment  || currFragmentId == R.id.loginEmailPassword || currFragmentId == R.id.registrationEmailPasswordFragment || currFragmentId == R.id.registrationNameFragment || currFragmentId == R.id.monitoringHistoryFragment) {
+        if (currFragmentId == R.id.intervieweeDetailFragment || currFragmentId == R.id.loginEmailPassword || currFragmentId == R.id.registrationEmailPasswordFragment || currFragmentId == R.id.registrationNameFragment || currFragmentId == R.id.monitoringHistoryFragment || currFragmentId == R.id.intervieweeOverviewFragment|| currFragmentId == R.id.intervieweeDetailFragment) {
             super.onBackPressed()
         }
     }
