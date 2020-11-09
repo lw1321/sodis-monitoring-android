@@ -19,7 +19,7 @@ interface VillageDao {
     @Query("SELECT * FROM Village")
     fun getAll(): LiveData<List<Village>>
 
-    @Query("SELECT * FROM Village WHERE id=:villageId")
+    @Query("SELECT * FROM Village WHERE id=:villageId ORDER BY name ASC")
     fun getById(villageId: Int):Village
 
 }
