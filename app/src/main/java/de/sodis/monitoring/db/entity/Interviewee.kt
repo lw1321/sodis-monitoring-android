@@ -25,7 +25,7 @@ import androidx.room.PrimaryKey
 )
 data class Interviewee(
     @PrimaryKey
-    val id: Int,
+    val id: String,
     val name: String,
     val villageId: Int,
     val girlsCount: Int,
@@ -40,8 +40,6 @@ data class Interviewee(
     val sectorId: Int?,
     var imagePath: String?=null,
     var imageUrl: String?=null,
-    var synced: Boolean?=true,
-    wie mach ich das mit client id und server id.
-    probleme: Verbindungen andere tables,
-    Lösung: lokale Id erstellen server id abspeichern wenn hochgeladen. FK auf server_id ändern?
+    var synced: Boolean?=true
+id zu string api und app, aufrufe anpassen usw, dann neuen interviewee erstellen mit name und uuid die dann auch an server mitschicken.
 )
