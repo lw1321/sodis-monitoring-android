@@ -18,6 +18,10 @@ class SurveyHistoryRepository(
         return completedSurveyDao.getAll()
     }
 
+    fun getCompletedSurveysSorted():LiveData<List<CompletedSurveyOverview>> {
+        return completedSurveyDao.getAllSorted()
+    }
+
     fun getCompletedSurvey(completedSurveyId: Int): List<CompletedSurveyDetail> {
         val completedQuestionDetailList: MutableList<CompletedSurveyDetail> = mutableListOf()
         //get the title of the completed survey

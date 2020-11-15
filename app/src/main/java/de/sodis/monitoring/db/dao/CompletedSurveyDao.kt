@@ -26,5 +26,8 @@ interface CompletedSurveyDao {
     @Query("SELECT * FROM CompletedSurvey WHERE id=:id")
     fun getById(id: Int): CompletedSurvey
 
+    @Query("SELECT Interviewee.name, SurveyHeader.surveyName, CompletedSurvey.id FROM CompletedSurvey JOIN Interviewee ON CompletedSurvey.intervieweeId=Interviewee.id JOIN SurveyHeader ON CompletedSurvey.surveyHeaderId=SurveyHeader.id ORDER BY timeStamp DESC")
+    fun getAllSorted(): LiveData<List<CompletedSurveyOverview>>
+
 
 }

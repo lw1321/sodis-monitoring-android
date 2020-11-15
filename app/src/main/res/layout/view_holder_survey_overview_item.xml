@@ -46,9 +46,9 @@
 
 
         <ImageView
-            android:layout_width="60dp"
+            android:layout_width="100dp"
             android:id="@+id/question_overview_image"
-            android:layout_height="60dp"
+            android:layout_height="100dp"
 
             app:srcCompat="@drawable/ic_emoji_happy"
             android:layout_marginStart="12dp"
