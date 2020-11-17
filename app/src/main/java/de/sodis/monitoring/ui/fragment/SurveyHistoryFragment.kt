@@ -25,7 +25,7 @@ class SurveyHistoryFragment : BaseListFragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        surveyHistoryView.surveyHistoryList.observe(this, Observer {
+        surveyHistoryView.surveHistoryListSorted.observe(this, Observer {
 
             recyclerView.withModels {
                 it.forEach {

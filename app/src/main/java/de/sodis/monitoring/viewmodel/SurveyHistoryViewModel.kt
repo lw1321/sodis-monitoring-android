@@ -22,6 +22,7 @@ class SurveyHistoryViewModel(application: Application) : AndroidViewModel(applic
 
     var surveyHistoryList: LiveData<List<CompletedSurveyOverview>>
     var surveyCompletedList: MutableLiveData<List<CompletedSurveyDetail>>
+    var surveHistoryListSorted: LiveData<List<CompletedSurveyOverview>>
 
     val monitoringDatabase = MonitoringDatabase.getDatabase(application.applicationContext)
     val surveyHistoryRepository =
@@ -36,6 +37,7 @@ class SurveyHistoryViewModel(application: Application) : AndroidViewModel(applic
     init {
         surveyHistoryList = surveyHistoryRepository.getCompletedSurveys()
         surveyCompletedList = MutableLiveData()
+        surveHistoryListSorted = surveyHistoryRepository.getCompletedSurveysSorted()
     }
 
     fun setCompletedSurveyId(completedSurveyId: Int) {

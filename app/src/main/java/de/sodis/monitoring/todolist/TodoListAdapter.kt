@@ -57,6 +57,15 @@ class TodoListAdapter(val activity: Activity, @NonNull todoPointS: List<TodoPoin
         Thread(Runnable{
             todoPointModel.updateTodoPoint(todoPoint)
         }).start()
+        sort()
+    }
+
+    fun sort() {
+        var newTodoPoints: List<TodoPoint> = todoPoints
+        newTodoPoints = newTodoPoints.sortedByDescending {
+            it.done
+        }
+        setDataSet(newTodoPoints)
     }
 
 
