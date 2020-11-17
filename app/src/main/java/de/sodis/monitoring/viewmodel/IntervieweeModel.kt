@@ -102,6 +102,8 @@ class IntervieweeModel(application: Application) : AndroidViewModel(application)
     }
 
     fun createInterviewee(name: String, village: Int) {
-        intervieweeRepository.createInterviewee(name, village)
+        viewModelScope.launch(Dispatchers.IO) {
+            intervieweeRepository.createInterviewee(name, village)
+        }
     }
 }

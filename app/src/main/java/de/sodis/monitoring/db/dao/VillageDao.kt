@@ -16,10 +16,10 @@ interface VillageDao {
     @Query("SELECT COUNT(*) FROM Village WHERE id = :id")
     fun count(id: Int): Int
 
-    @Query("SELECT * FROM Village")
+    @Query("SELECT * FROM Village ORDER BY name ASC")
     fun getAll(): LiveData<List<Village>>
 
-    @Query("SELECT * FROM Village WHERE id=:villageId ORDER BY name ASC")
+    @Query("SELECT * FROM Village WHERE id=:villageId")
     fun getById(villageId: Int):Village
 
 }

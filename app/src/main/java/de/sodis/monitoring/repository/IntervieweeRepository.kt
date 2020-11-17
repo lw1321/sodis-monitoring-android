@@ -157,7 +157,8 @@ class IntervieweeRepository(
             intervieweeDao.update(interviewee)
         }
     }
-    suspend fun postInterviewee(){
+
+    suspend fun postInterviewee() {
         intervieweeDao.getAllNotSynced()
     }
 
@@ -184,7 +185,7 @@ class IntervieweeRepository(
         intervieweeDao.insert(newInterviewee)
         //create interviewee technologies
         val techno = technologyDao.getAllSync()
-        techno.forEach{
+        techno.filter { it.name != "Dato Generales" }.forEach {
             intervieweeTechnologyDao.insert(
                 IntervieweeTechnology(
                     id = UUID.randomUUID().toString(),
