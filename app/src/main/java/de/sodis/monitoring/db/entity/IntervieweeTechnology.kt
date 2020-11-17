@@ -20,7 +20,7 @@ import androidx.room.PrimaryKey
     ]
 )
 data class IntervieweeTechnology(
-    @PrimaryKey val id: Int,
+    @PrimaryKey val id: String,
     val intervieweeId: String,
     val technologyId: Int,
     var stateTechnology: Int,

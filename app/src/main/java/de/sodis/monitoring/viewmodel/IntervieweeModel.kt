@@ -15,6 +15,7 @@ import de.sodis.monitoring.db.response.IntervieweeDetail
 import de.sodis.monitoring.repository.IntervieweeRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.util.*
 
 
 class IntervieweeModel(application: Application) : AndroidViewModel(application) {
@@ -64,8 +65,9 @@ class IntervieweeModel(application: Application) : AndroidViewModel(application)
                     val value = intervieweeDetail.value
                     value!!.intervieweeTechnologies.forEach { oldTechList ->
                         //update states
-                        val newTechno = updatedTechList.first { techno -> techno.id == oldTechList.id }
-                        oldTechList.stateKnowledge =  newTechno.stateKnowledge
+                        val newTechno =
+                            updatedTechList.first { techno -> techno.id == oldTechList.id }
+                        oldTechList.stateKnowledge = newTechno.stateKnowledge
                         oldTechList.stateTechnology = newTechno.stateTechnology
                     }
                     intervieweeDetail.postValue(value)
@@ -86,7 +88,6 @@ class IntervieweeModel(application: Application) : AndroidViewModel(application)
     }
 
 
-
     fun getVillageByID(int: Int): Village {
         return intervieweeRepository.getVillageByID(int)
     }
@@ -98,5 +99,9 @@ class IntervieweeModel(application: Application) : AndroidViewModel(application)
                 currentPhotoPath
             )
         }
+    }
+
+    fun createInterviewee(name: String, village: Int) {
+        intervieweeRepository.createInterviewee(name, village)
     }
 }

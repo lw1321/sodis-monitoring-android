@@ -6,6 +6,7 @@ import de.sodis.monitoring.api.model.IntervieweeJson
 import de.sodis.monitoring.db.dao.*
 import de.sodis.monitoring.db.entity.*
 import de.sodis.monitoring.db.response.IntervieweeDetail
+import java.util.*
 
 class IntervieweeRepository(
     private val intervieweeDao: IntervieweeDao,
@@ -158,5 +159,41 @@ class IntervieweeRepository(
     }
     suspend fun postInterviewee(){
         intervieweeDao.getAllNotSynced()
+    }
+
+    fun createInterviewee(name: String, village: Int) {
+        val uniqueId: String = UUID.randomUUID().toString()
+
+        val newInterviewee = Interviewee(
+            id = uniqueId,
+            name = name,
+            villageId = village,
+            boysCount = 0,
+            menCount = 0,
+            womenCount = 0,
+            girlsCount = 0,
+            oldMenCount = 0,
+            oldWomenCount = 0,
+            youngMenCount = 0,
+            youngWomenCount = 0,
+            userId = null,
+            imagePath = null,
+            imageUrl = null,
+            synced = true
+        )
+        intervieweeDao.insert(newInterviewee)
+        //create interviewee technologies
+        val techno = technologyDao.getAllSync()
+        techno.forEach{
+            intervieweeTechnologyDao.insert(
+                IntervieweeTechnology(
+                    id = UUID.randomUUID().toString(),
+                    intervieweeId = newInterviewee.id,
+                    technologyId = it.id,
+                    stateKnowledge = 0,
+                    stateTechnology = 0
+                )
+            )
+        }
     }
 }

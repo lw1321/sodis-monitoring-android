@@ -24,7 +24,7 @@ data class IntervieweeJson(
     )
 
     data class IntervieweeTechnology(
-        val id: Int,
+        val id: String,
         val technology: SurveyHeaderJson.Technology,
         val stateTechnology: Int,
         val stateKnowledge: Int
