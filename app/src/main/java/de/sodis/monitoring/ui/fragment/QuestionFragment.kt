@@ -148,7 +148,7 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
                             surveyViewModel.answerToID(currentQuestion.question.id)!!
                         val dialog = TodoDialog(
                             surveyViewModel.interviewee,
-                            answerToCheck.answerText,
+                            currentQuestion.title,
                             context!!,
                             this
                         )
