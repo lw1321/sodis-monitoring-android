@@ -83,7 +83,7 @@ class TodoDialog(
     }
 
     fun saveAndDismiss() {
-        var intervieweeidtoset: Int? = null
+        var intervieweeidtoset: String? = null
         var villageidtoset: Int? = null
         if (intervieweeChosen != null) {
             intervieweeidtoset = intervieweeChosen!!.id

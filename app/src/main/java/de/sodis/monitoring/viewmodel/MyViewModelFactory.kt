@@ -11,7 +11,6 @@ class MyViewModelFactory(private val mApplication: Application, private val mPar
         return when {
             modelClass === MonitoringOverviewModel::class.java -> MonitoringOverviewModel(mApplication) as T
             modelClass === IntervieweeModel::class.java -> IntervieweeModel(mApplication) as T
-            modelClass === TaskViewModel::class.java -> TaskViewModel(mApplication) as T
             modelClass === TodoPointModel::class.java -> TodoPointModel(mApplication) as T
             modelClass === SurveyHistoryViewModel::class.java -> SurveyHistoryViewModel(mApplication) as T
             modelClass === SurveyViewModel::class.java -> SurveyViewModel(
@@ -20,6 +19,7 @@ class MyViewModelFactory(private val mApplication: Application, private val mPar
             ) as T
             modelClass === RegisterViewModel::class.java -> RegisterViewModel(mApplication) as T
             modelClass === RootViewModel::class.java -> RootViewModel(mApplication) as T
+            modelClass === VillageModel::class.java -> VillageModel(mApplication) as T
             else -> super.create(modelClass)
         }
     }

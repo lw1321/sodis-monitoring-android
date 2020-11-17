@@ -3,7 +3,6 @@ package de.sodis.monitoring.db.dao
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import de.sodis.monitoring.db.entity.CalendarConverter
-import de.sodis.monitoring.db.entity.Task
 import de.sodis.monitoring.db.entity.TodoPoint
 import java.util.*
 

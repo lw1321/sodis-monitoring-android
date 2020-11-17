@@ -56,12 +56,10 @@ class SurveyViewModel(
             villageDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
                 .villageDao(),
             userDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).userDao(),
-            sectorDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).sectorDao(),
             technologyDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
                 .technologyDao(),
             intervieweeTechnologyDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
-                .intervieweeTechnologyDao(),
-            taskDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).taskDao()
+                .intervieweeTechnologyDao()
         )
     lateinit var surveyHeader: LiveData<SurveyHeaderResponse>
 
@@ -97,7 +95,9 @@ class SurveyViewModel(
             intervieweeTechnologyDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
                 .intervieweeTechnologyDao(),
             surveyHeaderDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
-                .surveyHeaderDao()
+                .surveyHeaderDao(),
+            intervieweeDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
+                .intervieweeDao()
         )
 
     /**
@@ -137,7 +137,7 @@ class SurveyViewModel(
         }
     }
 
-    fun setInterviewee(id: Int) {
+    fun setInterviewee(id: String) {
         viewModelScope.launch(Dispatchers.IO) {
             interviewee = intervieweeRepository.getIntervieweeByID(id)
         }
@@ -240,6 +240,10 @@ class SurveyViewModel(
             )
             return true
         }
+        //make razon questions optional, todo add bool requiered field to question
+        if ((questionItemList.value!![currentPosition].question.questionName == "Razón")) {
+            return true
+        }
         return false
     }
 
@@ -262,6 +266,12 @@ class SurveyViewModel(
 
     //returns true if the answer is "Escribir en la lista de tareas"
     fun createTodo(): Boolean {
-       return answerMap[questionItemList.value!![currentPosition].question.id]!!.answerText.equals("Escribir en la lista de tareas") //todo be aware of translation changes...
+        //optional questions
+        if (! answerMap.contains(questionItemList.value!![currentPosition].question.id)) {
+            return false
+        }
+        return answerMap[questionItemList.value!![currentPosition].question.id]!!.answerText.equals(
+            "Escribir en la lista de tareas"
+        ) //todo be aware of translation changes...
     }
 }

@@ -19,8 +19,14 @@ data class CompletedSurveyJson(
     }
 
     data class Interviewee(
-        val id: Int
-    )
+        val id: String,
+        val name: String,
+        val village: Village
+    ) {
+        data class Village(
+            val id: Int
+        )
+    }
 
     data class SurveyHeader(
         val id: Int

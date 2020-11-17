@@ -28,14 +28,14 @@ class UploadWorker(appContext: Context, workerParams: WorkerParameters) :
             intervieweeTechnologyDao = MonitoringDatabase.getDatabase(applicationContext.applicationContext)
                 .intervieweeTechnologyDao(),
             surveyHeaderDao = MonitoringDatabase.getDatabase(applicationContext.applicationContext)
-                .surveyHeaderDao()
+                .surveyHeaderDao(),
+            intervieweeDao =    MonitoringDatabase.getDatabase(applicationContext.applicationContext)
+                .intervieweeDao()
         )
         val intervieweeRepository = IntervieweeRepository(
             intervieweeTechnologyDao = db.intervieweeTechnologyDao(),
             monitoringApi = MonitoringApi(),
             intervieweeDao = db.intervieweeDao(),
-            sectorDao = db.sectorDao(),
-            taskDao = db.taskDao(),
             technologyDao = db.technologyDao(),
             userDao = db.userDao(),
             villageDao = db.villageDao()

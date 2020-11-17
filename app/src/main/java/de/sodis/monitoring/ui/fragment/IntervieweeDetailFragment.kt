@@ -18,6 +18,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.FileProvider
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.core.view.isGone
 import androidx.core.widget.addTextChangedListener
@@ -49,7 +50,7 @@ class IntervieweeDetailFragment : BaseListFragment() {
     }
 
     val args: IntervieweeDetailFragmentArgs by navArgs()
-    var intervieweeId: Int = 0
+    var intervieweeId: String = "0"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -119,43 +120,15 @@ class IntervieweeDetailFragment : BaseListFragment() {
                         }
                     }
                 }
-                /**
-                keyValue {
-                id("keyValueLocalExpert")
-                key("Local Expert")
-                value(intervieweeD.user?.firstName + " " + intervieweeD.user?.lastName)
-                }
 
-                keyValue {
-                id("keyValueCount")
-                key("miembro de la familia")
-                value(
-                (intervieweeD.interviewee.boysCount
-                + intervieweeD.interviewee.girlsCount
-                + intervieweeD.interviewee.youngMenCount
-                + intervieweeD.interviewee.youngWomenCount
-                + intervieweeD.interviewee.womenCount
-                + intervieweeD.interviewee.menCount
-                + intervieweeD.interviewee.oldWomenCount
-                + intervieweeD.interviewee.oldMenCount).toString()
-                )
-                }**/
                 intervieweeD.intervieweeTechnologies.forEach { techno ->
                     //are there open tasks for this technology?
-                    val taskFilteredList = intervieweeD.tasks.filter { task ->
-                        task.intervieweeTechnologyId == techno.id
-                    }
-                    var taskStatus: String? = null
-                    if (taskFilteredList.isNotEmpty()) {
-                        taskStatus = taskFilteredList.first().name!!
-                    }
-                    taskFilteredList ?: "All good"
-                    technology {
-                        id("technology")
+                technology {
+                        id("technology${techno.id}")
                         state(techno.stateTechnology.toString())
                         knowledgeState(techno.stateKnowledge.toString())
                         name(techno.name)
-                        taskName(taskStatus ?: "")
+                        taskName(  "")//TODO
                         onClick { _ ->
                             //show surveys for the corresponding technoology
                             val action =
@@ -185,26 +158,29 @@ class IntervieweeDetailFragment : BaseListFragment() {
                             view.dataBinding.root.technolgyImage.setColorFilter(
                                 when (techno.stateTechnology) {
                                     0 -> Color.GRAY
-                                    1 -> Color.YELLOW
-                                    2 -> Color.GREEN
-                                    else -> Color.RED
+                                    1 -> Color.RED
+                                    2 -> ResourcesCompat.getColor(
+                                        resources,
+                                        R.color.colorPrimary,
+                                        null
+                                    )
+                                    else -> Color.GRAY
                                 }
                             )
                             view.dataBinding.root.technologyKnowledgeImage.setColorFilter(
                                 when (techno.stateKnowledge) {
                                     0 -> Color.GRAY
-                                    1 -> Color.YELLOW
-                                    2 -> Color.GREEN
-                                    else -> Color.RED
+                                    1 -> Color.RED
+                                    2 -> ResourcesCompat.getColor(
+                                        resources,
+                                        R.color.colorPrimary,
+                                        null
+                                    )
+                                    else -> Color.GRAY
                                 }
                             )
                             view.dataBinding.root.technologyTaskImage.setColorFilter(Color.YELLOW)
-                            if (taskStatus == null) {
-                                view.dataBinding.root.technologyTaskImage.visibility = View.GONE
-                            } else {
-                                view.dataBinding.root.technologyTaskImage.visibility = View.VISIBLE
-                            }
-
+                            view.dataBinding.root.technologyTaskImage.visibility = View.GONE//TODO task
                         }
                     }
                 }

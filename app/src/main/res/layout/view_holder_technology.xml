@@ -65,7 +65,7 @@
                 app:layout_constraintBottom_toBottomOf="@+id/technolgyImage"
                 app:layout_constraintStart_toEndOf="@+id/technolgyImage"
                 app:layout_constraintTop_toTopOf="@+id/technolgyImage"
-                app:srcCompat="@android:drawable/ic_menu_info_details" />
+                app:srcCompat="@drawable/ic_emoji_people_24px" />
 
             <ImageView
                 android:id="@+id/technologyTaskImage"
@@ -98,7 +98,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@{name}"
-                android:textSize="16sp"
+                android:textSize="24sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="TechnologyName" />

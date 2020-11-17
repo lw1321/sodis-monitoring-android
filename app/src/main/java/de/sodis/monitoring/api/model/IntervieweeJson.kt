@@ -2,7 +2,7 @@ package de.sodis.monitoring.api.model
 
 
 data class IntervieweeJson(
-    val id: Int,
+    val id: String,
     val name: String,
     val village: Village,
     val intervieweeTechnologies: List<IntervieweeTechnology>,
@@ -15,7 +15,6 @@ data class IntervieweeJson(
     val oldWomenCount: Int,
     val menCount: Int,
     val womenCount: Int,
-    val sector: Sector?,
     val user: User?,
     val imageUrl: String?
 ) {
@@ -25,17 +24,12 @@ data class IntervieweeJson(
     )
 
     data class IntervieweeTechnology(
-        val id: Int,
+        val id: String,
         val technology: SurveyHeaderJson.Technology,
         val stateTechnology: Int,
         val stateKnowledge: Int
     )
 
-    data class Sector(
-        val id: Int,
-        val name: String,
-        val village: Village
-    )
 
     data class User(
         val id: Int,

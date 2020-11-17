@@ -9,19 +9,20 @@ import androidx.room.PrimaryKey
         ForeignKey(
             entity = Interviewee::class,
             parentColumns = arrayOf("id"),
-            childColumns = arrayOf("intervieweeId")
+            childColumns = arrayOf("intervieweeId"),
+            onDelete = ForeignKey.CASCADE
         ),
         ForeignKey(
-            onDelete = ForeignKey.SET_NULL,
             entity = SurveyHeader::class,
             parentColumns = arrayOf("id"),
-            childColumns = arrayOf("surveyHeaderId")
+            childColumns = arrayOf("surveyHeaderId"),
+            onDelete = ForeignKey.CASCADE
         )
     ]
 )
 data class CompletedSurvey(
     @PrimaryKey(autoGenerate = true) val id: Int? = null,
-    val intervieweeId: Int,
+    val intervieweeId: String,
     val surveyHeaderId: Int,
     val timeStamp: String,
     var submitted: Boolean = false,

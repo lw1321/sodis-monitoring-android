@@ -20,4 +20,7 @@ interface TechnologyDao {
     @Query("SELECT * FROM Technology")
     fun getAll(): LiveData<List<Technology>>
 
+    @Query("SELECT * FROM Technology")
+    fun getAllSync(): List<Technology>
+
 }

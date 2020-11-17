@@ -9,6 +9,7 @@ import de.sodis.monitoring.api.MonitoringApi
 import de.sodis.monitoring.db.MonitoringDatabase
 import de.sodis.monitoring.db.entity.QuestionImage
 import de.sodis.monitoring.repository.*
+import java.util.*
 
 
 class DownloadWorker(appContext: Context, workerParams: WorkerParameters) :
@@ -39,9 +40,7 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) :
                 technologyDao = monitoringDatabase.technologyDao(),
                 intervieweeTechnologyDao = monitoringDatabase.intervieweeTechnologyDao(),
                 villageDao = monitoringDatabase.villageDao(),
-                sectorDao = monitoringDatabase.sectorDao(),
-                userDao = monitoringDatabase.userDao(),
-                taskDao = monitoringDatabase.taskDao()
+                userDao = monitoringDatabase.userDao()
             )
         val userRepository =
             UserRepository(

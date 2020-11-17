@@ -15,17 +15,12 @@ import androidx.room.PrimaryKey
             entity = User::class,
             parentColumns = arrayOf("id"),
             childColumns = arrayOf("userId")
-        ),
-        ForeignKey(
-            entity = Sector::class,
-            parentColumns = arrayOf("id"),
-            childColumns = arrayOf("sectorId")
         )
     ]
 )
 data class Interviewee(
     @PrimaryKey
-    val id: Int,
+    val id: String,
     val name: String,
     val villageId: Int,
     val girlsCount: Int,
@@ -34,11 +29,11 @@ data class Interviewee(
     val youngWomenCount: Int,
     val oldMenCount: Int,
     val oldWomenCount: Int,
-    val menCount: Int,
+    var menCount: Int,
     val womenCount: Int,
     val userId: Int?,
-    val sectorId: Int?,
     var imagePath: String?=null,
     var imageUrl: String?=null,
     var synced: Boolean?=true
+
 )

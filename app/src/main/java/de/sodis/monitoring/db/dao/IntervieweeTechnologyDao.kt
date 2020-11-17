@@ -12,14 +12,14 @@ interface IntervieweeTechnologyDao {
     fun insert(intervieweeTechnology: IntervieweeTechnology)
 
     @Query("SELECT IntervieweeTechnology.stateKnowledge,IntervieweeTechnology.stateTechnology, Technology.name, IntervieweeTechnology.id, IntervieweeTechnology.technologyId FROM IntervieweeTechnology JOIN Technology ON IntervieweeTechnology.technologyId=Technology.id WHERE intervieweeId=:intervieweeId")
-    fun getByInterviewee(intervieweeId: Int): List<IntervieweeTechnologyDetail>
+    fun getByInterviewee(intervieweeId: String): List<IntervieweeTechnologyDetail>
 
     @Query("SELECT * FROM IntervieweeTechnology WHERE intervieweeId=:intervieweeId AND technologyId=:technologyId")
-    fun getByIntervieweeAndTechnoology(intervieweeId: Int, technologyId: Int): IntervieweeTechnology?
+    fun getByIntervieweeAndTechnoology(intervieweeId: String, technologyId: Int): IntervieweeTechnology?
 
     @Update
     fun update(intervieweeTechnology: IntervieweeTechnology)
 
     @Query("SELECT * FROM IntervieweeTechnology WHERE intervieweeId=:intervieweeId")
-    fun getByIntervieweeLive(intervieweeId: Int): LiveData<List<IntervieweeTechnology>>
+    fun getByIntervieweeLive(intervieweeId: String): LiveData<List<IntervieweeTechnology>>
 }

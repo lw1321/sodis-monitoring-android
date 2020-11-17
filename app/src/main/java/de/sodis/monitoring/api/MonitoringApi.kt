@@ -9,6 +9,7 @@ import de.sodis.monitoring.api.model.TaskJson
 import de.sodis.monitoring.db.entity.Interviewee
 import de.sodis.monitoring.db.entity.Stats
 import de.sodis.monitoring.db.entity.User
+import de.sodis.monitoring.db.entity.Village
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
@@ -79,7 +80,7 @@ class MonitoringApi {
         return monitoringApi.getStats()
     }
 
-    suspend fun postIntervieweImage(imagePath: String?, intervieweeId: Int): IntervieweeJson {
+    suspend fun postIntervieweImage(imagePath: String?, intervieweeId: String): IntervieweeJson {
         val file = File(imagePath)
         val requestFile: RequestBody =
             RequestBody.create(MediaType.parse("multipart/form-data"), file)
@@ -87,5 +88,13 @@ class MonitoringApi {
             MultipartBody.Part.createFormData("image", file.name, requestFile)
         val ret = monitoringApi.postIntervieweeImage(body, intervieweeId)
         return ret
+    }
+
+    suspend fun getAllVillages(): List<Village> {
+        return monitoringApi.getAllVillages()
+    }
+
+    suspend fun postInterviewee(interviewee: Interviewee): Interviewee {
+        return monitoringApi.postInterviewee(interviewee)
     }
 }
