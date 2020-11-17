@@ -19,6 +19,7 @@ import com.google.android.material.snackbar.Snackbar
 import de.sodis.monitoring.MainActivity
 import de.sodis.monitoring.R
 import de.sodis.monitoring.pictureListItem
+import de.sodis.monitoring.show_bottom_navigation
 import de.sodis.monitoring.viewmodel.IntervieweeModel
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
 import kotlinx.android.synthetic.main.continuable_list.view.*
@@ -154,6 +155,7 @@ class IntervieweeOverviewFragment : BaseListFragment() {
             dialog?.show()
         }
         view?.navigation_forward_button_left?.isGone = true
+        (activity as MainActivity).show_bottom_navigation()
         return view
     }
 }

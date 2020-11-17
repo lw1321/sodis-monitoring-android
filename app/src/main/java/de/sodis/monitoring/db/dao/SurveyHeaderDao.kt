@@ -11,6 +11,9 @@ interface SurveyHeaderDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(surveyHeader: SurveyHeader)
 
+    @Update
+    fun update(surveyHeader: SurveyHeader)
+
     @Delete
     fun deleteAll(surveyheader: List<SurveyHeader>)
 
@@ -29,5 +32,7 @@ interface SurveyHeaderDao {
     @Query("DELETE FROM SurveyHeader WHERE id not in (:ids)")
     fun deleteAllExcluded(ids: List<Int>)
 
+    @Query("SELECT COUNT(*) FROM SurveyHeader WHERE id=:id")
+    fun exists(id: Int): Int
 
 }

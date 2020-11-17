@@ -30,24 +30,29 @@ class IntervieweeRepository(
 
         for (interviewee: IntervieweeJson in respo) {
             //insert interviewee
-            intervieweeDao.insert(
-                Interviewee(
-                    id = interviewee.id,
-                    name = interviewee.name,
-                    villageId = interviewee.village.id,
-                    girlsCount = interviewee.girlsCount,
-                    boysCount = interviewee.boysCount,
-                    youngMenCount = interviewee.youngMenCount,
-                    youngWomenCount = interviewee.youngWomenCount,
-                    oldMenCount = interviewee.oldMenCount,
-                    oldWomenCount = interviewee.oldWomenCount,
-                    menCount = interviewee.menCount,
-                    womenCount = interviewee.womenCount,
-                    userId = interviewee.user?.id,
-                    imagePath = null,//todo add attributes server side
-                    imageUrl = null//todo save image from url local
-                )
+            val intervieweeEntity = Interviewee(
+                id = interviewee.id,
+                name = interviewee.name,
+                villageId = interviewee.village.id,
+                girlsCount = interviewee.girlsCount,
+                boysCount = interviewee.boysCount,
+                youngMenCount = interviewee.youngMenCount,
+                youngWomenCount = interviewee.youngWomenCount,
+                oldMenCount = interviewee.oldMenCount,
+                oldWomenCount = interviewee.oldWomenCount,
+                menCount = interviewee.menCount,
+                womenCount = interviewee.womenCount,
+                userId = interviewee.user?.id,
+                imagePath = null,//todo add attributes server side
+                imageUrl = null//todo save image from url local
             )
+
+            if (intervieweeDao.exists(interviewee.id) == 0) {
+                intervieweeDao.insert(intervieweeEntity)
+            } else {
+                intervieweeDao.update(intervieweeEntity)
+            }
+
             interviewee.intervieweeTechnologies.forEach {
                 if (technologyDao.count(it.technology.id) == 0) {
                     //save input type

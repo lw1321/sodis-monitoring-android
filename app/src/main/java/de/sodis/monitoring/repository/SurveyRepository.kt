@@ -57,13 +57,17 @@ class SurveyRepository(
                     )
                 )
             }
-            surveyHeaderDao.insert(
-                SurveyHeader(
-                    id = surveyHeaderJson.id,
-                    surveyName = surveyHeaderJson.surveyName,
-                    technologyId = surveyHeaderJson.technology.id
-                )
+            val header = SurveyHeader(
+                id = surveyHeaderJson.id,
+                surveyName = surveyHeaderJson.surveyName,
+                technologyId = surveyHeaderJson.technology.id
             )
+            if (surveyHeaderDao.exists(surveyHeaderJson.id) == 0) {
+                surveyHeaderDao.insert(header)
+            } else {
+                surveyHeaderDao.update(header)
+            }
+
             //add to temp lits
             headerIds.add(surveyHeaderJson.id)
             //loop through sections
@@ -99,9 +103,9 @@ class SurveyRepository(
                             dependentQuestionOptionId = questionJson.dependentQuestionOptionId,
                             inputTypeId = questionJson.inputType.id,
                             questionImageId = questionJson.questionImage?.id,
-                        questionName = questionJson.questionName,
-                        surveySectionId = surveySectionJson.id
-                    )
+                            questionName = questionJson.questionName,
+                            surveySectionId = surveySectionJson.id
+                        )
                     )
                     //add to temp lits
                     questionIds.add(questionJson.id)
