@@ -54,10 +54,10 @@ class IntervieweeDetailFragment : BaseListFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         intervieweeId = args.intervieweeId
         intervieweeModel.setInterviewee(intervieweeId)
         intervieweeModel.intervieweeDetail.observe(this, Observer { intervieweeD ->
+            (activity as MainActivity).supportActionBar!!.title = intervieweeD.interviewee.name
             recyclerView.withModels {
                 picture {
                     id("pictureHeader${intervieweeId}")
@@ -123,12 +123,12 @@ class IntervieweeDetailFragment : BaseListFragment() {
 
                 intervieweeD.intervieweeTechnologies.forEach { techno ->
                     //are there open tasks for this technology?
-                technology {
+                    technology {
                         id("technology${techno.id}")
                         state(techno.stateTechnology.toString())
                         knowledgeState(techno.stateKnowledge.toString())
                         name(techno.name)
-                        taskName(  "")//TODO
+                        taskName("")//TODO
                         onClick { _ ->
                             //show surveys for the corresponding technoology
                             val action =
@@ -180,7 +180,8 @@ class IntervieweeDetailFragment : BaseListFragment() {
                                 }
                             )
                             view.dataBinding.root.technologyTaskImage.setColorFilter(Color.YELLOW)
-                            view.dataBinding.root.technologyTaskImage.visibility = View.GONE//TODO task
+                            view.dataBinding.root.technologyTaskImage.visibility =
+                                View.GONE//TODO task
                         }
                     }
                 }

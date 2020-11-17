@@ -35,4 +35,5 @@
     <string name="person">Persona</string>
     <string name="add_new_family_dialog_title">Add new Family</string>
     <string name="enter_family_name">Namen eingeben</string>
+    <string name="tasks">Tasks</string>
 </resources>

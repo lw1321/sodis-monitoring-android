@@ -13,6 +13,6 @@
     <item
         android:id="@+id/tasks"
         android:icon="@drawable/ic_baseline_playlist_add_check"
-        android:title="Tasks"/>
+        android:title="@string/tasks"/>
 
 </menu>

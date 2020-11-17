@@ -67,9 +67,17 @@ class IntervieweeOverviewFragment : BaseListFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         var villageId = args.villageId
         intervieweeModel.getByVillage((villageId))
             .observe(this, Observer { intervieweesVillageList ->
+                (activity as MainActivity).supportActionBar!!.title = getString(R.string.village)
                 recyclerView.withModels {
                     intervieweesVillageList.forEach {
                         pictureListItem {
@@ -103,13 +111,6 @@ class IntervieweeOverviewFragment : BaseListFragment() {
                 }
             })
 
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
         val view = super.onCreateView(inflater, container, savedInstanceState)
         view?.navigation_forward_button_1?.isGone = false
         view?.navigation_forward_button_1?.setImageResource(R.drawable.ic_person_add_black_24dp)
@@ -134,7 +135,10 @@ class IntervieweeOverviewFragment : BaseListFragment() {
                             Snackbar.LENGTH_LONG
                         ).show()
                     } else {
-                        intervieweeModel.createInterviewee(name = edittext.text.toString(), village = args.villageId)
+                        intervieweeModel.createInterviewee(
+                            name = edittext.text.toString(),
+                            village = args.villageId
+                        )
                     }
 
                 })
