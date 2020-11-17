@@ -123,9 +123,11 @@ class QuestionRepository(
             // 2. for each completed survey get all answers.
             val answers = answerDao.getAnswersByCompletedSurveyId(it.id!!).map { it.toAnswerJson() }
             // 3. link answerlist to the completed survey
+            val interviewee = intervieweeDao.getById(it.intervieweeId)
+
             val completedSurveyJson = CompletedSurveyJson(
                 answers = answers,
-                interviewee = CompletedSurveyJson.Interviewee(id = it.id),
+                interviewee = CompletedSurveyJson.Interviewee(id = interviewee.id, name = interviewee.name, village = CompletedSurveyJson.Interviewee.Village(id=interviewee.villageId)),
                 creationDate = it.timeStamp,
                 surveyHeader = CompletedSurveyJson.SurveyHeader(it.surveyHeaderId),
                 latitude = it.latitude,
