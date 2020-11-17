@@ -50,7 +50,7 @@ class IntervieweeDetailFragment : BaseListFragment() {
     }
 
     val args: IntervieweeDetailFragmentArgs by navArgs()
-    var intervieweeId: Int = 0
+    var intervieweeId: String = "0"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -123,20 +123,12 @@ class IntervieweeDetailFragment : BaseListFragment() {
 
                 intervieweeD.intervieweeTechnologies.forEach { techno ->
                     //are there open tasks for this technology?
-                    val taskFilteredList = intervieweeD.tasks.filter { task ->
-                        task.intervieweeTechnologyId == techno.id
-                    }
-                    var taskStatus: String? = null
-                    if (taskFilteredList.isNotEmpty()) {
-                        taskStatus = taskFilteredList.first().name!!
-                    }
-                    taskFilteredList ?: "All good"
-                    technology {
+                technology {
                         id("technology${techno.id}")
                         state(techno.stateTechnology.toString())
                         knowledgeState(techno.stateKnowledge.toString())
                         name(techno.name)
-                        taskName(taskStatus ?: "")
+                        taskName(  "")//TODO
                         onClick { _ ->
                             //show surveys for the corresponding technoology
                             val action =
@@ -188,12 +180,7 @@ class IntervieweeDetailFragment : BaseListFragment() {
                                 }
                             )
                             view.dataBinding.root.technologyTaskImage.setColorFilter(Color.YELLOW)
-                            if (taskStatus == null) {
-                                view.dataBinding.root.technologyTaskImage.visibility = View.GONE
-                            } else {
-                                view.dataBinding.root.technologyTaskImage.visibility = View.VISIBLE
-                            }
-
+                            view.dataBinding.root.technologyTaskImage.visibility = View.GONE//TODO task
                         }
                     }
                 }

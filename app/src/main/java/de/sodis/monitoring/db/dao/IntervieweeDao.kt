@@ -22,7 +22,7 @@ interface IntervieweeDao {
     fun getByVillage(villageId: Int): LiveData<List<Interviewee>>
 
     @Query("SELECT * FROM Interviewee WHERE id=:intervieweeId")
-    fun getById(intervieweeId: Int): Interviewee
+    fun getById(intervieweeId: String): Interviewee
 
     @Update
     fun update(interviewee: Interviewee)
@@ -30,6 +30,6 @@ interface IntervieweeDao {
     @Query("SELECT * FROM Interviewee WHERE synced=0")
     fun getAllNotSynced(): List<Interviewee>
 
-    @Query("SELECT menCount FROM Interviewee WHERE id=:intervieweeId")
-    fun getFamilyCount(intervieweeId: Int): LiveData<Int>
+    @Query("SELECT menCount FROM Interviewee WHERE id=:intervieweeId")//TODO refactor family count
+    fun getFamilyCount(intervieweeId: String): LiveData<Int>
 }

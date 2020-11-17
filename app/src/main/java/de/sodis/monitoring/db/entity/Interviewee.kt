@@ -15,11 +15,6 @@ import androidx.room.PrimaryKey
             entity = User::class,
             parentColumns = arrayOf("id"),
             childColumns = arrayOf("userId")
-        ),
-        ForeignKey(
-            entity = Sector::class,
-            parentColumns = arrayOf("id"),
-            childColumns = arrayOf("sectorId")
         )
     ]
 )
@@ -37,9 +32,8 @@ data class Interviewee(
     var menCount: Int,
     val womenCount: Int,
     val userId: Int?,
-    val sectorId: Int?,
     var imagePath: String?=null,
     var imageUrl: String?=null,
     var synced: Boolean?=true
-id zu string api und app, aufrufe anpassen usw, dann neuen interviewee erstellen mit name und uuid die dann auch an server mitschicken.
+
 )

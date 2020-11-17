@@ -56,12 +56,10 @@ class SurveyViewModel(
             villageDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
                 .villageDao(),
             userDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).userDao(),
-            sectorDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).sectorDao(),
             technologyDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
                 .technologyDao(),
             intervieweeTechnologyDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
-                .intervieweeTechnologyDao(),
-            taskDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).taskDao()
+                .intervieweeTechnologyDao()
         )
     lateinit var surveyHeader: LiveData<SurveyHeaderResponse>
 
@@ -139,7 +137,7 @@ class SurveyViewModel(
         }
     }
 
-    fun setInterviewee(id: Int) {
+    fun setInterviewee(id: String) {
         viewModelScope.launch(Dispatchers.IO) {
             interviewee = intervieweeRepository.getIntervieweeByID(id)
         }

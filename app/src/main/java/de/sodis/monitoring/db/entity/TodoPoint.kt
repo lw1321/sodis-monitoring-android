@@ -41,7 +41,7 @@ data class TodoPoint(
     var donedate: Calendar?,
 
     @ColumnInfo(name = "family")
-    var family: Int?,
+    var family: String?,
 
     @ColumnInfo(name = "village")
     var village: Int?,

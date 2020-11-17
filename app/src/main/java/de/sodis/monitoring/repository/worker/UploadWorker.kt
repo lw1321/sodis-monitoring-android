@@ -36,8 +36,6 @@ class UploadWorker(appContext: Context, workerParams: WorkerParameters) :
             intervieweeTechnologyDao = db.intervieweeTechnologyDao(),
             monitoringApi = MonitoringApi(),
             intervieweeDao = db.intervieweeDao(),
-            sectorDao = db.sectorDao(),
-            taskDao = db.taskDao(),
             technologyDao = db.technologyDao(),
             userDao = db.userDao(),
             villageDao = db.villageDao()

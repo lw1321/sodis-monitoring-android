@@ -80,7 +80,7 @@ class MonitoringApi {
         return monitoringApi.getStats()
     }
 
-    suspend fun postIntervieweImage(imagePath: String?, intervieweeId: Int): IntervieweeJson {
+    suspend fun postIntervieweImage(imagePath: String?, intervieweeId: String): IntervieweeJson {
         val file = File(imagePath)
         val requestFile: RequestBody =
             RequestBody.create(MediaType.parse("multipart/form-data"), file)

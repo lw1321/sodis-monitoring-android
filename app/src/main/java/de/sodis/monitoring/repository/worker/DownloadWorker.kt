@@ -40,9 +40,7 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) :
                 technologyDao = monitoringDatabase.technologyDao(),
                 intervieweeTechnologyDao = monitoringDatabase.intervieweeTechnologyDao(),
                 villageDao = monitoringDatabase.villageDao(),
-                sectorDao = monitoringDatabase.sectorDao(),
-                userDao = monitoringDatabase.userDao(),
-                taskDao = monitoringDatabase.taskDao()
+                userDao = monitoringDatabase.userDao()
             )
         val userRepository =
             UserRepository(

@@ -10,7 +10,6 @@ import de.sodis.monitoring.api.MonitoringApi
 import de.sodis.monitoring.db.MonitoringDatabase
 import de.sodis.monitoring.db.entity.Interviewee
 import de.sodis.monitoring.db.entity.IntervieweeTechnology
-import de.sodis.monitoring.db.entity.Sector
 import de.sodis.monitoring.db.entity.Village
 import de.sodis.monitoring.db.response.IntervieweeDetail
 import de.sodis.monitoring.repository.IntervieweeRepository
@@ -26,18 +25,16 @@ class IntervieweeModel(application: Application) : AndroidViewModel(application)
     var intervieweeDetail: MutableLiveData<IntervieweeDetail>
     lateinit var technologyList: LiveData<List<IntervieweeTechnology>>
     var modiefied: Boolean = false
-    var currentIntervieweeId = 0
+    var currentIntervieweeId: String = "0"
 
     private val monitoringDatabase = MonitoringDatabase.getDatabase(application.applicationContext)
     private val intervieweeRepository =
         IntervieweeRepository(
             intervieweeDao = monitoringDatabase.intervieweeDao(),
             villageDao = monitoringDatabase.villageDao(),
-            sectorDao = monitoringDatabase.sectorDao(),
             userDao = monitoringDatabase.userDao(),
             intervieweeTechnologyDao = monitoringDatabase.intervieweeTechnologyDao(),
             technologyDao = monitoringDatabase.technologyDao(),
-            taskDao = monitoringDatabase.taskDao(),
             monitoringApi = MonitoringApi()
         )
 
@@ -51,7 +48,7 @@ class IntervieweeModel(application: Application) : AndroidViewModel(application)
         return intervieweeRepository.getByVillage(villageId)
     }
 
-    fun setInterviewee(intervieweeId: Int) {
+    fun setInterviewee(intervieweeId: String) {
         currentIntervieweeId = intervieweeId
         intervieweeRepository.getFamilyCount(intervieweeId).observeForever(Observer {
             if (intervieweeDetail.value != null) {
@@ -79,7 +76,7 @@ class IntervieweeModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    fun getByID(intervieweeId: Int): Interviewee {
+    fun getByID(intervieweeId: String): Interviewee {
         return intervieweeRepository.getIntervieweeByID(intervieweeId)
     }
 
@@ -88,11 +85,7 @@ class IntervieweeModel(application: Application) : AndroidViewModel(application)
         modiefied = true
     }
 
-    fun getSectorsOfVillage(villageId: Int): Array<CharSequence> {
-        val sectorsInVillage = intervieweeRepository.getSectorsOfVillage(villageId)
-        return sectorsInVillage.value!!.map { it.name }.toTypedArray()
 
-    }
 
     fun getVillageByID(int: Int): Village {
         return intervieweeRepository.getVillageByID(int)

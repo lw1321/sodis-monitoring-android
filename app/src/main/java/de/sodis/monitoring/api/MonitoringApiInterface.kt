@@ -55,7 +55,7 @@ interface MonitoringApiInterface {
         image: MultipartBody.Part, @Path(
             value = "intervieweeId",
             encoded = false
-        ) intervieweeId: Int
+        ) intervieweeId: String
     ): IntervieweeJson
 
     @GET("villages")

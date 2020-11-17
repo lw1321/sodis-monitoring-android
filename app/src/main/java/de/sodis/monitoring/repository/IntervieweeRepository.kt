@@ -10,10 +10,8 @@ import de.sodis.monitoring.db.response.IntervieweeDetail
 class IntervieweeRepository(
     private val intervieweeDao: IntervieweeDao,
     private val villageDao: VillageDao,
-    private val sectorDao: SectorDao,
     private val technologyDao: TechnologyDao,
     private val intervieweeTechnologyDao: IntervieweeTechnologyDao,
-    private val taskDao: TaskDao,
     private val userDao: UserDao,
     private val monitoringApi: MonitoringApi
 ) {
@@ -45,7 +43,6 @@ class IntervieweeRepository(
                     menCount = interviewee.menCount,
                     womenCount = interviewee.womenCount,
                     userId = interviewee.user?.id,
-                    sectorId = interviewee.sector?.id,
                     imagePath = null,//todo add attributes server side
                     imageUrl = null//todo save image from url local
                 )
@@ -102,7 +99,7 @@ class IntervieweeRepository(
         return intervieweeDao.searchByName(name)
     }
 
-    fun getIntervieweeByID(intervieweeId: Int): Interviewee {
+    fun getIntervieweeByID(intervieweeId: String): Interviewee {
         return intervieweeDao.getById(intervieweeId)
     }
 
@@ -110,28 +107,24 @@ class IntervieweeRepository(
      * Full infos
      * interviewee, technologies, village
      */
-    suspend fun getById(intervieweeId: Int): IntervieweeDetail {
+    suspend fun getById(intervieweeId: String): IntervieweeDetail {
         val intervieweeTechnologies =
             intervieweeTechnologyDao.getByInterviewee(intervieweeId)
         val interviewee = intervieweeDao.getById(intervieweeId)
         val village = villageDao.getById(interviewee.villageId)
-        val sector = interviewee.sectorId?.let { sectorDao.getById(it) }
         var localExpert: User? = null
         if (interviewee.userId != null) {
             localExpert = userDao.getByLocalExpertId(interviewee.userId)
         }
-        val taskList = taskDao.getTasksByInterviewee(intervieweeId)
         return IntervieweeDetail(
             interviewee = interviewee,
             intervieweeTechnologies = intervieweeTechnologies,
             village = village,
-            sector = sector,
-            user = localExpert,
-            tasks = taskList
+            user = localExpert
         )
     }
 
-    fun getFamilyCount(intervieweeId: Int): LiveData<Int> {
+    fun getFamilyCount(intervieweeId: String): LiveData<Int> {
         return intervieweeDao.getFamilyCount(intervieweeId)
     }
 
@@ -139,16 +132,11 @@ class IntervieweeRepository(
         intervieweeDao.insert(interviewee)
     }
 
-    fun getSectorsOfVillage(villageId: Int): LiveData<List<Sector>> {
-        return sectorDao.getByVillageId(villageId)
-
-    }
-
-    fun getTechnologies(intervieweeId: Int): LiveData<List<IntervieweeTechnology>> {
+    fun getTechnologies(intervieweeId: String): LiveData<List<IntervieweeTechnology>> {
         return intervieweeTechnologyDao.getByIntervieweeLive(intervieweeId)
     }
 
-    fun updateImagePath(id: Int, currentPhotoPath: String) {
+    fun updateImagePath(id: String, currentPhotoPath: String) {
         val intervieweeByID = getIntervieweeByID(id)
 
         intervieweeByID.imagePath = currentPhotoPath
