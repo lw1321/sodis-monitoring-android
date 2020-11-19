@@ -172,7 +172,12 @@ class SurveyViewModel(
                     fusedLocationClient.lastLocation
                         .addOnSuccessListener { location: Location? ->
                             // Got last known location. In some rare situations this can be null.
-                            saveSurvey(location!!.latitude, location.longitude)
+                            if(location != null){
+                                saveSurvey(location.latitude, location.longitude)
+                            }
+                            else{
+                                saveSurvey()
+                            }
                         }.addOnFailureListener { it ->
                             //Loation Request failed, save survey without location
                             saveSurvey()
