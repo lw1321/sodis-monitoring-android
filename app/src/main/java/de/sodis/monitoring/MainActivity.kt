@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         when (item.itemId) {
             R.id.dashboard -> {
                 findNavController(R.id.nav_host_fragment).navigate(R.id.villageFragment)
-                supportActionBar!!.title = getString(R.string.tab_village_overview)
+                supportActionBar!!.title = getString(R.string.village)
             }
             R.id.monitoring_history -> {
                 findNavController(R.id.nav_host_fragment).navigate(R.id.monitoringHistoryFragment)
@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             }
             R.id.tasks -> {
                 findNavController(R.id.nav_host_fragment).navigate(R.id.todoFragment)
-                supportActionBar!!.title = "Tasks"
+                supportActionBar!!.title = getString(R.string.tasks)
             }
         }
         return true
@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         bottomNavigation.setOnNavigationItemSelectedListener(this)
 
         findNavController(R.id.nav_host_fragment).navigate(R.id.villageFragment)
-        supportActionBar!!.title = getString(R.string.tab_village_overview)
+        supportActionBar!!.title = getString(R.string.village)
 
         // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance()

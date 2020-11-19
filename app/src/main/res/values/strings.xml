@@ -1,21 +1,12 @@
 <resources>
     <string name="app_name" translatable="false">Monitoreo</string>
-    <string name="tab_village_overview" translatable="false">Villages</string>
-    <string name="tab_monitoring" translatable="false">Monitoring</string>
-    <string name="tab_task" translatable="false">Task</string>
-    <string name="tab_history" translatable="false">History</string>
-    <string name="general_data_old_people" translatable="false">Mayores de 50 Años</string>
-    <string name="general_data_adult" translatable="false">Mayores de 15 a 49 Años</string>
-    <string name="gerneral_data_young" translatable="false">Niños de 6 a 14 Años</string>
-    <string name="general_data_women">Mujeres</string>
-    <string name="general_data_men">Hombres</string>
-    <string name="general_data_child">Menores de 0 a 5 Años</string>
-    <string name="hint_register_first_name">primer nombre</string>
-    <string name="hint_register_surname">nombre</string>
+    <string name="tab_history" translatable="false">Historial</string>
+    <string name="hint_register_first_name">nombre</string>
+    <string name="hint_register_surname">appelido</string>
     <string name="button_register">registro</string>
     <string name="register_whats_your_name">Como te llamas ?</string>
     <string name="message_monitoring_completed">Los datos se guardan</string>
-    <string name="message_monitoring_answer_required">Por favor seleccione una opción de respuesta!</string>
+    <string name="message_monitoring_answer_required">Seleccione una respuesta</string>
     <string name="hint_monitoring_answer">Respuesta</string>
     <string name="monitoring_interviewee">Interrogado</string>
     <string name="message_monitoring_interviewee_not_selected">Ingrese el nombre del encuestado</string>
@@ -29,13 +20,16 @@
     <string name="invalid_email_message">Please enter a valid Mail</string>
     <string name="password_too_short_message">Passwort  muss mindestens 7 zeichen lang sein</string>
     <string name="name_empty_message">Name can not be empty</string>
-    <string name="download_FINISHED">lOADING SUCCESSFULLY FINISHED</string>
-    <string name="history">History</string>
-    <string name="village">Comunidad</string>
+    <string name="village">Comunidades</string>
     <string name="person">Persona</string>
     <string name="add_new_family_dialog_title">Añadir una nueva familia</string>
     <string name="enter_family_name">Nombre de la familia</string>
-    <string name="tasks">Tasks</string>
     <string name="cancel">Cancelar</string>
     <string name="save">Guardar</string>
+    <string name="tasks">Tareas</string>
+    <string name="add">Añadir</string>
+    <string name="due">debido</string>
+    <string name="family">Familia</string>
+    <string name="title">Título</string>
+    <string name="due_until">debido hasta</string>
 </resources>

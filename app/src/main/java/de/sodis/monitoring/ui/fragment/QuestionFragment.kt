@@ -228,5 +228,4 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
             (activity as MainActivity).show_bottom_navigation()
         }
     }
-
 }

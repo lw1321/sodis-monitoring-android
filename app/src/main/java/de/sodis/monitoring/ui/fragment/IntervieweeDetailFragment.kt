@@ -31,7 +31,7 @@ import de.sodis.monitoring.*
 import de.sodis.monitoring.viewmodel.IntervieweeModel
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
 import kotlinx.android.synthetic.main.continuable_list.view.*
-import kotlinx.android.synthetic.main.view_holder_family_age_structure.view.*
+
 import kotlinx.android.synthetic.main.view_holder_header.*
 import kotlinx.android.synthetic.main.view_holder_key_value.view.*
 import kotlinx.android.synthetic.main.view_holder_picture.view.*
