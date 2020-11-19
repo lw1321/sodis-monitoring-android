@@ -1,7 +1,5 @@
 package de.sodis.monitoring.repository
 
-import com.crashlytics.android.Crashlytics
-import com.crashlytics.android.answers.Answers
 import de.sodis.monitoring.api.MonitoringApi
 import de.sodis.monitoring.api.model.AnswerJson
 import de.sodis.monitoring.api.model.CompletedSurveyJson

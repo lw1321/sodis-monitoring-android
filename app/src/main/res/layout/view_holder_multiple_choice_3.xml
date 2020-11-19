@@ -35,7 +35,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <RadioButton
+            <androidx.appcompat.widget.AppCompatRadioButton
                 android:orientation = "vertical"
                 android:id="@+id/optionButton1"
                 android:layout_width="match_parent"
@@ -51,7 +51,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
-            <RadioButton
+            <androidx.appcompat.widget.AppCompatRadioButton
                 android:orientation = "vertical"
                 android:id="@+id/optionButton2"
                 android:layout_width="match_parent"
@@ -68,7 +68,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <RadioButton
+            <androidx.appcompat.widget.AppCompatRadioButton
                 android:orientation = "vertical"
                 android:id="@+id/optionButton3"
                 android:layout_width="match_parent"

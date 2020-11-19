@@ -1,10 +1,10 @@
 package de.sodis.monitoring.repository.worker
 
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
-import com.crashlytics.android.Crashlytics
 import de.sodis.monitoring.api.MonitoringApi
 import de.sodis.monitoring.db.MonitoringDatabase
 import de.sodis.monitoring.db.entity.QuestionImage
@@ -86,7 +86,8 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) :
             setProgress(progressFinished)
             Result.success()
         } catch (e: Exception) {
-            Crashlytics.logException(e)
+            val crashlytics = FirebaseCrashlytics.getInstance()
+            crashlytics.log(e.localizedMessage)
             Result.failure()
         }
     }

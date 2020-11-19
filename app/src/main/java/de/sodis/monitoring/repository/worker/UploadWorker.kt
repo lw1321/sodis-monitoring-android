@@ -3,7 +3,7 @@ package de.sodis.monitoring.repository.worker
 import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.crashlytics.android.Crashlytics
+import com.google.firebase.crashlytics.FirebaseCrashlytics
 import de.sodis.monitoring.api.MonitoringApi
 import de.sodis.monitoring.db.MonitoringDatabase
 import de.sodis.monitoring.db.entity.Interviewee
@@ -46,7 +46,8 @@ class UploadWorker(appContext: Context, workerParams: WorkerParameters) :
 
             Result.success()
         } catch (e: Exception) {
-            Crashlytics.logException(e)
+            val crashlytics = FirebaseCrashlytics.getInstance()
+            crashlytics.log(e.localizedMessage)
             Result.failure()
         }
     }

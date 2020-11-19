@@ -65,7 +65,7 @@ class LoginEmailPasswordFragment: BaseListFragment() {
                             auth.signInWithEmailAndPassword(email, password).addOnCompleteListener(activity!!) { task ->
                                 if (task.isSuccessful) {
                                     if(task.result!=null) {
-                                        if(task.result!!.user.uid!=null) {
+                                        if(task.result!!.user!!.uid!=null) {
                                             findNavController().navigate(R.id.mainActivity)
                                         }
                                     }

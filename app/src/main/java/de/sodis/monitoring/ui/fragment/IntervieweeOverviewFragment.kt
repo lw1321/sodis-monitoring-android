@@ -126,7 +126,7 @@ class IntervieweeOverviewFragment : BaseListFragment() {
             builder?.setMessage(getString(R.string.enter_family_name))
             builder?.setView(edittext)
 
-            builder?.setPositiveButton("Save",
+            builder?.setPositiveButton(getString(R.string.save),
                 DialogInterface.OnClickListener { dialog, whichButton -> //What ever you want to do with the value
                     //todo create new family and technologies
                     if (edittext.text.isEmpty()) {
