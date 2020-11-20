@@ -1,7 +1,7 @@
 package de.sodis.monitoring.db.response
 
 data class CompletedSurveyOverview (
-    var id: Int,
+    var id: String,
     var name: String,
     var surveyName: String
 )

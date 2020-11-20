@@ -13,5 +13,5 @@ interface AnswerDao {
     fun insert(answer: Answer)
 
     @Query("SELECT * FROM Answer WHERE completedSurveyId=:completedSurveyId")
-    fun getAnswersByCompletedSurveyId(completedSurveyId: Int):List<Answer>
+    fun getAnswersByCompletedSurveyId(completedSurveyId: String):List<Answer>
 }

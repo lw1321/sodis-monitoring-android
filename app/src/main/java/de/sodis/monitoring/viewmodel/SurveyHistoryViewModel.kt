@@ -40,13 +40,13 @@ class SurveyHistoryViewModel(application: Application) : AndroidViewModel(applic
         surveHistoryListSorted = surveyHistoryRepository.getCompletedSurveysSorted()
     }
 
-    fun setCompletedSurveyId(completedSurveyId: Int) {
+    fun setCompletedSurveyId(completedSurveyId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             surveyCompletedList.postValue(surveyHistoryRepository.getCompletedSurvey(completedSurveyId))
         }
     }
 
-    fun getCompleteSurveyList(completedSurveyID: Int): List<CompletedSurveyDetail> {
+    fun getCompleteSurveyList(completedSurveyID: String): List<CompletedSurveyDetail> {
         return surveyHistoryRepository.getCompletedSurvey(completedSurveyID)
     }
 

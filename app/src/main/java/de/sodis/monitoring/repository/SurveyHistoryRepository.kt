@@ -22,7 +22,7 @@ class SurveyHistoryRepository(
         return completedSurveyDao.getAllSorted()
     }
 
-    fun getCompletedSurvey(completedSurveyId: Int): List<CompletedSurveyDetail> {
+    fun getCompletedSurvey(completedSurveyId: String): List<CompletedSurveyDetail> {
         val completedQuestionDetailList: MutableList<CompletedSurveyDetail> = mutableListOf()
         //get the title of the completed survey
 

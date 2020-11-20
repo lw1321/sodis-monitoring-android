@@ -47,7 +47,7 @@ class SurveyOverviewFragment: Fragment() {
 
     lateinit var recyclerView: RecyclerView
 
-    var completedSurveyID: Int  = 0
+    var completedSurveyID: String = ""
 
     val args: SurveyOverviewFragmentArgs by navArgs()
 

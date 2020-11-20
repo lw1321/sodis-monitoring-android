@@ -12,7 +12,7 @@ import de.sodis.monitoring.db.response.CompletedSurveyOverview
 interface CompletedSurveyDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(completedSurvey: CompletedSurvey): Long
+    fun insert(completedSurvey: CompletedSurvey)
 
     @Query("SELECT * FROM CompletedSurvey WHERE submitted=0")
     fun getAllUnsubmitted(): List<CompletedSurvey>
@@ -21,10 +21,10 @@ interface CompletedSurveyDao {
     fun getAll(): LiveData<List<CompletedSurveyOverview>>
 
     @Query("UPDATE CompletedSurvey SET submitted=1 WHERE id IN (:ids)")
-    fun setSubmitted(ids: List<Int>)
+    fun setSubmitted(ids: List<String>)
 
     @Query("SELECT * FROM CompletedSurvey WHERE id=:id")
-    fun getById(id: Int): CompletedSurvey
+    fun getById(id: String): CompletedSurvey
 
     @Query("SELECT Interviewee.name, SurveyHeader.surveyName, CompletedSurvey.id FROM CompletedSurvey JOIN Interviewee ON CompletedSurvey.intervieweeId=Interviewee.id JOIN SurveyHeader ON CompletedSurvey.surveyHeaderId=SurveyHeader.id ORDER BY timeStamp DESC")
     fun getAllSorted(): LiveData<List<CompletedSurveyOverview>>

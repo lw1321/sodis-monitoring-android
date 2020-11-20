@@ -21,7 +21,7 @@ import androidx.room.PrimaryKey
     ]
 )
 data class CompletedSurvey(
-    @PrimaryKey(autoGenerate = true) val id: Int? = null,
+    @PrimaryKey val id: String,
     val intervieweeId: String,
     val surveyHeaderId: Int,
     val timeStamp: String,

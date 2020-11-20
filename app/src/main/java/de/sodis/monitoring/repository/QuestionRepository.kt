@@ -79,10 +79,10 @@ class QuestionRepository(
         if (surveyHeader.surveyHeader.surveyName == "Miembros de la familia") {//TODO
             //update the family infos
             val interviewee = intervieweeDao.getById(completedSurvey.intervieweeId)
-            val completedSurveyId = completedSurveyDao.insert(completedSurvey)
+             completedSurveyDao.insert(completedSurvey)
             var ageSum = 0
             for ((k, v) in answerMap) {//todo insertAll
-                v.completedSurveyId = completedSurveyId.toInt()
+                v.completedSurveyId = completedSurvey.id
                 ageSum += v.answerText!!.toInt()
                 answerDao.insert(v)
             }
@@ -93,7 +93,7 @@ class QuestionRepository(
             var status = 2
             val completedSurveyId = completedSurveyDao.insert(completedSurvey)
             for ((k, v) in answerMap) {//todo insertAll
-                v.completedSurveyId = completedSurveyId.toInt()
+                v.completedSurveyId = completedSurvey.id
                 answerDao.insert(v)
                 if (!v.answerText.equals("Si"))//TODO{
                 //something is not "postiv" so lets set the status to 1
@@ -124,6 +124,7 @@ class QuestionRepository(
             val interviewee = intervieweeDao.getById(it.intervieweeId)
 
             val completedSurveyJson = CompletedSurveyJson(
+                id = UUID.randomUUID().toString(),
                 answers = answers,
                 interviewee = CompletedSurveyJson.Interviewee(id = interviewee.id, name = interviewee.name, village = CompletedSurveyJson.Interviewee.Village(id=interviewee.villageId)),
                 creationDate = it.timeStamp,
@@ -147,6 +148,7 @@ class QuestionRepository(
 
 private fun Answer.toAnswerJson(): CompletedSurveyJson.Answer {
     return CompletedSurveyJson.Answer(
+        id = UUID.randomUUID().toString(),
         answerYn = this.answerYn,
         questionOption = CompletedSurveyJson.Answer.QuestionOption(this.questionOptionId),
         answerText = this.answerText

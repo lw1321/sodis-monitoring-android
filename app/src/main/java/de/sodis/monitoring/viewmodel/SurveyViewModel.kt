@@ -29,6 +29,7 @@ import de.sodis.monitoring.repository.worker.UploadWorker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.sql.Timestamp
+import java.util.*
 
 
 class SurveyViewModel(
@@ -147,7 +148,7 @@ class SurveyViewModel(
         //request questionOption for the answer
         answerMap[id] = Answer(
             answerText = answer,
-            id = null,
+            id = UUID.randomUUID().toString(),
             questionOptionId = optionChoiceId,
             completedSurveyId = null, //todo
             answerYn = null//todo differe yn/text
@@ -215,6 +216,7 @@ class SurveyViewModel(
             questionRepository.saveQuestions(
                 answerMap,
                 CompletedSurvey(
+                    id = UUID.randomUUID().toString(),
                     intervieweeId = interviewee!!.id,
                     timeStamp = Timestamp(System.currentTimeMillis()).toString(),
                     surveyHeaderId = surveyHeader.value!!.surveyHeader.id,

@@ -40,7 +40,7 @@ class QuestionHistoryFragment : BaseListFragment() {
     }
 
     val args: QuestionHistoryFragmentArgs by navArgs()
-    var completedSurveyId: Int = 0
+    var completedSurveyId: String = ""
 
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -10,7 +10,7 @@ import de.sodis.monitoring.db.entity.*
 
 @Database(
     entities = [InputType::class, OptionChoice::class, Question::class, QuestionImage::class, QuestionOption::class, SurveyHeader::class, SurveySection::class, Interviewee::class, Answer::class, Village::class, Technology::class, IntervieweeTechnology::class, User::class, CompletedSurvey::class, TodoPoint::class, Stats::class],
-    version = 36
+    version = 39
 )
 abstract class MonitoringDatabase : RoomDatabase() {
     abstract fun inputTypeDao(): InputTypeDao

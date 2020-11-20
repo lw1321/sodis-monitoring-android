@@ -14,9 +14,9 @@ import androidx.room.PrimaryKey
     ]
 )
 data class Answer(
-    @PrimaryKey(autoGenerate = true) val id: Int?,
+    @PrimaryKey val id: String,
     val answerText: String?,
     val answerYn: Boolean?,
     val questionOptionId: Int,//TODO ADD FK!!
-    var completedSurveyId: Int?
+    var completedSurveyId: String?
 )

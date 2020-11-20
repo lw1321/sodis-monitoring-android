@@ -1,6 +1,7 @@
 package de.sodis.monitoring.api.model
 
 data class CompletedSurveyJson(
+    val id: String,
     val answers: List<Answer>,
     val creationDate: String,
     val interviewee: Interviewee,
@@ -9,6 +10,7 @@ data class CompletedSurveyJson(
     val longitude: Double?
 ) {
     data class Answer(
+        val id: String,
         val answerYn: Boolean?,
         val answerText: String?,
         val questionOption: QuestionOption
