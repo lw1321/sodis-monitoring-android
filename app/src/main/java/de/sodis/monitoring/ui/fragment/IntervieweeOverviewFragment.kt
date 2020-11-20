@@ -77,39 +77,42 @@ class IntervieweeOverviewFragment : BaseListFragment() {
     ): View? {
         var villageId = args.villageId
         intervieweeModel.getByVillage((villageId))
-            .observe(this, Observer { intervieweesVillageList ->
-                (activity as MainActivity).supportActionBar!!.title = getString(R.string.village)
-                recyclerView.withModels {
-                    intervieweesVillageList.forEach {
-                        pictureListItem {
-                            id(it.id)
-                            text(it.name)
-                            onClick { _ ->
-                                val options = navOptions {
-                                    anim {
-                                        enter = R.anim.slide_in_right
-                                        exit = R.anim.slide_out_left
-                                        popEnter = R.anim.slide_in_left
-                                        popExit = R.anim.slide_out_right
+            .observe(viewLifecycleOwner, Observer { intervieweesVillageList ->
+                intervieweeModel.requestVillageName(villageId)
+                intervieweeModel.villageName.observe(viewLifecycleOwner, Observer { name ->
+                    (activity as MainActivity).supportActionBar!!.title = name
+                    recyclerView.withModels {
+                        intervieweesVillageList.forEach {
+                            pictureListItem {
+                                id(it.id)
+                                text(it.name)
+                                onClick { _ ->
+                                    val options = navOptions {
+                                        anim {
+                                            enter = R.anim.slide_in_right
+                                            exit = R.anim.slide_out_left
+                                            popEnter = R.anim.slide_in_left
+                                            popExit = R.anim.slide_out_right
+                                        }
                                     }
+                                    val action =
+                                        IntervieweeOverviewFragmentDirections.actionIntervieweeOverviewFragmentToIntervieweeDetailFragment(
+                                            intervieweeId = it.id
+                                        )
+                                    findNavController().navigate(action)
                                 }
-                                val action =
-                                    IntervieweeOverviewFragmentDirections.actionIntervieweeOverviewFragmentToIntervieweeDetailFragment(
-                                        intervieweeId = it.id
-                                    )
-                                findNavController().navigate(action)
-                            }
-                            onBind { model, view, position ->
-                                if (it.imagePath == null) {
-                                    view.dataBinding.root.imageView.setImageResource(R.drawable.ic_person_black_24dp)
-                                }
-                                it.imagePath?.let {
-                                    setPic(it, view.dataBinding.root.imageView)
+                                onBind { model, view, position ->
+                                    if (it.imagePath == null) {
+                                        view.dataBinding.root.imageView.setImageResource(R.drawable.ic_person_black_24dp)
+                                    }
+                                    it.imagePath?.let {
+                                        setPic(it, view.dataBinding.root.imageView)
+                                    }
                                 }
                             }
                         }
                     }
-                }
+                })
             })
 
         val view = super.onCreateView(inflater, container, savedInstanceState)

@@ -27,6 +27,7 @@ class IntervieweeModel(application: Application) : AndroidViewModel(application)
     lateinit var technologyList: LiveData<List<IntervieweeTechnology>>
     var modiefied: Boolean = false
     var currentIntervieweeId: String = "0"
+    lateinit var villageName: MutableLiveData<String>
 
     private val monitoringDatabase = MonitoringDatabase.getDatabase(application.applicationContext)
     private val intervieweeRepository =
@@ -43,6 +44,8 @@ class IntervieweeModel(application: Application) : AndroidViewModel(application)
         intervieweeList = intervieweeRepository.getAll()
         villageList = intervieweeRepository.getAllVillages()
         intervieweeDetail = MutableLiveData()
+        villageName = MutableLiveData()
+        villageName.postValue("")
     }
 
     fun getByVillage(villageId: Int): LiveData<List<Interviewee>> {
@@ -98,6 +101,13 @@ class IntervieweeModel(application: Application) : AndroidViewModel(application)
                 intervieweeDetail.value!!.interviewee.id,
                 currentPhotoPath
             )
+        }
+    }
+
+    fun requestVillageName(id: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            var name = intervieweeRepository.getVillageName(id)
+            villageName.postValue(name)
         }
     }
 

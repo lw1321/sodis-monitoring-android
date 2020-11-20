@@ -202,4 +202,8 @@ class IntervieweeRepository(
             )
         }
     }
+
+    fun getVillageName(id: Int): String {
+        return villageDao.getNameById(id)
+    }
 }
