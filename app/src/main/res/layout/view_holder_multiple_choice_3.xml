@@ -22,7 +22,8 @@
         android:id="@+id/constraintLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:paddingBottom="70dp">
 
         <RadioGroup
             android:id="@+id/radio_group"
@@ -36,7 +37,6 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <androidx.appcompat.widget.AppCompatRadioButton
-                android:orientation = "vertical"
                 android:id="@+id/optionButton1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -45,14 +45,15 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginBottom="8dp"
+                android:orientation="vertical"
                 android:text="@{option1}"
                 android:textSize="20dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
+
             <androidx.appcompat.widget.AppCompatRadioButton
-                android:orientation = "vertical"
                 android:id="@+id/optionButton2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -61,6 +62,7 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginBottom="8dp"
+                android:orientation="vertical"
                 android:text="@{option2}"
                 android:textSize="20dp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -69,7 +71,6 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.appcompat.widget.AppCompatRadioButton
-                android:orientation = "vertical"
                 android:id="@+id/optionButton3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -78,6 +79,7 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginBottom="8dp"
+                android:orientation="vertical"
                 android:text="@{option3}"
                 android:textSize="20dp"
                 app:layout_constraintBottom_toBottomOf="parent"

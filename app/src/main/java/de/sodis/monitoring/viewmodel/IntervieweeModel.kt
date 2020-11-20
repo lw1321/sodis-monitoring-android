@@ -27,7 +27,7 @@ class IntervieweeModel(application: Application) : AndroidViewModel(application)
     lateinit var technologyList: LiveData<List<IntervieweeTechnology>>
     var modiefied: Boolean = false
     var currentIntervieweeId: String = "0"
-    lateinit var villageName: MutableLiveData<String>
+    var villageName: MutableLiveData<String>
 
     private val monitoringDatabase = MonitoringDatabase.getDatabase(application.applicationContext)
     private val intervieweeRepository =
