@@ -158,7 +158,7 @@ class IntervieweeRepository(
                 intervieweeId = interviewee.id
             )
             interviewee.imageUrl = postIntervieweImage.imageUrl
-            interviewee.synced = true
+            interviewee.synced = true //TODO USE FOR user sync, image seperate.
             intervieweeDao.update(interviewee)
         }
     }
