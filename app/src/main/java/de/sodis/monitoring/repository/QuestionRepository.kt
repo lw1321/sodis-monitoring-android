@@ -124,13 +124,13 @@ class QuestionRepository(
             val interviewee = intervieweeDao.getById(it.intervieweeId)
 
             val completedSurveyJson = CompletedSurveyJson(
-                id = UUID.randomUUID().toString(),
+                id = it.id,
                 answers = answers,
                 interviewee = CompletedSurveyJson.Interviewee(id = interviewee.id, name = interviewee.name, village = CompletedSurveyJson.Interviewee.Village(id=interviewee.villageId)),
                 creationDate = it.timeStamp,
                 surveyHeader = CompletedSurveyJson.SurveyHeader(it.surveyHeaderId),
                 latitude = it.latitude,
-                longitude = it.longitude!!
+                longitude = it.longitude
             )
             // 4. add the combined completed survey to a temp list
             tempCompletedSurveysList.add(completedSurveyJson);
