@@ -66,7 +66,9 @@ class IntervieweeDetailFragment : BaseListFragment() {
                     }
                     onBind { model, view, position ->
                         if (intervieweeD.interviewee.imagePath != null) {
-                            BitmapFactory.decodeFile(intervieweeD.interviewee.imagePath)
+                            val bo : BitmapFactory.Options = BitmapFactory.Options()
+                            bo.inSampleSize = 8
+                            BitmapFactory.decodeFile(intervieweeD.interviewee.imagePath, bo)
                                 ?.also { bitmap ->
                                     view.dataBinding.root.imageView.setImageBitmap(bitmap)
 
