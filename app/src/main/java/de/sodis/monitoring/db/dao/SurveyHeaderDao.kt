@@ -23,6 +23,9 @@ interface SurveyHeaderDao {
     @Query("SELECT * FROM SurveyHeader WHERE technologyId=:technologyId")
     fun getAllFilteredTechnology(technologyId: Int): LiveData<List<SurveyHeader>>
 
+    @Query("SELECT * FROM SurveyHeader WHERE technologyId=:technologyId")
+    fun getAllFilteredTechnologySync(technologyId: Int): List<SurveyHeader>
+
     @Query("SELECT * FROM SurveyHeader WHERE id=:surveyHeaderId")
     fun getById(surveyHeaderId: Int): LiveData<SurveyHeaderResponse>
 

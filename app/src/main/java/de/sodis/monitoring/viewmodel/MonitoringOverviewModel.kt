@@ -13,8 +13,8 @@ class MonitoringOverviewModel(application: Application) : AndroidViewModel(appli
         surveyHeaderList = surveyRepository.getSurveyHeadersFilteredTechnology(technologyId)
     }
 
-    fun getSurveyHeaderListByTechnologyID(technologyID: Int): LiveData<List<SurveyHeader>>  {
-        return surveyRepository.getSurveyHeadersFilteredTechnology(technologyID)
+    fun getSurveyHeaderListByTechnologyIDSynchronous(technologyID: Int): List<SurveyHeader>  {
+        return surveyRepository.getSurveyHeadersFilteredTechnologySynchronous(technologyID)
     }
 
     lateinit var surveyHeaderList: LiveData<List<SurveyHeader>>

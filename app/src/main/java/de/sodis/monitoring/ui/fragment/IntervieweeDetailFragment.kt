@@ -27,8 +27,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import coil.api.load
 import com.google.android.material.snackbar.Snackbar
 import de.sodis.monitoring.*
+import de.sodis.monitoring.db.entity.QuestionImage
 import de.sodis.monitoring.db.entity.SurveyHeader
 import de.sodis.monitoring.viewmodel.IntervieweeModel
 import de.sodis.monitoring.viewmodel.MonitoringOverviewModel
@@ -133,7 +135,7 @@ class IntervieweeDetailFragment : BaseListFragment() {
 
                 intervieweeD.intervieweeTechnologies.forEach { techno ->
                     //are there open tasks for this technology?
-                    val technologyList: List<SurveyHeader>? = monitoringOverviewModel.getSurveyHeaderListByTechnologyID(techno.technologyId).value
+
 
                     technology {
                         id("technology${techno.id}")
@@ -142,41 +144,38 @@ class IntervieweeDetailFragment : BaseListFragment() {
                         name(techno.name)
                         taskName("")//TODO
                         onClickTechnology { _ ->
-                            val item = technologyList?.single { surveyHeader ->  surveyHeader.surveyName.toLowerCase().contains("practicas") || surveyHeader.surveyName.toLowerCase().contains("practicas")}
-                            if(item!=null) {
-                                println(""); //todo: remove
-                                println("itID: ${item.id}")
-                                println("itName: ${item.surveyName}")
-                                println("itTechnology: ${item.technologyId}")
-                                val action =
-                                    MonitoringOverviewFragmentDirections.actionMonitoringOverviewFragmentToQuestionFragment(
-                                        item.id,
-                                        intervieweeId
-                                    )
-                                findNavController().navigate(action)
-                            }
-                            //show surveys for the corresponding technoology
-                            /*val action =
-                                IntervieweeDetailFragmentDirections.actionIntervieweeDetailFragmentToMonitoringOverviewFragment(
-                                    intervieweeId = intervieweeId,
-                                    technologyId = techno.technologyId
-                                )
-                            findNavController().navigate(action)*/
+                            Thread(Runnable {
+                                val technologyList: List<SurveyHeader> = monitoringOverviewModel.getSurveyHeaderListByTechnologyIDSynchronous(techno.technologyId)
+                                val item = technologyList.single { surveyHeader ->  surveyHeader.surveyName.toLowerCase().contains("practicas") || surveyHeader.surveyName.toLowerCase().contains("practicas")}
+                                if(item!=null) {
+                                    val action =
+                                        IntervieweeDetailFragmentDirections.actionIntervieweeDetailFragmentToQuestionFragment(
+                                            item.id,
+                                            intervieweeId
+                                        )
+                                    (activity as MainActivity).runOnUiThread {
+                                        findNavController().navigate(action)
+                                    }
+                                }
+
+                            }).start()
                         }
                         onClickPerson { _ ->
-                            val item = technologyList?.single { surveyHeader ->  surveyHeader.surveyName.toLowerCase().contains("infraestructura") || surveyHeader.surveyName.toLowerCase().contains("infrastructura")}
-                            if(item!=null) {
-                                println(""); //todo: remove
-                                println("itID: ${item.id}")
-                                println("itName: ${item.surveyName}")
-                                println("itTechnology: ${item.technologyId}")
-                                val action =
-                                    MonitoringOverviewFragmentDirections.actionMonitoringOverviewFragmentToQuestionFragment(
-                                        item.id,
-                                        intervieweeId
-                                    )
-                                findNavController().navigate(action)
-                            }
+                            Thread(Runnable {
+                                val technologyList: List<SurveyHeader> = monitoringOverviewModel.getSurveyHeaderListByTechnologyIDSynchronous(techno.technologyId)
+                                val item = technologyList.single { surveyHeader ->  surveyHeader.surveyName.toLowerCase().contains("infraestructura") || surveyHeader.surveyName.toLowerCase().contains("infrastructura")}
+                                if(item!=null) {
+
+                                    val action =
+                                        IntervieweeDetailFragmentDirections.actionIntervieweeDetailFragmentToQuestionFragment(
+                                            item.id,
+                                            intervieweeId
+                                        )
+                                    (activity as MainActivity).runOnUiThread {
+                                        findNavController().navigate(action)
+                                    }
+                                }
+                            }).start()
 
                         }
                         onBind { model, view, position ->

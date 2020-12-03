@@ -49,6 +49,9 @@
         <action
             android:id="@+id/action_intervieweeDetailFragment_to_monitoringOverviewFragment"
             app:destination="@id/monitoringOverviewFragment" />
+        <action
+            android:id="@+id/action_intervieweeDetailFragment_to_questionFragment"
+            app:destination="@id/questionFragment" />
     </fragment>
     <activity
         android:id="@+id/mainActivity"

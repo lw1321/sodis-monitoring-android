@@ -153,5 +153,9 @@ class SurveyRepository(
         return surveyHeaderDao.getAllFilteredTechnology(technologyId)
     }
 
+    fun getSurveyHeadersFilteredTechnologySynchronous(technologyID: Int):List<SurveyHeader> {
+        return surveyHeaderDao.getAllFilteredTechnologySync(technologyID)
+    }
+
 
 }
