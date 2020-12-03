@@ -43,6 +43,7 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        (activity as MainActivity).hide_bottom_navigation()
         surveyId = args.surveyId
         surveyViewModel.setSurveyId(surveyId)
         if (surveyViewModel.interviewee == null) {

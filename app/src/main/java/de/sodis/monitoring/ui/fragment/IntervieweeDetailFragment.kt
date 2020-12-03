@@ -146,7 +146,7 @@ class IntervieweeDetailFragment : BaseListFragment() {
                         onClickTechnology { _ ->
                             Thread(Runnable {
                                 val technologyList: List<SurveyHeader> = monitoringOverviewModel.getSurveyHeaderListByTechnologyIDSynchronous(techno.technologyId)
-                                val item = technologyList.single { surveyHeader ->  surveyHeader.surveyName.toLowerCase().contains("practicas") || surveyHeader.surveyName.toLowerCase().contains("practicas")}
+                                val item = technologyList.single { surveyHeader ->  surveyHeader.surveyName.toLowerCase().contains("infraestructura") || surveyHeader.surveyName.toLowerCase().contains("infraestructura")}
                                 if(item!=null) {
                                     val action =
                                         IntervieweeDetailFragmentDirections.actionIntervieweeDetailFragmentToQuestionFragment(
@@ -163,7 +163,7 @@ class IntervieweeDetailFragment : BaseListFragment() {
                         onClickPerson { _ ->
                             Thread(Runnable {
                                 val technologyList: List<SurveyHeader> = monitoringOverviewModel.getSurveyHeaderListByTechnologyIDSynchronous(techno.technologyId)
-                                val item = technologyList.single { surveyHeader ->  surveyHeader.surveyName.toLowerCase().contains("infraestructura") || surveyHeader.surveyName.toLowerCase().contains("infrastructura")}
+                                val item = technologyList.single { surveyHeader ->  surveyHeader.surveyName.toLowerCase().contains("practicas") || surveyHeader.surveyName.toLowerCase().contains("practicas")}
                                 if(item!=null) {
 
                                     val action =
