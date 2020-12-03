@@ -46,6 +46,7 @@ class MonitoringOverviewFragment : BaseListFragment() {
                         text(it.surveyName)
                         onClick { _ ->
                             (activity as MainActivity).hide_bottom_navigation()
+
                             val action =
                                 MonitoringOverviewFragmentDirections.actionMonitoringOverviewFragmentToQuestionFragment(
                                     it.id,

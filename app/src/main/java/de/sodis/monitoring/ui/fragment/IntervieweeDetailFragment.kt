@@ -22,13 +22,16 @@ import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.core.view.isGone
 import androidx.core.widget.addTextChangedListener
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
 import de.sodis.monitoring.*
+import de.sodis.monitoring.db.entity.SurveyHeader
 import de.sodis.monitoring.viewmodel.IntervieweeModel
+import de.sodis.monitoring.viewmodel.MonitoringOverviewModel
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
 import kotlinx.android.synthetic.main.continuable_list.view.*
 
@@ -47,6 +50,11 @@ class IntervieweeDetailFragment : BaseListFragment() {
     private val intervieweeModel: IntervieweeModel by lazy {
         ViewModelProviders.of(this, MyViewModelFactory(activity!!.application, emptyList()))
             .get(IntervieweeModel::class.java)
+    }
+
+    private val monitoringOverviewModel: MonitoringOverviewModel by lazy {
+        ViewModelProviders.of(this, MyViewModelFactory(activity!!.application, emptyList()))
+            .get(MonitoringOverviewModel::class.java)
     }
 
     val args: IntervieweeDetailFragmentArgs by navArgs()
@@ -125,20 +133,51 @@ class IntervieweeDetailFragment : BaseListFragment() {
 
                 intervieweeD.intervieweeTechnologies.forEach { techno ->
                     //are there open tasks for this technology?
+                    val technologyList: List<SurveyHeader>? = monitoringOverviewModel.getSurveyHeaderListByTechnologyID(techno.technologyId).value
+
                     technology {
                         id("technology${techno.id}")
                         state(techno.stateTechnology.toString())
                         knowledgeState(techno.stateKnowledge.toString())
                         name(techno.name)
                         taskName("")//TODO
-                        onClick { _ ->
+                        onClickTechnology { _ ->
+                            val item = technologyList?.single { surveyHeader ->  surveyHeader.surveyName.toLowerCase().contains("practicas") || surveyHeader.surveyName.toLowerCase().contains("practicas")}
+                            if(item!=null) {
+                                println(""); //todo: remove
+                                println("itID: ${item.id}")
+                                println("itName: ${item.surveyName}")
+                                println("itTechnology: ${item.technologyId}")
+                                val action =
+                                    MonitoringOverviewFragmentDirections.actionMonitoringOverviewFragmentToQuestionFragment(
+                                        item.id,
+                                        intervieweeId
+                                    )
+                                findNavController().navigate(action)
+                            }
                             //show surveys for the corresponding technoology
-                            val action =
+                            /*val action =
                                 IntervieweeDetailFragmentDirections.actionIntervieweeDetailFragmentToMonitoringOverviewFragment(
                                     intervieweeId = intervieweeId,
                                     technologyId = techno.technologyId
                                 )
-                            findNavController().navigate(action)
+                            findNavController().navigate(action)*/
+                        }
+                        onClickPerson { _ ->
+                            val item = technologyList?.single { surveyHeader ->  surveyHeader.surveyName.toLowerCase().contains("infraestructura") || surveyHeader.surveyName.toLowerCase().contains("infrastructura")}
+                            if(item!=null) {
+                                println(""); //todo: remove
+                                println("itID: ${item.id}")
+                                println("itName: ${item.surveyName}")
+                                println("itTechnology: ${item.technologyId}")
+                                val action =
+                                    MonitoringOverviewFragmentDirections.actionMonitoringOverviewFragmentToQuestionFragment(
+                                        item.id,
+                                        intervieweeId
+                                    )
+                                findNavController().navigate(action)
+                            }
+
                         }
                         onBind { model, view, position ->
                             val bo = BitmapFactory.Options()
@@ -168,7 +207,9 @@ class IntervieweeDetailFragment : BaseListFragment() {
                                     )
                                     else -> Color.GRAY
                                 }
-                            )
+                            ) //bild braucht onClickListener
+
+
                             view.dataBinding.root.technologyKnowledgeImage.setColorFilter(
                                 when (techno.stateKnowledge) {
                                     0 -> Color.GRAY

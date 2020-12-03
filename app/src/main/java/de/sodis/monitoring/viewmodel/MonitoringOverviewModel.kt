@@ -13,6 +13,10 @@ class MonitoringOverviewModel(application: Application) : AndroidViewModel(appli
         surveyHeaderList = surveyRepository.getSurveyHeadersFilteredTechnology(technologyId)
     }
 
+    fun getSurveyHeaderListByTechnologyID(technologyID: Int): LiveData<List<SurveyHeader>>  {
+        return surveyRepository.getSurveyHeadersFilteredTechnology(technologyID)
+    }
+
     lateinit var surveyHeaderList: LiveData<List<SurveyHeader>>
     private val monitoringDatabase = MonitoringDatabase.getDatabase(application.applicationContext)
     private val surveyRepository =

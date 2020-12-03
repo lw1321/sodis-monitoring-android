@@ -23,8 +23,14 @@
             type="String" />
 
         <variable
-            name="onClick"
-            type="android.view.View.OnClickListener" />
+            name="onClickTechnology"
+            type="android.view.View.OnClickListener"
+            />
+        <variable
+            name="onClickPerson"
+            type="android.view.View.OnClickListener"
+            />
+
     </data>
 
     <androidx.cardview.widget.CardView
@@ -39,7 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:foreground="?android:attr/selectableItemBackground"
-            android:onClick="@{onClick}"
+
             android:padding="12dp"
             app:cardCornerRadius="5dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -52,6 +58,7 @@
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_marginTop="4dp"
+                android:onClick="@{onClickTechnology}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textView5"
                 app:srcCompat="@drawable/sodis_logo" />
@@ -62,6 +69,7 @@
                 android:layout_height="60dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginLeft="8dp"
+                android:onClick="@{onClickPerson}"
                 app:layout_constraintBottom_toBottomOf="@+id/technolgyImage"
                 app:layout_constraintStart_toEndOf="@+id/technolgyImage"
                 app:layout_constraintTop_toTopOf="@+id/technolgyImage"
