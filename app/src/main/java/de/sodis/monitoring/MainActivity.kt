@@ -88,7 +88,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         //Registration/Login Process if no user//TODO test offline
         if (auth.currentUser == null) {
             //todo store token, store name?!
-            supportActionBar!!.title = "Registration"
+            supportActionBar!!.title = "Registro"
             this.hide_bottom_navigation()
             findNavController(R.id.nav_host_fragment).navigate(R.id.registrationOverviewwFragment)
             return
