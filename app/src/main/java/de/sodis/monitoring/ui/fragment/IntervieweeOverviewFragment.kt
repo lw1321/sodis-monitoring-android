@@ -23,41 +23,15 @@ import de.sodis.monitoring.show_bottom_navigation
 import de.sodis.monitoring.viewmodel.IntervieweeModel
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
 import kotlinx.android.synthetic.main.continuable_list.view.*
+import kotlinx.android.synthetic.main.view_holder_picture.view.*
 import kotlinx.android.synthetic.main.view_holder_picture_list_item.view.*
+import kotlinx.android.synthetic.main.view_holder_picture_list_item.view.imageView
 
 
 //TODO refactor redundant code
 class IntervieweeOverviewFragment : BaseListFragment() {
 
     //val args: Args by navArgs()
-
-    private fun setPic(currentPhotoPath: String, imageView: ImageView) {
-        // Get the dimensions of the View
-        val targetW: Int = 64
-        val targetH: Int = 64
-
-        val bmOptions = BitmapFactory.Options().apply {
-            // Get the dimensions of the bitmap
-            inJustDecodeBounds = true
-
-            BitmapFactory.decodeFile(currentPhotoPath, this)
-
-            val photoW: Int = outWidth
-            val photoH: Int = outHeight
-
-            // Determine how much to scale down the image
-            val scaleFactor: Int = Math.max(1, Math.min(photoW / targetW, photoH / targetH))
-
-            // Decode the image file into a Bitmap sized to fill the View
-            inJustDecodeBounds = false
-            inSampleSize = scaleFactor
-            inPurgeable = true
-        }
-        BitmapFactory.decodeFile(currentPhotoPath, bmOptions)?.also { bitmap ->
-            imageView.setImageBitmap(bitmap)
-        }
-    }
-
 
     private val intervieweeModel: IntervieweeModel by lazy {
         ViewModelProviders.of(this, MyViewModelFactory(activity!!.application, emptyList()))
@@ -106,7 +80,14 @@ class IntervieweeOverviewFragment : BaseListFragment() {
                                         view.dataBinding.root.imageView.setImageResource(R.drawable.ic_person_black_24dp)
                                     }
                                     it.imagePath?.let {
-                                        setPic(it, view.dataBinding.root.imageView)
+                                        val bo: BitmapFactory.Options = BitmapFactory.Options()
+                                        bo.inSampleSize = 32
+                                        BitmapFactory.decodeFile(it, bo)?.also { bitmap ->
+                                            view.dataBinding.root.imageView.setImageBitmap(
+                                                bitmap
+                                            )
+
+                                        }
                                     }
                                 }
                             }
