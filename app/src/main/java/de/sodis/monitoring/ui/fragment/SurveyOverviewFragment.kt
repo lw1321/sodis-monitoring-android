@@ -160,7 +160,11 @@ class SurveyOverviewAdapter(val activity: Activity, @NonNull context: Context?, 
 
     override fun onBindViewHolder(holder: SurveyOverviewViewHolder, position: Int) {
         val question: Question = questions[position].question
-        holder.questionTextView.text = questions[position].title + "\n" + question.questionName
+        var toSetText = questions[position].title
+        if(question.questionName!="Estado") {
+            toSetText+="\n" + question.questionName
+        }
+        holder.questionTextView.text = toSetText
         Thread(Runnable {
             val questionImage: QuestionImage? = question.questionImageId?.let { imageDao.getById(it) }
             if(questionImage == null) {
