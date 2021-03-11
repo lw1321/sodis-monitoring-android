@@ -35,4 +35,9 @@ interface IntervieweeDao {
 
     @Query("SELECT COUNT(*) FROM Interviewee WHERE id=:id")
     fun exists(id: String): Int
+
+
+    @Query("SELECT * FROM Interviewee WHERE imagePath IS NOT NULL AND imageUrl IS NULL ")
+    fun getNotsyncedProfilePictures(): List<Interviewee>
+
 }

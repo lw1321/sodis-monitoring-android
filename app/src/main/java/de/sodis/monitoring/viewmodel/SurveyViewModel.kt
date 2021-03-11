@@ -33,8 +33,8 @@ import java.util.*
 
 
 class SurveyViewModel(
-    private val mApplication: Application,
-    surveyId: Int//TODO use args
+        private val mApplication: Application,
+        surveyId: Int//TODO use args
 ) : AndroidViewModel(mApplication) {
 
     /**
@@ -50,18 +50,18 @@ class SurveyViewModel(
      * Repository for interviewee actions
      */
     private val intervieweeRepository =
-        IntervieweeRepository(
-            intervieweeDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
-                .intervieweeDao(),
-            monitoringApi = MonitoringApi(),
-            villageDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
-                .villageDao(),
-            userDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).userDao(),
-            technologyDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
-                .technologyDao(),
-            intervieweeTechnologyDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
-                .intervieweeTechnologyDao()
-        )
+            IntervieweeRepository(
+                    intervieweeDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
+                            .intervieweeDao(),
+                    monitoringApi = MonitoringApi(),
+                    villageDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
+                            .villageDao(),
+                    userDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).userDao(),
+                    technologyDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
+                            .technologyDao(),
+                    intervieweeTechnologyDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
+                            .intervieweeTechnologyDao()
+            )
     lateinit var surveyHeader: LiveData<SurveyHeaderResponse>
 
     lateinit var surveyQuestions: List<QuestionAnswer>
@@ -75,31 +75,31 @@ class SurveyViewModel(
      * Repository for interviewee actions
      */
     private val surveyHeaderRepository =
-        SurveyHeaderRepository(
-            surveyHeaderDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
-                .surveyHeaderDao()
-        )
+            SurveyHeaderRepository(
+                    surveyHeaderDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
+                            .surveyHeaderDao()
+            )
     private val questionRepository =
-        QuestionRepository(
-            questionDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
-                .questionDao(),
-            questionOptionDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
-                .questionOptionDao(),
-            questionImageDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
-                .questionImageDao(),
-            answerDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).answerDao(),
-            optionChoiceDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
-                .optionChoiceDao(),
-            completedSurveyDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
-                .completedSurveyDao(),
-            monitoringApi = MonitoringApi(),
-            intervieweeTechnologyDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
-                .intervieweeTechnologyDao(),
-            surveyHeaderDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
-                .surveyHeaderDao(),
-            intervieweeDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
-                .intervieweeDao()
-        )
+            QuestionRepository(
+                    questionDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
+                            .questionDao(),
+                    questionOptionDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
+                            .questionOptionDao(),
+                    questionImageDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
+                            .questionImageDao(),
+                    answerDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).answerDao(),
+                    optionChoiceDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
+                            .optionChoiceDao(),
+                    completedSurveyDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
+                            .completedSurveyDao(),
+                    monitoringApi = MonitoringApi(),
+                    intervieweeTechnologyDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
+                            .intervieweeTechnologyDao(),
+                    surveyHeaderDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
+                            .surveyHeaderDao(),
+                    intervieweeDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
+                            .intervieweeDao()
+            )
 
     /**
      *Location Client, will be initialized when permission is granted
@@ -129,7 +129,7 @@ class SurveyViewModel(
                 //we got the survey headers! not we can query the questions.
                 viewModelScope.launch(Dispatchers.IO) {
                     surveyQuestions = questionRepository.getQuestionsBySurveySections(
-                        surveyHeader.value!!.surveySectionList
+                            surveyHeader.value!!.surveySectionList
                     )
                     //now we have everything.., check if surveyQuestions is loaded sync, then generate
                     questionItemList.postValue(surveyQuestions)
@@ -147,11 +147,13 @@ class SurveyViewModel(
     fun setAnswer(id: Int, answer: String, optionChoiceId: Int) {
         //request questionOption for the answer
         answerMap[id] = Answer(
-            answerText = answer,
-            id = UUID.randomUUID().toString(),
-            questionOptionId = optionChoiceId,
-            completedSurveyId = null, //todo
-            answerYn = null//todo differe yn/text
+                answerText = answer,
+                id = UUID.randomUUID().toString(),
+                questionOptionId = optionChoiceId,
+                completedSurveyId = null, //todo
+                answerYn = null,//todo differe yn/text
+                imagePath = null,
+                imageSynced = null
         )
     }
 
@@ -164,25 +166,24 @@ class SurveyViewModel(
             viewModelScope.launch(Dispatchers.IO) {
                 // GET last know location
                 if (ContextCompat.checkSelfPermission(
-                        getApplication<Application>().applicationContext,
-                        Manifest.permission.ACCESS_FINE_LOCATION
-                    ) == PackageManager.PERMISSION_GRANTED
+                                getApplication<Application>().applicationContext,
+                                Manifest.permission.ACCESS_FINE_LOCATION
+                        ) == PackageManager.PERMISSION_GRANTED
                 ) {
                     fusedLocationClient =
-                        LocationServices.getFusedLocationProviderClient(mApplication.applicationContext)
+                            LocationServices.getFusedLocationProviderClient(mApplication.applicationContext)
                     fusedLocationClient.lastLocation
-                        .addOnSuccessListener { location: Location? ->
-                            // Got last known location. In some rare situations this can be null.
-                            if(location != null){
-                                saveSurvey(location.latitude, location.longitude)
-                            }
-                            else{
+                            .addOnSuccessListener { location: Location? ->
+                                // Got last known location. In some rare situations this can be null.
+                                if (location != null) {
+                                    saveSurvey(location.latitude, location.longitude)
+                                } else {
+                                    saveSurvey()
+                                }
+                            }.addOnFailureListener { it ->
+                                //Loation Request failed, save survey without location
                                 saveSurvey()
                             }
-                        }.addOnFailureListener { it ->
-                            //Loation Request failed, save survey without location
-                            saveSurvey()
-                        }
                 } else {
                     //Location not granted, save survey without location
                     saveSurvey()
@@ -190,7 +191,7 @@ class SurveyViewModel(
             }
             //start worker manager
             val uploadWorkRequest = OneTimeWorkRequestBuilder<UploadWorker>().setConstraints(
-                Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+                    Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
             ).build()
             WorkManager.getInstance(mApplication.applicationContext).enqueue(uploadWorkRequest)
 
@@ -214,15 +215,15 @@ class SurveyViewModel(
     private fun saveSurvey(latitude: Double? = null, longitude: Double? = null) {
         viewModelScope.launch(Dispatchers.IO) {
             questionRepository.saveQuestions(
-                answerMap,
-                CompletedSurvey(
-                    id = UUID.randomUUID().toString(),
-                    intervieweeId = interviewee!!.id,
-                    timeStamp = Timestamp(System.currentTimeMillis()).toString(),
-                    surveyHeaderId = surveyHeader.value!!.surveyHeader.id,
-                    latitude = latitude,
-                    longitude = longitude
-                )
+                    answerMap,
+                    CompletedSurvey(
+                            id = UUID.randomUUID().toString(),
+                            intervieweeId = interviewee!!.id,
+                            timeStamp = Timestamp(System.currentTimeMillis()).toString(),
+                            surveyHeaderId = surveyHeader.value!!.surveyHeader.id,
+                            latitude = latitude,
+                            longitude = longitude
+                    )
             )
 
             answerMap.clear()
@@ -241,9 +242,9 @@ class SurveyViewModel(
         }
         if (questionItemList.value!![currentPosition].question.inputTypeId == 3) {//numeric if not answered, set 0 todo question
             setAnswer(
-                questionItemList.value!![currentPosition].question.id,
-                0.toString(),
-                questionItemList.value!![currentPosition].answers.first().questionOption.id
+                    questionItemList.value!![currentPosition].question.id,
+                    0.toString(),
+                    questionItemList.value!![currentPosition].answers.first().questionOption.id
             )
             return true
         }
@@ -259,7 +260,7 @@ class SurveyViewModel(
             val lastPosition = listOfAnsweredQuestions.last()
             answerMap.remove(questionItemList.value!![lastPosition].question.id)
             listOfAnsweredQuestions =
-                listOfAnsweredQuestions.subList(0, listOfAnsweredQuestions.size - 1)
+                    listOfAnsweredQuestions.subList(0, listOfAnsweredQuestions.size - 1)
             currentPosition = lastPosition
             return true
         }
@@ -274,11 +275,11 @@ class SurveyViewModel(
     //returns true if the answer is "Escribir en la lista de tareas"
     fun createTodo(): Boolean {
         //optional questions
-        if (! answerMap.contains(questionItemList.value!![currentPosition].question.id)) {
+        if (!answerMap.contains(questionItemList.value!![currentPosition].question.id)) {
             return false
         }
         return answerMap[questionItemList.value!![currentPosition].question.id]!!.answerText.equals(
-            "Escribir en la lista de tareas"
+                "Escribir en la lista de tareas"
         ) //todo be aware of translation changes...
     }
 }

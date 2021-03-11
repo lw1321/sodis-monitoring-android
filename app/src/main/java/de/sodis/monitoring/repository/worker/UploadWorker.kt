@@ -41,6 +41,7 @@ class UploadWorker(appContext: Context, workerParams: WorkerParameters) :
             villageDao = db.villageDao()
         )
         return try {
+            intervieweeRepository.postIntervieweeAndTechnology()
             questionRepository.uploadQuestions()
             intervieweeRepository.uploadProfilPictures()
 

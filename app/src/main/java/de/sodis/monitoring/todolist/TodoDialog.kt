@@ -117,7 +117,7 @@ class TodoDialog(
         if (dialog != null) {
             var width = ViewGroup.LayoutParams.MATCH_PARENT
             var height = ViewGroup.LayoutParams.MATCH_PARENT
-            dialog.window.setLayout(width, height)
+            dialog.window!!.setLayout(width, height)
         }
     }
 
@@ -143,7 +143,7 @@ class TodoDialog(
 
 
         datePickerDialog = DatePickerDialog(
-            context,
+            context!!,
             DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
                 due.set(Calendar.YEAR, year)
                 due.set(Calendar.MONTH, month)

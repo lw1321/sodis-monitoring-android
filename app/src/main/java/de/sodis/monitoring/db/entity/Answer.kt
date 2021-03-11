@@ -18,5 +18,7 @@ data class Answer(
     val answerText: String?,
     val answerYn: Boolean?,
     val questionOptionId: Int,//TODO ADD FK!!
-    var completedSurveyId: String?
+    var completedSurveyId: String?,
+    var imagePath: String?,
+    var imageSynced: Boolean?
 )

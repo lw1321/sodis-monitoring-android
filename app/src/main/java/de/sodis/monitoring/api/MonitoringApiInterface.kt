@@ -6,7 +6,6 @@ import de.sodis.monitoring.db.entity.Stats
 import de.sodis.monitoring.db.entity.User
 import de.sodis.monitoring.db.entity.Village
 import okhttp3.MultipartBody
-import retrofit2.Response
 import retrofit2.http.*
 
 interface MonitoringApiInterface {
@@ -21,10 +20,10 @@ interface MonitoringApiInterface {
 
     @PUT("tasks/{taskId}")
     suspend fun updateTask(
-        @Path(
-            value = "taskId",
-            encoded = false
-        ) taskId: Int, @Body task: TaskJson
+            @Path(
+                    value = "taskId",
+                    encoded = false
+            ) taskId: Int, @Body task: TaskJson
     ): TaskJson
 
     @POST("tasks")
@@ -51,16 +50,22 @@ interface MonitoringApiInterface {
     @Multipart
     @POST("interviewees/{intervieweeId}/image")
     suspend fun postIntervieweeImage(
-        @Part
-        image: MultipartBody.Part, @Path(
-            value = "intervieweeId",
-            encoded = false
-        ) intervieweeId: String
+            @Part
+            image: MultipartBody.Part, @Path(
+                    value = "intervieweeId",
+                    encoded = false
+            ) intervieweeId: String
     ): IntervieweeJson
 
     @GET("villages")
     suspend fun getAllVillages(): List<Village>
 
-    @POST
-    suspend fun postInterviewee(@Body interviewee: Interviewee): Interviewee
+    @POST("interviewees")
+    suspend fun postInterviewee(@Body interviewee: CompletedSurveyJson.Interviewee): Interviewee
+
+    @POST("interviewees/{intervieweeId}/technologies")
+    suspend fun postIntervieweeTechnology(@Path(value = "intervieweeId", encoded = false) intervieweeId: String,
+                                          @Body intervieweeTechnology: IntervieweeJson.IntervieweeTechnology):
+            IntervieweeJson.IntervieweeTechnology
+
 }

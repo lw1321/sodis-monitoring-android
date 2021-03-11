@@ -28,7 +28,7 @@ class MonitoringApi {
             .build()
 
         val retrofit = Retrofit.Builder()
-            .baseUrl(Config.MONITORING_API_TEST)
+            .baseUrl(Config.MONITORING_API_DEV)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .client(okHttpClient)
@@ -94,7 +94,11 @@ class MonitoringApi {
         return monitoringApi.getAllVillages()
     }
 
-    suspend fun postInterviewee(interviewee: Interviewee): Interviewee {
+    suspend fun postInterviewee(interviewee: CompletedSurveyJson.Interviewee): Interviewee {
         return monitoringApi.postInterviewee(interviewee)
+    }
+
+   suspend fun postIntervieweeTechnology(intervieweeId: String, intervieweeTechnology: IntervieweeJson.IntervieweeTechnology) : IntervieweeJson.IntervieweeTechnology {
+        return monitoringApi.postIntervieweeTechnology(intervieweeId, intervieweeTechnology)
     }
 }
