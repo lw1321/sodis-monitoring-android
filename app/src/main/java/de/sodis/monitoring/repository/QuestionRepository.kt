@@ -160,7 +160,7 @@ class QuestionRepository(
 
 private fun Answer.toAnswerJson(): CompletedSurveyJson.Answer {//TODO SET UUID on saving to local db!!
     return CompletedSurveyJson.Answer(
-            id = UUID.randomUUID().toString(),
+            id = this.id,
             answerYn = this.answerYn,
             questionOption = CompletedSurveyJson.Answer.QuestionOption(this.questionOptionId),
             answerText = this.answerText
