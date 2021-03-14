@@ -65,7 +65,7 @@ interface MonitoringApiInterface {
                                           @Body intervieweeTechnology: IntervieweeJson.IntervieweeTechnology):
             IntervieweeJson.IntervieweeTechnology
     @Multipart
-    @POST("interviewees/{answerId}/image")
+    @POST("answers/{answerId}/images")
     suspend fun postAnswerImage(
             @Part
             image: MultipartBody.Part, @Path(

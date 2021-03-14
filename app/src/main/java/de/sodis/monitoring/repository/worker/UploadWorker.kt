@@ -43,6 +43,7 @@ class UploadWorker(appContext: Context, workerParams: WorkerParameters) :
         return try {
             intervieweeRepository.postIntervieweeAndTechnology()
             questionRepository.uploadQuestions()
+            questionRepository.uploadAnswerImages()
             intervieweeRepository.uploadProfilPictures()
 
             Result.success()
