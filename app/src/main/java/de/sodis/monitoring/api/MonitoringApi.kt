@@ -6,10 +6,7 @@ import de.sodis.monitoring.api.model.CompletedSurveyJson
 import de.sodis.monitoring.api.model.IntervieweeJson
 import de.sodis.monitoring.api.model.SurveyHeaderJson
 import de.sodis.monitoring.api.model.TaskJson
-import de.sodis.monitoring.db.entity.Interviewee
-import de.sodis.monitoring.db.entity.Stats
-import de.sodis.monitoring.db.entity.User
-import de.sodis.monitoring.db.entity.Village
+import de.sodis.monitoring.db.entity.*
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
@@ -100,5 +97,14 @@ class MonitoringApi {
 
    suspend fun postIntervieweeTechnology(intervieweeId: String, intervieweeTechnology: IntervieweeJson.IntervieweeTechnology) : IntervieweeJson.IntervieweeTechnology {
         return monitoringApi.postIntervieweeTechnology(intervieweeId, intervieweeTechnology)
+    }
+
+    suspend fun postAnswerImage(id: String, imagePath: String?): Answer {
+        val file = File(imagePath!!)
+        val requestFile: RequestBody =
+                RequestBody.create(MediaType.parse("multipart/form-data"), file)
+        val body =
+                MultipartBody.Part.createFormData("image", file.name, requestFile)
+        return monitoringApi.postAnswerImage(body, id)
     }
 }

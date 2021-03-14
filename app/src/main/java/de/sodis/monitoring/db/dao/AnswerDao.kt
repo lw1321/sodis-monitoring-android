@@ -8,10 +8,13 @@ import de.sodis.monitoring.db.entity.Answer
 
 @Dao
 interface AnswerDao {
-//todo insertAll
+    //todo insertAll
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(answer: Answer)
 
     @Query("SELECT * FROM Answer WHERE completedSurveyId=:completedSurveyId")
-    fun getAnswersByCompletedSurveyId(completedSurveyId: String):List<Answer>
+    fun getAnswersByCompletedSurveyId(completedSurveyId: String): List<Answer>
+
+    @Query("SELECT * FROM Answer JOIN CompletedSurvey CS ON CS.id = Answer.completedSurveyId  WHERE imageSynced=0 AND submitted=1")
+    fun getNotSubmittedImages(): List<Answer>
 }

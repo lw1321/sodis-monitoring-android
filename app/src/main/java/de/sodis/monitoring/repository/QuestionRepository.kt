@@ -10,23 +10,23 @@ import java.util.*
 
 
 class QuestionRepository(
-    private val questionDao: QuestionDao,
-    private val questionOptionDao: QuestionOptionDao,
-    private val questionImageDao: QuestionImageDao,
-    private val answerDao: AnswerDao,
-    private val optionChoiceDao: OptionChoiceDao,
-    private val completedSurveyDao: CompletedSurveyDao,
-    private val monitoringApi: MonitoringApi,
-    private val intervieweeTechnologyDao: IntervieweeTechnologyDao,
-    private val intervieweeDao: IntervieweeDao,
-    private val surveyHeaderDao: SurveyHeaderDao
+        private val questionDao: QuestionDao,
+        private val questionOptionDao: QuestionOptionDao,
+        private val questionImageDao: QuestionImageDao,
+        private val answerDao: AnswerDao,
+        private val optionChoiceDao: OptionChoiceDao,
+        private val completedSurveyDao: CompletedSurveyDao,
+        private val monitoringApi: MonitoringApi,
+        private val intervieweeTechnologyDao: IntervieweeTechnologyDao,
+        private val intervieweeDao: IntervieweeDao,
+        private val surveyHeaderDao: SurveyHeaderDao
 ) {
     /**
      * include answers
      */
     fun getQuestionsBySurveySections(surveySectionIds: List<SurveySection>): MutableList<QuestionAnswer> {
         val questionList =
-            questionDao.getBySurveySections(surveySectionIds.map { sectionItem -> sectionItem.id })
+                questionDao.getBySurveySections(surveySectionIds.map { sectionItem -> sectionItem.id })
         val questionAnswerList: MutableList<QuestionAnswer> = mutableListOf()
         for (question: Question in questionList) {
             val questionOptionChoiceList: MutableList<QuestionOptionChoice> = mutableListOf()
@@ -35,20 +35,20 @@ class QuestionRepository(
                 //get the optionchoice..todo clean n:m query..
                 val optionChoice = optionChoiceDao.getById(questionOption.optionChoiceId)
                 questionOptionChoiceList.add(
-                    QuestionOptionChoice(
-                        questionOption = questionOption,
-                        optionChoice = optionChoice
-                    )
+                        QuestionOptionChoice(
+                                questionOption = questionOption,
+                                optionChoice = optionChoice
+                        )
                 )
             }
             val image = question.questionImageId?.let { questionImageDao.getById(it) }
             questionAnswerList.add(
-                QuestionAnswer(
-                    question = question,
-                    answers = questionOptionChoiceList.toList(),
-                    image = image,
-                    title = surveySectionIds.first { surveySection -> surveySection.id == question.surveySectionId }.sectionName
-                )
+                    QuestionAnswer(
+                            question = question,
+                            answers = questionOptionChoiceList.toList(),
+                            image = image,
+                            title = surveySectionIds.first { surveySection -> surveySection.id == question.surveySectionId }.sectionName
+                    )
             )
         }
         return questionAnswerList
@@ -59,8 +59,8 @@ class QuestionRepository(
      */
 
     fun saveQuestions(
-        answerMap: MutableMap<Int, Answer>,
-        completedSurvey: CompletedSurvey
+            answerMap: MutableMap<Int, Answer>,
+            completedSurvey: CompletedSurvey
     ) {
         /**
          * Statusnerechnung:
@@ -70,16 +70,16 @@ class QuestionRepository(
          */
         //intervieweetechnology holen
         val surveyHeader =
-            surveyHeaderDao.getByIdSync(surveyHeaderId = completedSurvey.surveyHeaderId)
+                surveyHeaderDao.getByIdSync(surveyHeaderId = completedSurvey.surveyHeaderId)
         val intervieweeTechnology = intervieweeTechnologyDao.getByIntervieweeAndTechnoology(
-            completedSurvey.intervieweeId,
-            surveyHeader.surveyHeader.technologyId
+                completedSurvey.intervieweeId,
+                surveyHeader.surveyHeader.technologyId
         )
 
         if (surveyHeader.surveyHeader.surveyName == "Miembros de la familia") {//TODO
             //update the family infos
             val interviewee = intervieweeDao.getById(completedSurvey.intervieweeId)
-             completedSurveyDao.insert(completedSurvey)
+            completedSurveyDao.insert(completedSurvey)
             var ageSum = 0
             for ((k, v) in answerMap) {//todo insertAll
                 v.completedSurveyId = completedSurvey.id
@@ -101,7 +101,7 @@ class QuestionRepository(
             }
             if (intervieweeTechnology != null) {
                 if (surveyHeader.surveyHeader.surveyName.toLowerCase(Locale.getDefault())
-                        .contains("practicas")
+                                .contains("practicas")
                 ) {
                     intervieweeTechnology.stateKnowledge = status
                 } else {
@@ -119,18 +119,18 @@ class QuestionRepository(
         val completedSurveys = completedSurveyDao.getAllUnsubmitted()
         completedSurveys.forEach {
             // 2. for each completed survey get all answers.
-            val answers = answerDao.getAnswersByCompletedSurveyId(it.id!!).map { it.toAnswerJson() }
+            val answers = answerDao.getAnswersByCompletedSurveyId(it.id!!).map { it.toAnswerJson() }// TODO ID GENERATION
             // 3. link answerlist to the completed survey
             val interviewee = intervieweeDao.getById(it.intervieweeId)
 
             val completedSurveyJson = CompletedSurveyJson(
-                id = it.id,
-                answers = answers,
-                interviewee = CompletedSurveyJson.Interviewee(id = interviewee.id, name = interviewee.name, village = CompletedSurveyJson.Interviewee.Village(id=interviewee.villageId)),
-                creationDate = it.timeStamp,
-                surveyHeader = CompletedSurveyJson.SurveyHeader(it.surveyHeaderId),
-                latitude = it.latitude,
-                longitude = it.longitude
+                    id = it.id,
+                    answers = answers,
+                    interviewee = CompletedSurveyJson.Interviewee(id = interviewee.id, name = interviewee.name, village = CompletedSurveyJson.Interviewee.Village(id = interviewee.villageId)),
+                    creationDate = it.timeStamp,
+                    surveyHeader = CompletedSurveyJson.SurveyHeader(it.surveyHeaderId),
+                    latitude = it.latitude,
+                    longitude = it.longitude
             )
             // 4. add the combined completed survey to a temp list
             tempCompletedSurveysList.add(completedSurveyJson);
@@ -144,14 +144,26 @@ class QuestionRepository(
         }
 
     }
+
+    suspend fun uploadAnswerImages() {
+        //check for not uploaded images where the answers are already synced.
+        val notSubmittedImages = answerDao.getNotSubmittedImages()
+        //upload the images
+        notSubmittedImages.forEach{ answer ->
+            monitoringApi.postAnswerImage(answer.id, answer.imagePath)
+        }
+        //update the photo path
+    }
+
 }
 
-private fun Answer.toAnswerJson(): CompletedSurveyJson.Answer {
+
+private fun Answer.toAnswerJson(): CompletedSurveyJson.Answer {//TODO SET UUID on saving to local db!!
     return CompletedSurveyJson.Answer(
-        id = UUID.randomUUID().toString(),
-        answerYn = this.answerYn,
-        questionOption = CompletedSurveyJson.Answer.QuestionOption(this.questionOptionId),
-        answerText = this.answerText
+            id = UUID.randomUUID().toString(),
+            answerYn = this.answerYn,
+            questionOption = CompletedSurveyJson.Answer.QuestionOption(this.questionOptionId),
+            answerText = this.answerText
     )
 }
 

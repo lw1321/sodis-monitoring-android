@@ -13,7 +13,7 @@ data class CompletedSurveyJson(
         val id: String,
         val answerYn: Boolean?,
         val answerText: String?,
-        val questionOption: QuestionOption
+        val questionOption: QuestionOption//TODO add image path and synced?
     ) {
         data class QuestionOption(
             val id: Int
