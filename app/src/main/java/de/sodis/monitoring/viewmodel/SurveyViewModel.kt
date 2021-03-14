@@ -144,7 +144,7 @@ class SurveyViewModel(
         }
     }
 
-    fun setAnswer(id: Int, answer: String, optionChoiceId: Int) {
+    fun setAnswer(id: Int, answer: String, optionChoiceId: Int, imagePath: String? = null) {
         //request questionOption for the answer
         answerMap[id] = Answer(
                 answerText = answer,
@@ -152,7 +152,7 @@ class SurveyViewModel(
                 questionOptionId = optionChoiceId,
                 completedSurveyId = null, //todo
                 answerYn = null,//todo differe yn/text
-                imagePath = null,
+                imagePath = imagePath,
                 imageSynced = null
         )
     }
