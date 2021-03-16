@@ -71,6 +71,7 @@ class MonitoringOverviewFragment : BaseListFragment() {
         val view = super.onCreateView(inflater, container, savedInstanceState)
         view?.navigation_forward_button_1?.isGone = true
         view?.navigation_forward_button_left?.isGone = true
+        view?.navigation_cancel_button?.isGone = true
         return view
     }
 }

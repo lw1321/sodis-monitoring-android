@@ -180,7 +180,7 @@ class SurveyViewModel(
                                 saveSurvey()
                             }
                         }.addOnFailureListener { it ->
-                            //Loation Request failed, save survey without location
+                            //Location Request failed, save survey without location
                             saveSurvey()
                         }
                 } else {
