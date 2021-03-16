@@ -2,6 +2,7 @@ package de.sodis.monitoring.ui.fragment
 
 import android.app.Activity
 import android.content.Context
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -187,12 +188,18 @@ class SurveyOverviewAdapter(val activity: Activity, @NonNull context: Context?, 
 
         val answer: Answer = questions[position].answer
         if(answer.answerText!=null) {
-            holder.answerTextView.text = answer.answerText
             if(answer.answerText == "Si") {
                 holder.emojiView.setImageResource(R.drawable.ic_emoji_happy)
+                holder.emojiView.setColorFilter(Color.GREEN)
+                holder.answerTextView.visibility = View.GONE
             }
             else {
                 holder.emojiView.setImageResource(R.drawable.ic_emoji_sad)
+                holder.emojiView.setColorFilter(Color.RED)
+                if ( answer.answerText == "No"){
+                    holder.answerTextView.visibility = View.GONE
+                }
+                holder.answerTextView.text = answer.answerText
             }
 
         }

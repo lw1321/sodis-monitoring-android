@@ -4,6 +4,7 @@ import android.content.DialogInterface
 import android.os.Bundle
 import android.text.InputType
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.core.view.isGone
 import androidx.core.widget.addTextChangedListener
 import androidx.lifecycle.Observer
@@ -200,6 +201,41 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
                     )
                     findNavController().navigate(action)
                 }
+            }
+
+            view?.navigation_cancel_button?.setOnClickListener {
+                val alertDialog: AlertDialog.Builder = AlertDialog.Builder(context!!)
+                alertDialog.setTitle("cancelar el cuestionario")
+                alertDialog.setMessage("¿Descartar todas las respuestas?")
+                alertDialog.setPositiveButton(
+                    "Si"
+                ) { _, _ ->
+                    Snackbar.make(
+                        view!!.rootView.findViewById(R.id.nav_host_fragment),
+                        getString(R.string.message_monitoring_cancelled),
+                        Snackbar.LENGTH_LONG
+                        ).show()
+
+                    val action =
+                        QuestionFragmentDirections.actionQuestionFragmentToIntervieweeDetailFragment(
+                            intervieweeId = args.intervieweeId
+                        )
+                    findNavController().navigate(action)
+                    (activity as MainActivity).show_bottom_navigation()
+                }
+                alertDialog.setNegativeButton(
+                    "No"
+                ) { _, _ ->
+                    Snackbar.make(
+                        view!!.rootView.findViewById(R.id.nav_host_fragment),
+                        getString(R.string.message_monitoring_answer_required),
+                        Snackbar.LENGTH_LONG
+                    ).show()
+                }
+                val alert: AlertDialog = alertDialog.create()
+                alert.setCanceledOnTouchOutside(false)
+                alert.show()
+
             }
         })
 

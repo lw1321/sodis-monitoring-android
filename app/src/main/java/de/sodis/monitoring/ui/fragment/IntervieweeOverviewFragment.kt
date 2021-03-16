@@ -139,6 +139,7 @@ class IntervieweeOverviewFragment : BaseListFragment() {
             dialog?.show()
         }
         view?.navigation_forward_button_left?.isGone = true
+        view?.navigation_cancel_button?.isGone = true
         (activity as MainActivity).show_bottom_navigation()
         return view
     }
