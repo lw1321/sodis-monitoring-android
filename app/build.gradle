@@ -117,6 +117,8 @@ dependencies {
     //play-services
     implementation 'com.google.android.gms:play-services-location:16.0.0'
 
+    //Image Compression Library
+    implementation 'id.zelory:compressor:3.0.0'
 
 }
 

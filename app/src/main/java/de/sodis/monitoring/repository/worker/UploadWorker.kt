@@ -6,7 +6,6 @@ import androidx.work.WorkerParameters
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import de.sodis.monitoring.api.MonitoringApi
 import de.sodis.monitoring.db.MonitoringDatabase
-import de.sodis.monitoring.db.entity.Interviewee
 import de.sodis.monitoring.repository.IntervieweeRepository
 import de.sodis.monitoring.repository.QuestionRepository
 
@@ -43,7 +42,7 @@ class UploadWorker(appContext: Context, workerParams: WorkerParameters) :
         return try {
             intervieweeRepository.postIntervieweeAndTechnology()
             questionRepository.uploadQuestions()
-            questionRepository.uploadAnswerImages()
+            questionRepository.uploadAnswerImages(applicationContext)
             intervieweeRepository.uploadProfilPictures()
 
             Result.success()

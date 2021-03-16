@@ -1,11 +1,14 @@
 package de.sodis.monitoring.repository
 
+import android.content.Context
 import de.sodis.monitoring.api.MonitoringApi
-import de.sodis.monitoring.api.model.AnswerJson
 import de.sodis.monitoring.api.model.CompletedSurveyJson
 import de.sodis.monitoring.db.dao.*
 import de.sodis.monitoring.db.entity.*
 import de.sodis.monitoring.db.response.QuestionAnswer
+import id.zelory.compressor.Compressor
+import id.zelory.compressor.constraint.quality
+import java.io.File
 import java.util.*
 
 
@@ -145,12 +148,14 @@ class QuestionRepository(
 
     }
 
-    suspend fun uploadAnswerImages() {
+    suspend fun uploadAnswerImages(applicationContext: Context) {
         //check for not uploaded images where the answers are already synced.
         val notSubmittedImages = answerDao.getNotSubmittedImages()
         //upload the images
         notSubmittedImages.forEach{ answer ->
-            monitoringApi.postAnswerImage(answer.id, answer.imagePath)
+
+            val compressedImageFile = Compressor.compress(applicationContext, File(answer.imagePath!!))
+            monitoringApi.postAnswerImage(answer.id, compressedImageFile)
         }
         //update the photo path
     }

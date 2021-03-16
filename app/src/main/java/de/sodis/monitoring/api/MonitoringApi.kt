@@ -21,15 +21,15 @@ class MonitoringApi {
 
     init {
         val okHttpClient = OkHttpClient.Builder()
-            .addInterceptor(FirebaseUserIdTokenInterceptor())
-            .build()
+                .addInterceptor(FirebaseUserIdTokenInterceptor())
+                .build()
 
         val retrofit = Retrofit.Builder()
-            .baseUrl(Config.MONITORING_API_DEV)
-            .addConverterFactory(GsonConverterFactory.create())
-            .addCallAdapterFactory(CoroutineCallAdapterFactory())
-            .client(okHttpClient)
-            .build()
+                .baseUrl(Config.MONITORING_API_DEV)
+                .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(CoroutineCallAdapterFactory())
+                .client(okHttpClient)
+                .build()
         monitoringApi = retrofit.create(MonitoringApiInterface::class.java)
     }
 
@@ -80,9 +80,9 @@ class MonitoringApi {
     suspend fun postIntervieweImage(imagePath: String?, intervieweeId: String): IntervieweeJson {
         val file = File(imagePath)
         val requestFile: RequestBody =
-            RequestBody.create(MediaType.parse("multipart/form-data"), file)
+                RequestBody.create(MediaType.parse("multipart/form-data"), file)
         val body =
-            MultipartBody.Part.createFormData("image", file.name, requestFile)
+                MultipartBody.Part.createFormData("image", file.name, requestFile)
         val ret = monitoringApi.postIntervieweeImage(body, intervieweeId)
         return ret
     }
@@ -95,12 +95,12 @@ class MonitoringApi {
         return monitoringApi.postInterviewee(interviewee)
     }
 
-   suspend fun postIntervieweeTechnology(intervieweeId: String, intervieweeTechnology: IntervieweeJson.IntervieweeTechnology) : IntervieweeJson.IntervieweeTechnology {
+    suspend fun postIntervieweeTechnology(intervieweeId: String, intervieweeTechnology: IntervieweeJson.IntervieweeTechnology): IntervieweeJson.IntervieweeTechnology {
         return monitoringApi.postIntervieweeTechnology(intervieweeId, intervieweeTechnology)
     }
 
-    suspend fun postAnswerImage(id: String, imagePath: String?): Answer {
-        val file = File(imagePath!!)
+    suspend fun postAnswerImage(id: String, file: File): Answer {
+
         val requestFile: RequestBody =
                 RequestBody.create(MediaType.parse("multipart/form-data"), file)
         val body =

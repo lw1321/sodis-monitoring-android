@@ -54,7 +54,6 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
     var surveyId: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        Log.d("PISSE", "onCreate")
         super.onCreate(savedInstanceState)
         (activity as MainActivity).hide_bottom_navigation()
         surveyId = args.surveyId
@@ -70,7 +69,6 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
                 //if question is type "do image" don't load the UI, instead redirect to image take intent.
                 if (currentQuestion.question.inputTypeId == 4) {
                     dispatchTakePictureIntent()
-                    Log.d("PISSE", "AFTER DISPATCH")
                 }
 
 
@@ -233,7 +231,6 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
     }
 
     override fun onDismiss(dialog: DialogInterface?) {
-        Log.d("PISSE", "onDismiss")
         surveyViewModel.listOfAnsweredQuestions += surveyViewModel.currentPosition
         val hasNext = surveyViewModel.nextQuestion()
         if (hasNext) {
@@ -265,7 +262,7 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
         // Create an image file name
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
         val storageDir: File? = activity!!.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        return File.createTempFile(
+        val imageFile =  File.createTempFile(
                 "JPEG_${timeStamp}_", /* prefix */
                 ".jpg", /* suffix */
                 storageDir /* directory */
@@ -273,10 +270,10 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
             // Save a file: path for use with ACTION_VIEW intents
             currentPhotoPath = absolutePath
         }
+        return imageFile
     }
 
     private fun dispatchTakePictureIntent() {
-        print("PISSE dispatchTakePictureIntent")
         Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
             // Ensure that there's a camera activity to handle the intent
             takePictureIntent.resolveActivity(activity!!.packageManager)?.also {
