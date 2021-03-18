@@ -141,7 +141,7 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
                 }
             }
 
-            view?.navigation_forward_button_1?.setImageResource(if (surveyViewModel.currentPosition != (list.size - 1)) R.drawable.ic_arrow_forward_white_24dp else R.drawable.ic_check_white_24dp)
+            view?.navigation_forward_button_1?.setImageResource(if (surveyViewModel.currentPosition != (list.size - 3)) R.drawable.ic_arrow_forward_white_24dp else R.drawable.ic_check_white_24dp)
 
             view?.navigation_forward_button_1?.setOnClickListener {
                 if (surveyViewModel.isAnswered(currentQuestion.question.id)) {
@@ -166,17 +166,37 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
                                 )
                             findNavController().navigate(action)
                         } else {
-                            Snackbar.make(
-                                view!!.rootView.findViewById(R.id.nav_host_fragment),
-                                getString(R.string.message_monitoring_completed),
-                                Snackbar.LENGTH_LONG
-                            ).show()
-                            (activity as MainActivity).show_bottom_navigation()
-                            val action =
-                                QuestionFragmentDirections.actionQuestionFragmentToIntervieweeDetailFragment(
-                                    intervieweeId = args.intervieweeId
-                                )
-                            findNavController().navigate(action)
+                            val finishDialog: AlertDialog.Builder = AlertDialog.Builder(context!!)
+                            finishDialog.setTitle("enviar cuestionario")
+                            finishDialog.setMessage("¿Guardar respuestas?")
+                            finishDialog.setPositiveButton(
+                                "Si"
+                            ) { _, _ ->
+                                surveyViewModel.finishSurvey()
+                                Snackbar.make(
+                                    view!!.rootView.findViewById(R.id.nav_host_fragment),
+                                    getString(R.string.message_monitoring_completed),
+                                    Snackbar.LENGTH_LONG
+                                ).show()
+                                val action =
+                                    QuestionFragmentDirections.actionQuestionFragmentToIntervieweeDetailFragment(
+                                        intervieweeId = args.intervieweeId
+                                    )
+                                findNavController().navigate(action)
+                                (activity as MainActivity).show_bottom_navigation()
+                            }
+                            finishDialog.setNegativeButton(
+                                "No"
+                            ) { _, _ ->
+                                Snackbar.make(
+                                    view!!.rootView.findViewById(R.id.nav_host_fragment),
+                                    getString(R.string.message_monitoring_answer_required),
+                                    Snackbar.LENGTH_LONG
+                                ).show()
+                            }
+                            val alert: AlertDialog = finishDialog.create()
+                            alert.setCanceledOnTouchOutside(false)
+                            alert.show()
                         }
                     }
 
@@ -210,6 +230,8 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
                 alertDialog.setPositiveButton(
                     "Si"
                 ) { _, _ ->
+                    surveyViewModel.currentPosition = 0
+                    surveyViewModel.listOfAnsweredQuestions = mutableListOf()
                     Snackbar.make(
                         view!!.rootView.findViewById(R.id.nav_host_fragment),
                         getString(R.string.message_monitoring_cancelled),
@@ -252,6 +274,7 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
             )
             findNavController().navigate(action)
         } else {
+            surveyViewModel.finishSurvey()
             Snackbar.make(
                 view!!.rootView.findViewById(R.id.nav_host_fragment),
                 getString(R.string.message_monitoring_completed),
@@ -263,6 +286,7 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
                 )
             findNavController().navigate(action)
             (activity as MainActivity).show_bottom_navigation()
+
         }
     }
 }
