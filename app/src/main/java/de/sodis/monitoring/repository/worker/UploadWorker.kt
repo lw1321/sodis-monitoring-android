@@ -14,13 +14,7 @@ class UploadWorker(appContext: Context, workerParams: WorkerParameters) :
     override suspend fun doWork(): Result {
         val db = MonitoringDatabase.getDatabase(applicationContext)
         val questionRepository = QuestionRepository(
-            questionDao = MonitoringDatabase.getDatabase(applicationContext).questionDao(),
-            questionOptionDao = MonitoringDatabase.getDatabase(applicationContext)
-                .questionOptionDao(),
-            questionImageDao = MonitoringDatabase.getDatabase(applicationContext)
-                .questionImageDao(),
             answerDao = MonitoringDatabase.getDatabase(applicationContext).answerDao(),
-            optionChoiceDao = MonitoringDatabase.getDatabase(applicationContext).optionChoiceDao(),
             completedSurveyDao = MonitoringDatabase.getDatabase(applicationContext)
                 .completedSurveyDao(),
             monitoringApi = MonitoringApi(),
@@ -35,8 +29,8 @@ class UploadWorker(appContext: Context, workerParams: WorkerParameters) :
             villageDao = db.villageDao()
         )
         return try {
-            intervieweeRepository.postIntervieweeAndTechnology()
-            questionRepository.uploadQuestions()
+            intervieweeRepository.syncInterviewee()
+            questionRepository.uploadSurveys()
             questionRepository.uploadAnswerImages(applicationContext)
             intervieweeRepository.uploadProfilPictures()
 

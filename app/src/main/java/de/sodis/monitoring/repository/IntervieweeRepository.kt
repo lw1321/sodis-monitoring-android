@@ -122,15 +122,13 @@ class IntervieweeRepository(
         }
     }
 
-    suspend fun postIntervieweeAndTechnology() {
+    suspend fun syncInterviewee() {
         val notSyncedInterviewee = intervieweeDao.getAllNotSynced()
         notSyncedInterviewee.forEach {
             //post interviewee
-            val postInterviewee = monitoringApi.postInterviewee(CompletedSurveyJson.Interviewee(
+            val postInterviewee = monitoringApi.postInterviewee(Interviewee(
                     id = it.id,
-                    village = CompletedSurveyJson.Interviewee.Village(
-                            id = it.villageId
-                    ),
+                    villageId = it.villageId,
                     name = it.name
             ))
             it.synced = true

@@ -1,16 +1,15 @@
-package de.sodis.monitoring.api
+package de.sodis.monitoring.apiCompletedSurveyJson
 
-import de.sodis.monitoring.api.model.*
 import de.sodis.monitoring.db.entity.*
 import okhttp3.MultipartBody
 import retrofit2.http.*
 
 interface MonitoringApiInterface {
     @GET("surveys")
-    suspend fun getAllSurveys(): List<SurveyHeaderJson>
+    suspend fun getAllSurveys(): List<SurveyHeader>
 
     @GET("interviewees")
-    suspend fun getAllInterviewees(): List<IntervieweeJson>
+    suspend fun getAllInterviewees(): List<Interviewee>
 
     @POST("users/register")
     suspend fun registerUser(@Body user: User): User
@@ -22,10 +21,10 @@ interface MonitoringApiInterface {
     suspend fun getAllUsers(): List<User>
 
     @POST("completed-surveys")
-    suspend fun postCompletedSurveys(@Body completedSurveyJson: List<CompletedSurveyJson>): List<CompletedSurveyJson>
+    suspend fun postCompletedSurveys(@Body completedSurveyJson: List<CompletedSurvey>): List<CompletedSurvey>
 
     @GET("question-images")
-    suspend fun getAllQuestionImages(): List<SurveyHeaderJson.SurveySectionJson.QuestionJson.QuestionImageJson>
+    suspend fun getAllQuestionImages(): List<QuestionImage>
 
     @GET("stats")
     suspend fun getStats(): Stats
@@ -38,13 +37,13 @@ interface MonitoringApiInterface {
                     value = "intervieweeId",
                     encoded = false
             ) intervieweeId: String
-    ): IntervieweeJson
+    ): Interviewee
 
     @GET("villages")
     suspend fun getAllVillages(): List<Village>
 
     @POST("interviewees")
-    suspend fun postInterviewee(@Body interviewee: CompletedSurveyJson.Interviewee): Interviewee
+    suspend fun postInterviewee(@Body interviewee: Interviewee): Interviewee
 
     @Multipart
     @POST("answers/{answerId}/images")

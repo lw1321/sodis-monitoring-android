@@ -2,9 +2,7 @@ package de.sodis.monitoring.api
 
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import de.sodis.monitoring.Config
-import de.sodis.monitoring.api.model.CompletedSurveyJson
-import de.sodis.monitoring.api.model.IntervieweeJson
-import de.sodis.monitoring.api.model.SurveyHeaderJson
+import de.sodis.monitoring.apiCompletedSurveyJson.MonitoringApiInterface
 import de.sodis.monitoring.db.entity.*
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -32,11 +30,11 @@ class MonitoringApi {
         monitoringApi = retrofit.create(MonitoringApiInterface::class.java)
     }
 
-    suspend fun getSurveys(): List<SurveyHeaderJson> {
+    suspend fun getSurveys(): List<SurveyHeader> {
         return monitoringApi.getAllSurveys()
     }
 
-    suspend fun getInterviewees(): List<IntervieweeJson> {
+    suspend fun getInterviewees(): List<Interviewee> {
         return monitoringApi.getAllInterviewees()
     }
 
@@ -52,11 +50,11 @@ class MonitoringApi {
         return monitoringApi.getMyself()
     }
 
-    suspend fun postCompletedSurveys(completedSurveyJsonList: List<CompletedSurveyJson>): List<CompletedSurveyJson> {
+    suspend fun postCompletedSurveys(completedSurveyJsonList: List<CompletedSurvey>): List<CompletedSurvey> {
         return monitoringApi.postCompletedSurveys(completedSurveyJsonList)
     }
 
-    suspend fun getQuestionImages(): List<SurveyHeaderJson.SurveySectionJson.QuestionJson.QuestionImageJson> {
+    suspend fun getQuestionImages(): List<QuestionImage> {
         return monitoringApi.getAllQuestionImages()
     }
 
@@ -64,7 +62,7 @@ class MonitoringApi {
         return monitoringApi.getStats()
     }
 
-    suspend fun postIntervieweImage(imagePath: String?, intervieweeId: String): IntervieweeJson {
+    suspend fun postIntervieweImage(imagePath: String?, intervieweeId: String): Interviewee {
         val file = File(imagePath)
         val requestFile: RequestBody =
                 RequestBody.create(MediaType.parse("multipart/form-data"), file)
@@ -78,7 +76,7 @@ class MonitoringApi {
         return monitoringApi.getAllVillages()
     }
 
-    suspend fun postInterviewee(interviewee: CompletedSurveyJson.Interviewee): Interviewee {
+    suspend fun postInterviewee(interviewee: Interviewee): Interviewee {
         return monitoringApi.postInterviewee(interviewee)
     }
 
