@@ -1,4 +1,6 @@
-package de.sodis.monitoring.db.entity
+package de.sodis.monitoring.db.entity fun getVillageName(id: Int): String {
+        return villageDao.getNameById(id)
+    }
 
 import androidx.room.Entity
 import androidx.room.ForeignKey

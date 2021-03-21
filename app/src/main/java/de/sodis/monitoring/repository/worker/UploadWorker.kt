@@ -1,15 +1,12 @@
 package de.sodis.monitoring.repository.worker
 
 import android.content.Context
-import android.text.style.ReplacementSpan
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import de.sodis.monitoring.api.MonitoringApi
 import de.sodis.monitoring.db.MonitoringDatabase
-import de.sodis.monitoring.repository.IntervieweeRepository
 import de.sodis.monitoring.repository.PlaceRepository
-import de.sodis.monitoring.repository.QuestionRepository
 import de.sodis.monitoring.repository.SurveyRepository
 
 class UploadWorker(appContext: Context, workerParams: WorkerParameters) :
@@ -31,7 +28,7 @@ class UploadWorker(appContext: Context, workerParams: WorkerParameters) :
                 surveyHeaderDao = db.surveyHeaderDao(),
                 surveySectionDao = db.surveySectionDao(),
                 questionImageDao = db.questionImageDao(),
-                answerDao =  db.answerDao(),
+                answerDao = db.answerDao(),
                 completedSurveyDao = db.completedSurveyDao(),
                 monitoringApi = MonitoringApi()
             )
@@ -39,7 +36,7 @@ class UploadWorker(appContext: Context, workerParams: WorkerParameters) :
         return try {
             //SYNC Places
             placeRepository.syncInterviewee()
-            placeRepository.uploadProfilPictures()
+            placeRepository.syncProfilPictures()
             //SYNC collected SURVEY DATA
             surveyRepository.syncCompletedSurveys()
             surveyRepository.syncAnswers()

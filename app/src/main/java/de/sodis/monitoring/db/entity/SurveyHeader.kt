@@ -9,12 +9,12 @@ import androidx.room.PrimaryKey
     foreignKeys = [ForeignKey(
         entity = Project::class,
         parentColumns = arrayOf("id"),
-        childColumns = arrayOf("technologyId")
+        childColumns = arrayOf("projectId")
     )]
 )
 data class SurveyHeader(
     @PrimaryKey
     val id: Int,
     val surveyName: String,
-    val technologyId: Int
+    val projectId: Int
 )

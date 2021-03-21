@@ -27,6 +27,7 @@ class PlaceRepository(
             intervieweeDao.insert(interviewee)
         }
     }
+
     /*
     just basic info
      */
@@ -88,7 +89,7 @@ class PlaceRepository(
         intervieweeDao.update(intervieweeByID)
     }
 
-    suspend fun uploadProfilPictures() {
+    suspend fun syncProfilPictures() {
         val allNotSynced = intervieweeDao.getNotsyncedProfilePictures()
         allNotSynced.forEach { interviewee ->
             val postIntervieweImage = monitoringApi.postIntervieweImage(
@@ -102,17 +103,11 @@ class PlaceRepository(
 
     suspend fun syncInterviewee() {
         val notSyncedInterviewee = intervieweeDao.getAllNotSynced()
-        notSyncedInterviewee.forEach {
+        notSyncedInterviewee.forEach { interviewee ->
             //post interviewee
-            val postInterviewee = monitoringApi.postInterviewee(
-                Interviewee(
-                    id = it.id,
-                    villageId = it.villageId,
-                    name = it.name
-                )
-            )
-            it.synced = true
-            intervieweeDao.update(interviewee = it)
+            val postInterviewee = monitoringApi.postInterviewee(interviewee)
+            interviewee.synced = true
+            intervieweeDao.update(interviewee = interviewee)
         }
     }
 
@@ -128,9 +123,5 @@ class PlaceRepository(
             synced = false
         )
         intervieweeDao.insert(newInterviewee)
-    }
-
-    fun getVillageName(id: Int): String {
-        return villageDao.getNameById(id)
     }
 }
