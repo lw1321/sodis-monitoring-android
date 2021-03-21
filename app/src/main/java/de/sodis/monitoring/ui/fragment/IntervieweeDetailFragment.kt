@@ -76,7 +76,7 @@ class IntervieweeDetailFragment : BaseListFragment() {
                     }
                     onBind { model, view, position ->
                         if (intervieweeD.interviewee.imagePath != null) {
-                            val bo : BitmapFactory.Options = BitmapFactory.Options()
+                            val bo: BitmapFactory.Options = BitmapFactory.Options()
                             bo.inSampleSize = 8
                             BitmapFactory.decodeFile(intervieweeD.interviewee.imagePath, bo)
                                 ?.also { bitmap ->
@@ -110,14 +110,7 @@ class IntervieweeDetailFragment : BaseListFragment() {
                     id("keyValueGeneral")
                     key("Miembros de la familia")
                     value(
-                        (intervieweeD.interviewee.boysCount
-                                + intervieweeD.interviewee.girlsCount
-                                + intervieweeD.interviewee.youngMenCount
-                                + intervieweeD.interviewee.youngWomenCount
-                                + intervieweeD.interviewee.womenCount
-                                + intervieweeD.interviewee.menCount
-                                + intervieweeD.interviewee.oldWomenCount
-                                + intervieweeD.interviewee.oldMenCount).toString()
+                        "12"
                     )
                     onBind { model, view, position ->
                         view.dataBinding.root.imageView2.setImageResource(R.drawable.ic_family_silhouette_svgrepo_com)
@@ -145,9 +138,16 @@ class IntervieweeDetailFragment : BaseListFragment() {
                         taskName("")//TODO
                         onClickTechnology { _ ->
                             Thread(Runnable {
-                                val technologyList: List<SurveyHeader> = monitoringOverviewModel.getSurveyHeaderListByTechnologyIDSynchronous(techno.technologyId)
-                                val item = technologyList.single { surveyHeader ->  surveyHeader.surveyName.toLowerCase().contains("infraestructura") || surveyHeader.surveyName.toLowerCase().contains("infraestructura")}
-                                if(item!=null) {
+                                val technologyList: List<SurveyHeader> =
+                                    monitoringOverviewModel.getSurveyHeaderListByTechnologyIDSynchronous(
+                                        techno.technologyId
+                                    )
+                                val item = technologyList.single { surveyHeader ->
+                                    surveyHeader.surveyName.toLowerCase()
+                                        .contains("infraestructura") || surveyHeader.surveyName.toLowerCase()
+                                        .contains("infraestructura")
+                                }
+                                if (item != null) {
                                     val action =
                                         IntervieweeDetailFragmentDirections.actionIntervieweeDetailFragmentToQuestionFragment(
                                             item.id,
@@ -162,9 +162,16 @@ class IntervieweeDetailFragment : BaseListFragment() {
                         }
                         onClickPerson { _ ->
                             Thread(Runnable {
-                                val technologyList: List<SurveyHeader> = monitoringOverviewModel.getSurveyHeaderListByTechnologyIDSynchronous(techno.technologyId)
-                                val item = technologyList.single { surveyHeader ->  surveyHeader.surveyName.toLowerCase().contains("practicas") || surveyHeader.surveyName.toLowerCase().contains("practicas")}
-                                if(item!=null) {
+                                val technologyList: List<SurveyHeader> =
+                                    monitoringOverviewModel.getSurveyHeaderListByTechnologyIDSynchronous(
+                                        techno.technologyId
+                                    )
+                                val item = technologyList.single { surveyHeader ->
+                                    surveyHeader.surveyName.toLowerCase()
+                                        .contains("practicas") || surveyHeader.surveyName.toLowerCase()
+                                        .contains("practicas")
+                                }
+                                if (item != null) {
 
                                     val action =
                                         IntervieweeDetailFragmentDirections.actionIntervieweeDetailFragmentToQuestionFragment(

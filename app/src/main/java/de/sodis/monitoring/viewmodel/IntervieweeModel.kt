@@ -9,23 +9,18 @@ import androidx.lifecycle.viewModelScope
 import de.sodis.monitoring.api.MonitoringApi
 import de.sodis.monitoring.db.MonitoringDatabase
 import de.sodis.monitoring.db.entity.Interviewee
-import de.sodis.monitoring.db.entity.IntervieweeTechnology
 import de.sodis.monitoring.db.entity.Village
 import de.sodis.monitoring.db.response.IntervieweeDetail
 import de.sodis.monitoring.repository.IntervieweeRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import java.util.*
 
 
 class IntervieweeModel(application: Application) : AndroidViewModel(application) {
 
-    lateinit var familyCount: MutableLiveData<Int>
     var intervieweeList: LiveData<List<Interviewee>>
     var villageList: LiveData<List<Village>>
     var intervieweeDetail: MutableLiveData<IntervieweeDetail>
-    lateinit var technologyList: LiveData<List<IntervieweeTechnology>>
-    var modiefied: Boolean = false
     var currentIntervieweeId: String = "0"
     var villageName: MutableLiveData<String>
 
@@ -35,7 +30,6 @@ class IntervieweeModel(application: Application) : AndroidViewModel(application)
             intervieweeDao = monitoringDatabase.intervieweeDao(),
             villageDao = monitoringDatabase.villageDao(),
             userDao = monitoringDatabase.userDao(),
-            intervieweeTechnologyDao = monitoringDatabase.intervieweeTechnologyDao(),
             technologyDao = monitoringDatabase.technologyDao(),
             monitoringApi = MonitoringApi()
         )
@@ -53,41 +47,14 @@ class IntervieweeModel(application: Application) : AndroidViewModel(application)
     }
 
     fun setInterviewee(intervieweeId: String) {
-        currentIntervieweeId = intervieweeId
-        intervieweeRepository.getFamilyCount(intervieweeId).observeForever(Observer {
-            if (intervieweeDetail.value != null) {
-                val value = intervieweeDetail.value
-                value!!.interviewee.menCount = it
-                intervieweeDetail.postValue(value)
-            }
-        })
-        intervieweeRepository.getTechnologies(intervieweeId)
-            .observeForever(Observer { updatedTechList ->
-                //update the intervieweedetails..
-                if (intervieweeDetail.value != null) {
-                    val value = intervieweeDetail.value
-                    value!!.intervieweeTechnologies.forEach { oldTechList ->
-                        //update states
-                        val newTechno =
-                            updatedTechList.first { techno -> techno.id == oldTechList.id }
-                        oldTechList.stateKnowledge = newTechno.stateKnowledge
-                        oldTechList.stateTechnology = newTechno.stateTechnology
-                    }
-                    intervieweeDetail.postValue(value)
-                }
-            })
         viewModelScope.launch(Dispatchers.IO) {
+            currentIntervieweeId = intervieweeId
             intervieweeDetail.postValue(intervieweeRepository.getById(intervieweeId = intervieweeId))
         }
     }
 
     fun getByID(intervieweeId: String): Interviewee {
         return intervieweeRepository.getIntervieweeByID(intervieweeId)
-    }
-
-    fun updateInterviewee(interviewee: Interviewee) {
-        intervieweeDetail.value!!.interviewee = interviewee
-        modiefied = true
     }
 
 

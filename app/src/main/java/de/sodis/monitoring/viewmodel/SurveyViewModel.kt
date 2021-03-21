@@ -58,9 +58,7 @@ class SurveyViewModel(
                             .villageDao(),
                     userDao = MonitoringDatabase.getDatabase(mApplication.applicationContext).userDao(),
                     technologyDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
-                            .technologyDao(),
-                    intervieweeTechnologyDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
-                            .intervieweeTechnologyDao()
+                            .technologyDao()
             )
     lateinit var surveyHeader: LiveData<SurveyHeaderResponse>
 
@@ -93,10 +91,6 @@ class SurveyViewModel(
                     completedSurveyDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
                             .completedSurveyDao(),
                     monitoringApi = MonitoringApi(),
-                    intervieweeTechnologyDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
-                            .intervieweeTechnologyDao(),
-                    surveyHeaderDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
-                            .surveyHeaderDao(),
                     intervieweeDao = MonitoringDatabase.getDatabase(mApplication.applicationContext)
                             .intervieweeDao()
             )
@@ -151,9 +145,9 @@ class SurveyViewModel(
                 id = UUID.randomUUID().toString(),
                 questionOptionId = optionChoiceId,
                 completedSurveyId = null, //todo
-                answerYn = null,//todo differe yn/text
                 imagePath = imagePath,
-                imageSynced = null
+                imageSynced = null,
+                questionId = null
         )
     }
 

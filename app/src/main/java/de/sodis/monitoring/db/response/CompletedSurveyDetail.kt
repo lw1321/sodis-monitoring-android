@@ -5,8 +5,9 @@ import de.sodis.monitoring.db.entity.Question
 import de.sodis.monitoring.db.entity.QuestionImage
 
 data class CompletedSurveyDetail(
-    val question: Question,
-    val answer: Answer,
-    val title: String,
-    val image: QuestionImage?
+    val answerText: String?,
+    val questionName: String,
+    val sectionName: String,
+    val inputType: Int,
+    val path: String?
 )

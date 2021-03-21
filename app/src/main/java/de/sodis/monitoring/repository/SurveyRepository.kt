@@ -24,7 +24,6 @@ class SurveyRepository(
     private val surveySectionDao: SurveySectionDao,
     private val questionDao: QuestionDao,
     private val inputTypeDao: InputTypeDao,
-    private val questionImageDao: QuestionImageDao,
     private val questionOptionDao: QuestionOptionDao,
     private val optionChoiceDao: OptionChoiceDao,
     private val technologyDao: TechnologyDao,

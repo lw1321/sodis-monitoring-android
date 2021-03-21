@@ -23,30 +23,6 @@ class SurveyHistoryRepository(
     }
 
     fun getCompletedSurvey(completedSurveyId: String): List<CompletedSurveyDetail> {
-        val completedQuestionDetailList: MutableList<CompletedSurveyDetail> = mutableListOf()
-        //get the title of the completed survey
-
-        //get completed Survey
-        val completedSurvey = completedSurveyDao.getById(completedSurveyId)
-        val surveyHeaderResponse = surveyHeaderDao.getByIdSync(completedSurvey.surveyHeaderId)
-        val surveySectionList = surveyHeaderResponse!!.surveySectionList
-        val answerList = answerDao.getAnswersByCompletedSurveyId(completedSurveyId)
-        answerList.forEach { answer ->
-            // get the depending question for the answer
-            val question = questionDao.getByQuestionOptionId(answer.questionOptionId)
-            //get the depending image for the question
-            val image = question.questionImageId?.let { imageDao.getById(it) }
-            completedQuestionDetailList.add(
-                CompletedSurveyDetail(
-                    question = question,
-                    image = image ?: null,
-                    title = surveySectionList.first {
-                        it.id == question.surveySectionId
-                    }.sectionName!!,
-                    answer = answer
-                )
-            )
-        }
-        return completedQuestionDetailList
+        return completedSurveyDao.getAnswers(completedSurveyId)
     }
 }

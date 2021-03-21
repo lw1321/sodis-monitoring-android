@@ -52,28 +52,28 @@ class QuestionHistoryFragment : BaseListFragment() {
             recyclerView.withModels {
                 question {
                     id("question")
-                    title(currentQuestion.title)
-                    questionText(currentQuestion.question.questionName)
+                    title(currentQuestion.sectionName)
+                    questionText(currentQuestion.questionName)
                     onBind { model, view, position ->
-                        view.dataBinding.root.question_image.load(File(currentQuestion.image?.path))
+                        view.dataBinding.root.question_image.load(File(currentQuestion.path))
                     }
                 }
-                when (currentQuestion.question.inputTypeId) {
+                when (currentQuestion.inputType) {
                     2 -> //todo
                         textInput {
                             id("input")
                             inputType(InputType.TYPE_NULL)
-                            text(currentQuestion.answer.answerText)
+                            text(currentQuestion.answerText)
                         }
                     1 -> textChoice {
                         id("choice")
-                        if (currentQuestion.answer.answerText.equals("Si")) {
-                            option1(currentQuestion.answer.answerText)
+                        if (currentQuestion.answerText.equals("Si")) {
+                            option1(currentQuestion.answerText)
                             option1checked(true)
                             option2visible(View.GONE)
                         }
-                        if (currentQuestion.answer.answerText.equals("No")) {
-                            option2(currentQuestion.answer.answerText)
+                        if (currentQuestion.answerText.equals("No")) {
+                            option2(currentQuestion.answerText)
                             option2checked(true)
                             option1visible(View.GONE)
                         }

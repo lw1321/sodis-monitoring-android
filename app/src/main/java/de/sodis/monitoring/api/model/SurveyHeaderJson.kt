@@ -2,8 +2,6 @@ package de.sodis.monitoring.api.model
 
 data class SurveyHeaderJson(
     val id: Int,
-    val instructions: String,
-    val otherHeaderInfo: String,
     val surveyName: String,
     val surveySection: List<SurveySectionJson>,
     val technology: Technology
@@ -11,9 +9,7 @@ data class SurveyHeaderJson(
     data class SurveySectionJson(
         val id: Int,
         val questions: List<QuestionJson>,
-        val sectionName: String,
-        val sectionSubheading: String,
-        val sectionTitle: String
+        val sectionName: String
     ) {
         data class QuestionJson(
             val dependentQuestionId: Int,

@@ -5,7 +5,8 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import de.sodis.monitoring.db.entity.CompletedSurvey
+import de.sodis.monitoring.db.entity.*
+import de.sodis.monitoring.db.response.CompletedSurveyDetail
 import de.sodis.monitoring.db.response.CompletedSurveyOverview
 
 @Dao
@@ -28,6 +29,9 @@ interface CompletedSurveyDao {
 
     @Query("SELECT Interviewee.name, SurveyHeader.surveyName, CompletedSurvey.id FROM CompletedSurvey JOIN Interviewee ON CompletedSurvey.intervieweeId=Interviewee.id JOIN SurveyHeader ON CompletedSurvey.surveyHeaderId=SurveyHeader.id ORDER BY timeStamp DESC")
     fun getAllSorted(): LiveData<List<CompletedSurveyOverview>>
+
+    @Query("SELECT a.answerText, q.questionName, s.sectionName, q.inputTypeId, qi.path as imagePath FROM Answer a  JOIN Question q  ON a.questionId = q.questionName  JOIN SurveySection s ON s.id = q.surveySectionId JOIN QuestionImage qi ON qi.id = q.questionImageId " )
+    fun getAnswers(completedSurveyId: String): List<CompletedSurveyDetail>
 
 
 }

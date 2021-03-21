@@ -11,12 +11,11 @@ data class CompletedSurveyJson(
 ) {
     data class Answer(
         val id: String,
-        val answerYn: Boolean?,
         val answerText: String?,
         val questionOption: QuestionOption//TODO add image path and synced?
     ) {
         data class QuestionOption(
-            val id: Int
+            val id: Int?
         )
     }
 

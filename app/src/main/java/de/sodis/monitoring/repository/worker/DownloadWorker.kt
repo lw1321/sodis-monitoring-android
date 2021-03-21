@@ -26,7 +26,6 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) :
                 inputTypeDao = monitoringDatabase.inputTypeDao(),
                 optionChoiceDao = monitoringDatabase.optionChoiceDao(),
                 questionDao = monitoringDatabase.questionDao(),
-                questionImageDao = monitoringDatabase.questionImageDao(),
                 questionOptionDao = monitoringDatabase.questionOptionDao(),
                 surveyHeaderDao = monitoringDatabase.surveyHeaderDao(),
                 surveySectionDao = monitoringDatabase.surveySectionDao(),
@@ -38,7 +37,6 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) :
                 intervieweeDao = monitoringDatabase.intervieweeDao(),
                 monitoringApi = MonitoringApi(),
                 technologyDao = monitoringDatabase.technologyDao(),
-                intervieweeTechnologyDao = monitoringDatabase.intervieweeTechnologyDao(),
                 villageDao = monitoringDatabase.villageDao(),
                 userDao = monitoringDatabase.userDao()
             )

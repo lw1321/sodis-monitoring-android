@@ -14,7 +14,6 @@ class IntervieweeRepository(
         private val intervieweeDao: IntervieweeDao,
         private val villageDao: VillageDao,
         private val technologyDao: TechnologyDao,
-        private val intervieweeTechnologyDao: IntervieweeTechnologyDao,
         private val userDao: UserDao,
         private val monitoringApi: MonitoringApi
 ) {
@@ -36,15 +35,7 @@ class IntervieweeRepository(
                     id = interviewee.id,
                     name = interviewee.name,
                     villageId = interviewee.village.id,
-                    girlsCount = interviewee.girlsCount,
-                    boysCount = interviewee.boysCount,
-                    youngMenCount = interviewee.youngMenCount,
-                    youngWomenCount = interviewee.youngWomenCount,
-                    oldMenCount = interviewee.oldMenCount,
-                    oldWomenCount = interviewee.oldWomenCount,
-                    menCount = interviewee.menCount,
-                    womenCount = interviewee.womenCount,
-                    userId = interviewee.user?.id,
+                    userId = null,
                     imagePath = null,//todo add attributes server side
                     imageUrl = null//todo save image from url local
             )
@@ -53,27 +44,6 @@ class IntervieweeRepository(
                 intervieweeDao.insert(intervieweeEntity)
             } else {
                 intervieweeDao.update(intervieweeEntity)
-            }
-
-            interviewee.intervieweeTechnologies.forEach {
-                if (technologyDao.count(it.technology.id) == 0) {
-                    //save input type
-                    technologyDao.insert(
-                            Technology(
-                                    id = it.technology.id,
-                                    name = it.technology.name
-                            )
-                    )
-                }
-                intervieweeTechnologyDao.insert(
-                        IntervieweeTechnology(
-                                id = it.id,
-                                stateKnowledge = it.stateKnowledge,
-                                technologyId = it.technology.id,
-                                stateTechnology = it.stateTechnology,
-                                intervieweeId = interviewee.id
-                        )
-                )
             }
         }
 
@@ -116,8 +86,6 @@ class IntervieweeRepository(
      * interviewee, technologies, village
      */
     suspend fun getById(intervieweeId: String): IntervieweeDetail {
-        val intervieweeTechnologies =
-                intervieweeTechnologyDao.getByInterviewee(intervieweeId)
         val interviewee = intervieweeDao.getById(intervieweeId)
         val village = villageDao.getById(interviewee.villageId)
         var localExpert: User? = null
@@ -126,22 +94,12 @@ class IntervieweeRepository(
         }
         return IntervieweeDetail(
                 interviewee = interviewee,
-                intervieweeTechnologies = intervieweeTechnologies,
                 village = village,
                 user = localExpert
         )
     }
-
-    fun getFamilyCount(intervieweeId: String): LiveData<Int> {
-        return intervieweeDao.getFamilyCount(intervieweeId)
-    }
-
     fun saveInterviewee(interviewee: Interviewee) {
         intervieweeDao.insert(interviewee)
-    }
-
-    fun getTechnologies(intervieweeId: String): LiveData<List<IntervieweeTechnology>> {
-        return intervieweeTechnologyDao.getByIntervieweeLive(intervieweeId)
     }
 
     fun updateImagePath(id: String, currentPhotoPath: String) {
@@ -177,57 +135,21 @@ class IntervieweeRepository(
             ))
             it.synced = true
             intervieweeDao.update(interviewee = it)
-            //post technologies
-            val byInterviewee = intervieweeTechnologyDao.getByInterviewee(it.id)//todo seperate call with creation and sync date
-            byInterviewee.forEach { technology ->
-                monitoringApi.postIntervieweeTechnology(it.id,
-                        IntervieweeJson.IntervieweeTechnology(
-                                id = technology.id,
-                                technology = SurveyHeaderJson.Technology(
-                                        id = technology.technologyId,
-                                        name = technology.name),
-                                stateKnowledge = technology.stateKnowledge,
-                                stateTechnology = technology.stateTechnology
-                        ))
-            }
-
         }
     }
 
     fun createInterviewee(name: String, village: Int) {
         val uniqueId: String = UUID.randomUUID().toString()
-
         val newInterviewee = Interviewee(
                 id = uniqueId,
                 name = name,
                 villageId = village,
-                boysCount = 0,
-                menCount = 0,
-                womenCount = 0,
-                girlsCount = 0,
-                oldMenCount = 0,
-                oldWomenCount = 0,
-                youngMenCount = 0,
-                youngWomenCount = 0,
                 userId = null,
                 imagePath = null,
                 imageUrl = null,
                 synced = false
         )
         intervieweeDao.insert(newInterviewee)
-        //create interviewee technologies
-        val techno = technologyDao.getAllSync()
-        techno.filter { it.name != "Dato Generales" }.forEach {
-            intervieweeTechnologyDao.insert(
-                    IntervieweeTechnology(
-                            id = UUID.randomUUID().toString(),
-                            intervieweeId = newInterviewee.id,
-                            technologyId = it.id,
-                            stateKnowledge = 0,
-                            stateTechnology = 0
-                    )
-            )
-        }
     }
 
     fun getVillageName(id: Int): String {

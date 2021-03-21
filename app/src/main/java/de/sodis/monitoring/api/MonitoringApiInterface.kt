@@ -12,20 +12,6 @@ interface MonitoringApiInterface {
     @GET("interviewees")
     suspend fun getAllInterviewees(): List<IntervieweeJson>
 
-    @GET("tasks")
-    suspend fun getAllTasks(): List<TaskJson>
-
-    @PUT("tasks/{taskId}")
-    suspend fun updateTask(
-            @Path(
-                    value = "taskId",
-                    encoded = false
-            ) taskId: Int, @Body task: TaskJson
-    ): TaskJson
-
-    @POST("tasks")
-    suspend fun createTask(@Body task: TaskJson): TaskJson
-
     @POST("users/register")
     suspend fun registerUser(@Body user: User): User
 
@@ -60,10 +46,6 @@ interface MonitoringApiInterface {
     @POST("interviewees")
     suspend fun postInterviewee(@Body interviewee: CompletedSurveyJson.Interviewee): Interviewee
 
-    @POST("interviewees/{intervieweeId}/technologies")
-    suspend fun postIntervieweeTechnology(@Path(value = "intervieweeId", encoded = false) intervieweeId: String,
-                                          @Body intervieweeTechnology: IntervieweeJson.IntervieweeTechnology):
-            IntervieweeJson.IntervieweeTechnology
     @Multipart
     @POST("answers/{answerId}/images")
     suspend fun postAnswerImage(

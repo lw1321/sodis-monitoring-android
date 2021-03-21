@@ -30,9 +30,6 @@ interface IntervieweeDao {
     @Query("SELECT * FROM Interviewee WHERE synced=0")
     fun getAllNotSynced(): List<Interviewee>
 
-    @Query("SELECT menCount FROM Interviewee WHERE id=:intervieweeId")//TODO refactor family count
-    fun getFamilyCount(intervieweeId: String): LiveData<Int>
-
     @Query("SELECT COUNT(*) FROM Interviewee WHERE id=:id")
     fun exists(id: String): Int
 

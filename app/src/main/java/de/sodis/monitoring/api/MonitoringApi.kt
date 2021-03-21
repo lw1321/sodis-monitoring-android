@@ -5,7 +5,6 @@ import de.sodis.monitoring.Config
 import de.sodis.monitoring.api.model.CompletedSurveyJson
 import de.sodis.monitoring.api.model.IntervieweeJson
 import de.sodis.monitoring.api.model.SurveyHeaderJson
-import de.sodis.monitoring.api.model.TaskJson
 import de.sodis.monitoring.db.entity.*
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -39,18 +38,6 @@ class MonitoringApi {
 
     suspend fun getInterviewees(): List<IntervieweeJson> {
         return monitoringApi.getAllInterviewees()
-    }
-
-    suspend fun getTasks(): List<TaskJson> {
-        return monitoringApi.getAllTasks()
-    }
-
-    suspend fun updateTask(task: TaskJson): TaskJson {
-        return monitoringApi.updateTask(task.id, task)
-    }
-
-    suspend fun createTask(task: TaskJson): TaskJson {
-        return monitoringApi.createTask(task)
     }
 
     suspend fun registerUser(user: User): User {
@@ -93,10 +80,6 @@ class MonitoringApi {
 
     suspend fun postInterviewee(interviewee: CompletedSurveyJson.Interviewee): Interviewee {
         return monitoringApi.postInterviewee(interviewee)
-    }
-
-    suspend fun postIntervieweeTechnology(intervieweeId: String, intervieweeTechnology: IntervieweeJson.IntervieweeTechnology): IntervieweeJson.IntervieweeTechnology {
-        return monitoringApi.postIntervieweeTechnology(intervieweeId, intervieweeTechnology)
     }
 
     suspend fun postAnswerImage(id: String, file: File): Answer {

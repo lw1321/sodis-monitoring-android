@@ -23,17 +23,8 @@ data class Interviewee(
     val id: String,
     val name: String,
     val villageId: Int,
-    val girlsCount: Int,
-    val boysCount: Int,
-    val youngMenCount: Int,
-    val youngWomenCount: Int,
-    val oldMenCount: Int,
-    val oldWomenCount: Int,
-    var menCount: Int,
-    val womenCount: Int,
     val userId: Int?,
     var imagePath: String?=null,
     var imageUrl: String?=null,
     var synced: Boolean?=true
-
 )

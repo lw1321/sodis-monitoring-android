@@ -24,7 +24,6 @@ class MonitoringOverviewModel(application: Application) : AndroidViewModel(appli
             inputTypeDao = monitoringDatabase.inputTypeDao(),
             optionChoiceDao = monitoringDatabase.optionChoiceDao(),
             questionDao = monitoringDatabase.questionDao(),
-            questionImageDao = monitoringDatabase.questionImageDao(),
             questionOptionDao = monitoringDatabase.questionOptionDao(),
             surveyHeaderDao = monitoringDatabase.surveyHeaderDao(),
             surveySectionDao = monitoringDatabase.surveySectionDao(),
