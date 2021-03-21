@@ -3,10 +3,12 @@ package de.sodis.monitoring.repository
 import android.content.Context
 import androidx.lifecycle.LiveData
 import de.sodis.monitoring.api.MonitoringApi
-import de.sodis.monitoring.api.model.SurveyHeaderJson
 import de.sodis.monitoring.db.dao.*
 import de.sodis.monitoring.db.entity.*
-import de.sodis.monitoring.repository.SurveyRepository.Companion.bitmapToFile
+import de.sodis.monitoring.db.response.CompletedSurveyDetail
+import de.sodis.monitoring.db.response.CompletedSurveyOverview
+import id.zelory.compressor.Compressor
+import java.io.File
 
 
 class SurveyRepository(
@@ -17,42 +19,78 @@ class SurveyRepository(
     private val optionChoiceDao: OptionChoiceDao,
     private val questionOptionDao: QuestionOptionDao,
     private val questionImageDao: QuestionImageDao,
-
+    private val answerDao: AnswerDao,
+    private val completedSurveyDao: CompletedSurveyDao,
     private val monitoringApi: MonitoringApi
 ) {
 
-    /**
-     * If internet connection is available, load all surveys and save it in the local database.
-     * Also load and save the associated images in the internal storage.
-     */
-    suspend fun loadSurveys() {
-        //TODO save
-        // get survey headers
-        val response = monitoringApi.getSurveys()
-    }
-
-    suspend fun loadSections() {
-        val response = monitoringApi.getSections()
-        //TODO
-    }
-
-    suspend fun loadQuestions() {
-        monitoringApi.getOptionChoices()
-        monitoringApi.getInputTypes()
-        //TODO
-        val questionImageList = monitoringApi.getQuestionImages()
-        //loop through surveys
-        for (questionImage: QuestionImage in questionImageList) {
-            //load bitmap from url
-            //TODO
-            if (questionImageDao.exists(questionImage.id) == 0) {
-                //udpate
-                questionImageDao.update(questionImage)
-            } else {
-                questionImageDao.insert(questionImage)
-            }
+    suspend fun syncSurveys() {
+        val surveys = monitoringApi.getSurveys()
+        surveys.forEach {
+            surveyHeaderDao.insert(it)
         }
     }
+
+    suspend fun syncSections() {
+        val sections = monitoringApi.getSections()
+        sections.forEach {
+            surveySectionDao.insert(it)
+        }
+    }
+
+    suspend fun syncQuestions() {
+        syncInputTypes()
+        syncOptionChoices()
+        syncQuestionImages()
+
+        val questions = monitoringApi.getAllQuestions()
+        questions.forEach { question ->
+            questionDao.insert(
+                Question(
+                    id = question.id,
+                    dependentQuestionId = question.dependentQuestionId,
+                    dependentQuestionOptionId = question.dependentQuestionOptionId,
+                    inputTypeId = question.inputType.id,
+                    questionImageId = question.questionImage?.id,
+                    questionName = question.questionName,
+                    surveySectionId = question.surveySection.id
+                )
+            )
+            question.questionOptions.forEach { questionOption ->
+                questionOptionDao.insert(
+                    QuestionOption(
+                        id = questionOption.id,
+                        questionId = question.id,
+                        optionChoiceId = questionOption.optionChoice.id
+                    )
+                )
+            }
+
+        }
+    }
+
+    private suspend fun syncInputTypes() {
+        val inputTypes = monitoringApi.getInputTypes()
+        inputTypes.forEach {
+            inputTypeDao.insert(it)
+        }
+    }
+
+    private suspend fun syncOptionChoices() {
+        val optionChoice = monitoringApi.getOptionChoices()
+        optionChoice.forEach {
+            optionChoiceDao.insert(optionChoice = it)
+        }
+    }
+
+    private suspend fun syncQuestionImages() {
+        val questionImages = monitoringApi.getQuestionImages()
+        questionImages.forEach {
+            questionImageDao.insert(questionImage = it)
+        }
+
+    }
+
 
     /**
      * Provide a list of all in database stored survey headers.
@@ -83,5 +121,51 @@ class SurveyRepository(
         }
     }
 
+
+    /**
+     * Save questions in loval database, also try to upload them..Also save if the upload was successfully
+     */
+    fun saveQuestions(
+        answerMap: MutableMap<Int, Answer>,
+        completedSurvey: CompletedSurvey
+    ) {
+        completedSurveyDao.insert(completedSurvey)
+
+        for ((_, v) in answerMap) {
+            v.completedSurveyId = completedSurvey.id
+            answerDao.insert(v)
+        }
+    }
+
+    suspend fun syncCompletedSurveys(applicationContext: Context) {
+        // TODO implement after server endpoints are adjust
+        val surveysToSync = completedSurveyDao.getAllUnsubmitted()
+        monitoringApi.postCompletedSurveys(surveysToSync)
+        //upload answers
+        val answersToSync = answerDao.getAllBySurveys(surveysToSync.map { it.id })
+        monitoringApi.postAnswers(answersToSync)
+        //upload images
+        //check for not uploaded images where the answers are already synced.
+        val answerImagesToSync = answerDao.getNotSubmittedImages()
+        //upload the images
+        answerImagesToSync.forEach { answer ->
+            //Compress File
+            //TODO compression before saving the image localy
+            val compressedImageFile =
+                Compressor.compress(applicationContext, File(answer.imagePath!!))
+            monitoringApi.postAnswerImage(answer.id, compressedImageFile)
+        }
+    }
+    fun getCompletedSurveys(): LiveData<List<CompletedSurveyOverview>> {
+        return completedSurveyDao.getAll()
+    }
+
+    fun getCompletedSurveysSorted():LiveData<List<CompletedSurveyOverview>> {
+        return completedSurveyDao.getAllSorted()
+    }
+
+    fun getCompletedSurvey(completedSurveyId: String): List<CompletedSurveyDetail> {
+        return completedSurveyDao.getAnswers(completedSurveyId)
+    }
 
 }

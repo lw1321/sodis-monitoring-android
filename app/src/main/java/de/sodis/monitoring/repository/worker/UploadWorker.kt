@@ -1,41 +1,49 @@
 package de.sodis.monitoring.repository.worker
 
 import android.content.Context
+import android.text.style.ReplacementSpan
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import de.sodis.monitoring.api.MonitoringApi
 import de.sodis.monitoring.db.MonitoringDatabase
 import de.sodis.monitoring.repository.IntervieweeRepository
+import de.sodis.monitoring.repository.PlaceRepository
 import de.sodis.monitoring.repository.QuestionRepository
+import de.sodis.monitoring.repository.SurveyRepository
 
 class UploadWorker(appContext: Context, workerParams: WorkerParameters) :
     CoroutineWorker(appContext, workerParams) {
     override suspend fun doWork(): Result {
         val db = MonitoringDatabase.getDatabase(applicationContext)
-        val questionRepository = QuestionRepository(
-            answerDao = MonitoringDatabase.getDatabase(applicationContext).answerDao(),
-            completedSurveyDao = MonitoringDatabase.getDatabase(applicationContext)
-                .completedSurveyDao(),
-            monitoringApi = MonitoringApi(),
-            intervieweeDao =    MonitoringDatabase.getDatabase(applicationContext.applicationContext)
-                .intervieweeDao()
-        )
-        val intervieweeRepository = IntervieweeRepository(
+        val placeRepository = PlaceRepository(
             monitoringApi = MonitoringApi(),
             intervieweeDao = db.intervieweeDao(),
-            technologyDao = db.technologyDao(),
             userDao = db.userDao(),
             villageDao = db.villageDao()
         )
+        val surveyRepository =
+            SurveyRepository(
+                inputTypeDao = db.inputTypeDao(),
+                optionChoiceDao = db.optionChoiceDao(),
+                questionDao = db.questionDao(),
+                questionOptionDao = db.questionOptionDao(),
+                surveyHeaderDao = db.surveyHeaderDao(),
+                surveySectionDao = db.surveySectionDao(),
+                questionImageDao = db.questionImageDao(),
+                answerDao =  db.answerDao(),
+                completedSurveyDao = db.completedSurveyDao(),
+                monitoringApi = MonitoringApi()
+            )
+
         return try {
-            intervieweeRepository.syncInterviewee()
-            questionRepository.syncCompletedSurveys()
-            //TODO upload answers
-            questionRepository.uploadSurveyImages(applicationContext)
-
-            intervieweeRepository.uploadProfilPictures()
-
+            //SYNC Places
+            placeRepository.syncInterviewee()
+            placeRepository.uploadProfilPictures()
+            //SYNC collected SURVEY DATA
+            surveyRepository.syncCompledSurveys(applicationContext)
+            surveyRepository.syncAnswers()
+            surveyRepository.syncAnswerImages()
             Result.success()
         } catch (e: Exception) {
             val crashlytics = FirebaseCrashlytics.getInstance()

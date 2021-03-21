@@ -2,23 +2,19 @@ package de.sodis.monitoring.repository
 
 import androidx.lifecycle.LiveData
 import de.sodis.monitoring.api.MonitoringApi
-import de.sodis.monitoring.api.model.CompletedSurveyJson
-import de.sodis.monitoring.api.model.IntervieweeJson
-import de.sodis.monitoring.api.model.SurveyHeaderJson
 import de.sodis.monitoring.db.dao.*
 import de.sodis.monitoring.db.entity.*
 import de.sodis.monitoring.db.response.IntervieweeDetail
 import java.util.*
 
-class IntervieweeRepository(
-        private val intervieweeDao: IntervieweeDao,
-        private val villageDao: VillageDao,
-        private val technologyDao: TechnologyDao,
-        private val userDao: UserDao,
-        private val monitoringApi: MonitoringApi
+class PlaceRepository(
+    private val intervieweeDao: IntervieweeDao,
+    private val villageDao: VillageDao,
+    private val userDao: UserDao,
+    private val monitoringApi: MonitoringApi
 ) {
 
-    suspend fun loadVillages(){
+    suspend fun loadVillages() {
         val villageResponse = monitoringApi.getAllVillages()
         villageResponse.forEach {
             villageDao.insert(it)
@@ -26,23 +22,11 @@ class IntervieweeRepository(
     }
 
     suspend fun loadFamilies() {
-        //let's request a new list of interviewees to be sure our local data is up to data.
-        //load villages
-
-        val respo = monitoringApi.getInterviewees()
-
-        for (interviewee: Interviewee in respo) {
-            //insert interviewee
-            if (intervieweeDao.exists(interviewee.id) == 0) {
-                intervieweeDao.insert(interviewee)
-            } else {
-                intervieweeDao.update(interviewee)
-            }
+        val interviewees = monitoringApi.getInterviewees()
+        interviewees.forEach { interviewee ->
+            intervieweeDao.insert(interviewee)
         }
-
     }
-
-
     /*
     just basic info
      */
@@ -86,11 +70,12 @@ class IntervieweeRepository(
             localExpert = userDao.getByLocalExpertId(interviewee.userId)
         }
         return IntervieweeDetail(
-                interviewee = interviewee,
-                village = village,
-                user = localExpert
+            interviewee = interviewee,
+            village = village,
+            user = localExpert
         )
     }
+
     fun saveInterviewee(interviewee: Interviewee) {
         intervieweeDao.insert(interviewee)
     }
@@ -107,8 +92,8 @@ class IntervieweeRepository(
         val allNotSynced = intervieweeDao.getNotsyncedProfilePictures()
         allNotSynced.forEach { interviewee ->
             val postIntervieweImage = monitoringApi.postIntervieweImage(
-                    interviewee.imagePath,
-                    intervieweeId = interviewee.id
+                interviewee.imagePath,
+                intervieweeId = interviewee.id
             )
             interviewee.imageUrl = postIntervieweImage.imageUrl
             intervieweeDao.update(interviewee)
@@ -119,11 +104,13 @@ class IntervieweeRepository(
         val notSyncedInterviewee = intervieweeDao.getAllNotSynced()
         notSyncedInterviewee.forEach {
             //post interviewee
-            val postInterviewee = monitoringApi.postInterviewee(Interviewee(
+            val postInterviewee = monitoringApi.postInterviewee(
+                Interviewee(
                     id = it.id,
                     villageId = it.villageId,
                     name = it.name
-            ))
+                )
+            )
             it.synced = true
             intervieweeDao.update(interviewee = it)
         }
@@ -132,13 +119,13 @@ class IntervieweeRepository(
     fun createInterviewee(name: String, village: Int) {
         val uniqueId: String = UUID.randomUUID().toString()
         val newInterviewee = Interviewee(
-                id = uniqueId,
-                name = name,
-                villageId = village,
-                userId = null,
-                imagePath = null,
-                imageUrl = null,
-                synced = false
+            id = uniqueId,
+            name = name,
+            villageId = village,
+            userId = null,
+            imagePath = null,
+            imageUrl = null,
+            synced = false
         )
         intervieweeDao.insert(newInterviewee)
     }

@@ -19,33 +19,37 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) :
     }
 
     override suspend fun doWork(): Result {
-        val monitoringDatabase = MonitoringDatabase.getDatabase(applicationContext)
+        val db = MonitoringDatabase.getDatabase(applicationContext)
         val surveyRepository =
             SurveyRepository(
-                inputTypeDao = monitoringDatabase.inputTypeDao(),
-                optionChoiceDao = monitoringDatabase.optionChoiceDao(),
-                questionDao = monitoringDatabase.questionDao(),
-                questionOptionDao = monitoringDatabase.questionOptionDao(),
-                surveyHeaderDao = monitoringDatabase.surveyHeaderDao(),
-                surveySectionDao = monitoringDatabase.surveySectionDao(),
-                technologyDao = monitoringDatabase.technologyDao(),
-                questionImageDao = monitoringDatabase.questionImageDao(),
+                inputTypeDao = db.inputTypeDao(),
+                optionChoiceDao = db.optionChoiceDao(),
+                questionDao = db.questionDao(),
+                questionOptionDao = db.questionOptionDao(),
+                surveyHeaderDao = db.surveyHeaderDao(),
+                surveySectionDao = db.surveySectionDao(),
+                questionImageDao = db.questionImageDao(),
+                answerDao =  db.answerDao(),
+                completedSurveyDao = db.completedSurveyDao(),
                 monitoringApi = MonitoringApi()
             )
-        val intervieweeRepository =
-            IntervieweeRepository(
-                intervieweeDao = monitoringDatabase.intervieweeDao(),
+
+        val placesRepository =
+            PlaceRepository(
+                intervieweeDao = db.intervieweeDao(),
                 monitoringApi = MonitoringApi(),
-                technologyDao = monitoringDatabase.technologyDao(),
-                villageDao = monitoringDatabase.villageDao(),
-                userDao = monitoringDatabase.userDao()
+                villageDao = db.villageDao(),
+                userDao = db.userDao()
             )
-
-
+        val projectRepository =
+            ProjectRepository(
+                monitoringApi = MonitoringApi(),
+                projectDao = db.projectDao()
+            )
 
         val statsRepository = StatsRepository(
             monitoringApi = MonitoringApi(),
-            statsDao = monitoringDatabase.statsDao()
+            statsDao = db.statsDao()
         )
 
         return try {
@@ -53,20 +57,16 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) :
             //check if there are new data
             if (statsRepository.dataUpdateAvailable()) {
                 //ok cool there is new data. Let's sync it!
-                intervieweeRepository.loadVillages()
-                setProgress(progress(15))
-                intervieweeRepository.loadFamilies()
-                setProgress(progress(30))
-                surveyRepository.loadSurveys()
-                setProgress(progress(45))
-                surveyRepository.loadSections()
-                setProgress(progress(60))
-                surveyRepository.loadQuestions()
-                setProgress(progress(75))
-                surveyRepository.loadSurveys()
-                setProgress(progress(90))
+                //LOAD PROJECTS/
+                projectRepository.loadProjects()
+                // LOAD PLACES
+                placesRepository.loadVillages()
+                placesRepository.loadFamilies()
+                //LOAD SURVEYS
+                surveyRepository.syncSurveys()
+                surveyRepository.syncSections()
+                surveyRepository.syncQuestions()
                 surveyRepository.storeImages(applicationContext)
-                //taskRepository.downloadTasks() //just offline tasks for now
                 statsRepository.updateLastSyncTime()
                 setProgress(progress(100))
                 Result.success()

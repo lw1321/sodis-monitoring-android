@@ -2,6 +2,7 @@ package de.sodis.monitoring.api
 
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import de.sodis.monitoring.Config
+import de.sodis.monitoring.api.models.QuestionJson
 import de.sodis.monitoring.apiCompletedSurveyJson.MonitoringApiInterface
 import de.sodis.monitoring.db.entity.*
 import okhttp3.MediaType
@@ -77,6 +78,9 @@ class MonitoringApi {
     suspend fun getAllVillages(): List<Village> {
         return monitoringApi.getAllVillages()
     }
+    suspend fun getAllProjects(): List<Project> {
+        return monitoringApi.getAllProjects()
+    }
 
     suspend fun postInterviewee(interviewee: Interviewee): Interviewee {
         return monitoringApi.postInterviewee(interviewee)
@@ -89,5 +93,12 @@ class MonitoringApi {
         val body =
                 MultipartBody.Part.createFormData("image", file.name, requestFile)
         return monitoringApi.postAnswerImage(body, id)
+    }
+
+    suspend fun postAnswers(answers: List<Answer>): List<Answer> {
+        return monitoringApi.postAnswer(answers)
+    }
+    suspend fun getAllQuestions(): List<QuestionJson> {
+        return monitoringApi.getAllQuestions()
     }
 }
