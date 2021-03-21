@@ -2,7 +2,10 @@ package de.sodis.monitoring.api
 
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import de.sodis.monitoring.Config
+import de.sodis.monitoring.api.models.IntervieweeJson
 import de.sodis.monitoring.api.models.QuestionJson
+import de.sodis.monitoring.api.models.SectionJson
+import de.sodis.monitoring.api.models.SurveyJson
 import de.sodis.monitoring.apiCompletedSurveyJson.MonitoringApiInterface
 import de.sodis.monitoring.db.entity.*
 import okhttp3.MediaType
@@ -31,10 +34,10 @@ class MonitoringApi {
         monitoringApi = retrofit.create(MonitoringApiInterface::class.java)
     }
 
-    suspend fun getSurveys(): List<SurveyHeader> {
+    suspend fun getSurveys(): List<SurveyJson> {
         return monitoringApi.getAllSurveys()
     }
-    suspend fun getSections(): List<SurveySection> {
+    suspend fun getSections(): List<SectionJson> {
         return monitoringApi.getAllSections()
     }
 
@@ -45,7 +48,7 @@ class MonitoringApi {
         return monitoringApi.getAllInputTypes()
     }
 
-    suspend fun getInterviewees(): List<Interviewee> {
+    suspend fun getInterviewees(): List<IntervieweeJson> {
         return monitoringApi.getAllInterviewees()
     }
 

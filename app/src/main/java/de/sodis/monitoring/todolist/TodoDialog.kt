@@ -5,31 +5,24 @@ import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.text.Editable
-import android.text.Layout
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import de.sodis.monitoring.R
-import de.sodis.monitoring.api.MonitoringApi
-import de.sodis.monitoring.db.MonitoringDatabase
 import de.sodis.monitoring.db.entity.Interviewee
 import de.sodis.monitoring.db.entity.TodoPoint
-import de.sodis.monitoring.repository.IntervieweeRepository
-import de.sodis.monitoring.viewmodel.IntervieweeModel
+import de.sodis.monitoring.viewmodel.PlaceViewModel
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
 import de.sodis.monitoring.viewmodel.TodoPointModel
-import kotlinx.coroutines.selects.select
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.concurrent.thread
 
 class TodoDialog(
     val passedInterviewee: Interviewee?,
@@ -38,9 +31,9 @@ class TodoDialog(
     val onDismissListener: DialogInterface.OnDismissListener?
 ) : DialogFragment() {
 
-    private val intervieweeModel: IntervieweeModel by lazy {
+    private val placeViewModel: PlaceViewModel by lazy {
         ViewModelProviders.of(this, MyViewModelFactory(activity!!.application, emptyList()))
-            .get(IntervieweeModel::class.java)
+            .get(PlaceViewModel::class.java)
     }
 
     private val todoPointModel: TodoPointModel by lazy {
@@ -194,11 +187,12 @@ class TodoDialog(
 
 
 
-
-        intervieweeModel.intervieweeList.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+            /*
+            //TODO
+        placeViewModel.intervieweeList.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             searchAdapter?.setDataSet(it)
             searchAdapter?.filter.filter(searchEditText?.text)
-        })
+        })*/
         titleText = view.findViewById(R.id.tododialog_title)
         if (passedText != null) {
             titleText.setText(passedText)

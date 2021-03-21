@@ -9,13 +9,9 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.activity.OnBackPressedCallback
-import androidx.activity.addCallback
 import androidx.annotation.NonNull
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -23,22 +19,16 @@ import coil.api.load
 import de.sodis.monitoring.MainActivity
 import de.sodis.monitoring.R
 import de.sodis.monitoring.db.dao.QuestionImageDao
-import de.sodis.monitoring.db.dao.QuestionImageDao_Impl
 import de.sodis.monitoring.db.entity.Answer
 import de.sodis.monitoring.db.entity.Question
 import de.sodis.monitoring.db.entity.QuestionImage
 import de.sodis.monitoring.db.response.CompletedSurveyDetail
-import de.sodis.monitoring.viewmodel.MyViewModelFactory
-import de.sodis.monitoring.viewmodel.SurveyHistoryViewModel
 import java.io.File
 
 
 class SurveyOverviewFragment: Fragment() {
 
-    private val surveyHistoryView: SurveyHistoryViewModel by lazy {
-        ViewModelProviders.of(this, MyViewModelFactory(activity!!.application, emptyList()))
-            .get(SurveyHistoryViewModel::class.java)
-    }
+
 
 
     var questionList: List<CompletedSurveyDetail>? = null
@@ -67,10 +57,6 @@ class SurveyOverviewFragment: Fragment() {
         }*/
 
         completedSurveyID = args.completedSurveyID
-        imageDao = surveyHistoryView.monitoringDatabase.questionImageDao()
-
-
-        surveyHistoryView.setCompletedSurveyId(completedSurveyId = this.completedSurveyID)
 
     }
 
@@ -82,7 +68,6 @@ class SurveyOverviewFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View? {
 
-        questionList = surveyHistoryView.getCompletedSurvey()
 
         val observer = Observer<List<CompletedSurveyDetail>> {
             newList ->
@@ -92,7 +77,6 @@ class SurveyOverviewFragment: Fragment() {
             }
 
         }
-        surveyHistoryView.surveyCompletedList.observe(viewLifecycleOwner , observer)
 
         println(message = "onCreatView wird ausgeführt")
         mainView = inflater.inflate(R.layout.survey_overview, container, false)
@@ -159,48 +143,6 @@ class SurveyOverviewAdapter(val activity: Activity, @NonNull context: Context?, 
     }
 
     override fun onBindViewHolder(holder: SurveyOverviewViewHolder, position: Int) {
-        val question: Question = questions[position].question
-        holder.questionTextView.text = questions[position].title + "\n" + question.questionName
-        Thread(Runnable {
-            val questionImage: QuestionImage? = question.questionImageId?.let { imageDao.getById(it) }
-            if(questionImage == null) {
-                activity.runOnUiThread {
-                    holder.imageView.visibility = View.GONE
-                }
-
-            }
-            else {
-                activity.runOnUiThread {
-                    holder.imageView.load(File(questionImage.path))
-                }
-
-            }
-        }).start()
-
-
-        /*try {
-            holder.imageView.setImageResource(question.questionImageId)
-        }catch(error:Error) {
-
-        }*/
-
-
-        val answer: Answer = questions[position].answer
-        if(answer.answerText!=null) {
-            holder.answerTextView.text = answer.answerText
-            if(answer.answerText == "Si") {
-                holder.emojiView.setImageResource(R.drawable.ic_emoji_happy)
-            }
-            else {
-                holder.emojiView.setImageResource(R.drawable.ic_emoji_sad)
-            }
-
-        }
-        else {
-            holder.answerTextView.visibility = View.GONE
-        }
-
-
     }
 }
 

@@ -24,7 +24,16 @@ class PlaceRepository(
     suspend fun loadFamilies() {
         val interviewees = monitoringApi.getInterviewees()
         interviewees.forEach { interviewee ->
-            intervieweeDao.insert(interviewee)
+            intervieweeDao.insert(
+                Interviewee(
+                id = interviewee.id,
+                villageId = interviewee.village.id,
+                    imagePath = null,
+                    imageUrl = interviewee.imageUrl,
+                    name = interviewee.name,
+                    synced = true,
+                    userId = null
+            ))
         }
     }
 

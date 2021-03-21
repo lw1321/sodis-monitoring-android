@@ -15,7 +15,7 @@ interface AnswerDao {
     @Query("SELECT * FROM Answer WHERE completedSurveyId=:completedSurveyId")
     fun getAnswersByCompletedSurveyId(completedSurveyId: String): List<Answer>
 
-    @Query("SELECT Answer.* FROM Answer JOIN CompletedSurvey CS ON CS.id = Answer.completedSurveyId  WHERE imagePath IS NOT NULL AND imageSynced IS NULL AND submitted=1")
+    @Query("SELECT Answer.* FROM Answer  WHERE imagePath IS NOT NULL AND imageSynced=0")
     fun getNotSubmittedImages(): List<Answer>
 
     @Query("SELECT * FROM Answer WHERE Answer.completedSurveyId IN (:ids)")

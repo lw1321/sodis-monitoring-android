@@ -26,15 +26,27 @@ class SurveyRepository(
 
     suspend fun syncSurveys() {
         val surveys = monitoringApi.getSurveys()
-        surveys.forEach {
-            surveyHeaderDao.insert(it)
+        surveys.forEach { survey ->
+            surveyHeaderDao.insert(
+                SurveyHeader(
+                    id = survey.id,
+                    projectId = survey.project.id,
+                    surveyName = survey.surveyName
+                )
+            )
         }
     }
 
     suspend fun syncSections() {
         val sections = monitoringApi.getSections()
-        sections.forEach {
-            surveySectionDao.insert(it)
+        sections.forEach { surveySection ->
+            surveySectionDao.insert(
+                SurveySection(
+                    id = surveySection.id,
+                    sectionName = surveySection.sectionName,
+                    surveyHeaderId = surveySection.surveyHeader.id
+                )
+            )
         }
     }
 
@@ -91,18 +103,6 @@ class SurveyRepository(
 
     }
 
-
-    /**
-     * Provide a list of all in database stored survey headers.
-     */
-    fun getSurveyHeadersFilteredTechnology(technologyId: Int): LiveData<List<SurveyHeader>> {
-        return surveyHeaderDao.getAllFilteredTechnology(technologyId)
-    }
-
-    fun getSurveyHeadersFilteredTechnologySynchronous(technologyID: Int): List<SurveyHeader> {
-        return surveyHeaderDao.getAllFilteredTechnologySync(technologyID)
-    }
-
     /**
      * If internet connection is available, load all question images
      */
@@ -147,7 +147,7 @@ class SurveyRepository(
         //upload answers
         val answersToSync = answerDao.getAllNotSubmitted()
         monitoringApi.postAnswers(answersToSync)
-        answersToSync.forEach { answer->
+        answersToSync.forEach { answer ->
             answer.submitted = true
             answerDao.update(answer)
         }
@@ -168,18 +168,4 @@ class SurveyRepository(
             answerDao.update(answer)
         }
     }
-
-
-    fun getCompletedSurveys(): LiveData<List<CompletedSurveyOverview>> {
-        return completedSurveyDao.getAll()
-    }
-
-    fun getCompletedSurveysSorted(): LiveData<List<CompletedSurveyOverview>> {
-        return completedSurveyDao.getAllSorted()
-    }
-
-    fun getCompletedSurvey(completedSurveyId: String): List<CompletedSurveyDetail> {
-        return completedSurveyDao.getAnswers(completedSurveyId)
-    }
-
 }

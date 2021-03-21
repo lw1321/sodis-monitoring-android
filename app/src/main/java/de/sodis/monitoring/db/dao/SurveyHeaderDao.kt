@@ -20,11 +20,11 @@ interface SurveyHeaderDao {
     @Query("SELECT * FROM SurveyHeader")
     fun getAll(): LiveData<List<SurveyHeader>>
 
-    @Query("SELECT * FROM SurveyHeader WHERE technologyId=:technologyId")
-    fun getAllFilteredTechnology(technologyId: Int): LiveData<List<SurveyHeader>>
+    @Query("SELECT * FROM SurveyHeader WHERE projectId=:projectId")
+    fun getAllFilteredProject(projectId: Int): LiveData<List<SurveyHeader>>
 
-    @Query("SELECT * FROM SurveyHeader WHERE technologyId=:technologyId")
-    fun getAllFilteredTechnologySync(technologyId: Int): List<SurveyHeader>
+    @Query("SELECT * FROM SurveyHeader WHERE projectId=:projectId")
+    fun getAllFilteredProjectSync(projectId: Int): List<SurveyHeader>
 
     @Query("SELECT * FROM SurveyHeader WHERE id=:surveyHeaderId")
     fun getById(surveyHeaderId: Int): LiveData<SurveyHeaderResponse>

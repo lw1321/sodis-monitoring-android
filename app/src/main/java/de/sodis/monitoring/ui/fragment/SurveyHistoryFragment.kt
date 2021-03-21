@@ -5,42 +5,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isGone
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.navigation.fragment.findNavController
-import de.sodis.monitoring.default
-import de.sodis.monitoring.history
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
-import de.sodis.monitoring.viewmodel.SurveyHistoryViewModel
+import de.sodis.monitoring.viewmodel.SurveyViewModel
 import kotlinx.android.synthetic.main.continuable_list.view.*
 
 class SurveyHistoryFragment : BaseListFragment() {
 
 
-    private val surveyHistoryView: SurveyHistoryViewModel by lazy {
+    private val surveyHistoryView: SurveyViewModel by lazy {
         ViewModelProviders.of(this, MyViewModelFactory(activity!!.application, emptyList()))
-            .get(SurveyHistoryViewModel::class.java)
+            .get(SurveyViewModel::class.java)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        surveyHistoryView.surveHistoryListSorted.observe(this, Observer {
-
-            recyclerView.withModels {
-                it.forEach {
-                    history {
-                        id(it.id)
-                        firstText(it.surveyName )
-                        secondText(it.name)
-                        onClick { _ ->
-                            val action = SurveyHistoryFragmentDirections.actionMonitoringHistoryFragmentToSurveyOverview(it.id)
-                            findNavController().navigate(action)
-                        }
-                    }
-                }
-            }
-        })
 
     }
 

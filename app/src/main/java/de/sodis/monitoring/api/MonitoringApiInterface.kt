@@ -1,16 +1,19 @@
 package de.sodis.monitoring.apiCompletedSurveyJson
 
+import de.sodis.monitoring.api.models.IntervieweeJson
 import de.sodis.monitoring.api.models.QuestionJson
+import de.sodis.monitoring.api.models.SectionJson
+import de.sodis.monitoring.api.models.SurveyJson
 import de.sodis.monitoring.db.entity.*
 import okhttp3.MultipartBody
 import retrofit2.http.*
 
 interface MonitoringApiInterface {
     @GET("surveys")
-    suspend fun getAllSurveys(): List<SurveyHeader>
+    suspend fun getAllSurveys(): List<SurveyJson>
 
     @GET("survey-sections")
-    suspend fun getAllSections(): List<SurveySection>
+    suspend fun getAllSections(): List<SectionJson>
 
     @GET("questions")
     suspend fun getAllQuestions(): List<QuestionJson>
@@ -19,7 +22,7 @@ interface MonitoringApiInterface {
     suspend fun getAllOptionChoices(): List<OptionChoice>
 
     @GET("interviewees")
-    suspend fun getAllInterviewees(): List<Interviewee>
+    suspend fun getAllInterviewees(): List<IntervieweeJson>
 
     @POST("users/register")
     suspend fun registerUser(@Body user: User): User
@@ -65,7 +68,7 @@ interface MonitoringApiInterface {
             ) answerId: String
     ): Answer
 
-    @GET("/questions/input-types/")
+    @GET("questions/input-types/")
     suspend fun getAllInputTypes(): List<InputType>
 
 

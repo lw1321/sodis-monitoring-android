@@ -1,7 +1,4 @@
-package de.sodis.monitoring.db.entity fun getVillageName(id: Int): String {
-        return villageDao.getNameById(id)
-    }
-
+package de.sodis.monitoring.db.entity
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
@@ -25,8 +22,8 @@ data class Interviewee(
     val id: String,
     val name: String,
     val villageId: Int,
-    val userId: Int?,
+    val userId: Int?=null,
     var imagePath: String?=null,
     var imageUrl: String?=null,
-    var synced: Boolean?=true
+    var synced: Boolean?=false
 )

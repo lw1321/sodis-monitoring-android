@@ -5,61 +5,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isGone
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import de.sodis.monitoring.MainActivity
-import de.sodis.monitoring.default
-import de.sodis.monitoring.hide_bottom_navigation
-import de.sodis.monitoring.viewmodel.MonitoringOverviewModel
-import de.sodis.monitoring.viewmodel.MyViewModelFactory
 import kotlinx.android.synthetic.main.continuable_list.view.*
 
 class MonitoringOverviewFragment : BaseListFragment() {
 
     val args: MonitoringOverviewFragmentArgs by navArgs()
 
-    private val monitoringOverviewModel: MonitoringOverviewModel by lazy {
-        ViewModelProviders.of(this, MyViewModelFactory(activity!!.application, emptyList()))
-            .get(MonitoringOverviewModel::class.java)
-    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        monitoringOverviewModel.setTechnology(args.technologyId)
-        monitoringOverviewModel.surveyHeaderList.observe(this, Observer {
-            if (it.size == 1) {
-                //just one survey available in this category. Move forward!
-                val action =
-                    MonitoringOverviewFragmentDirections.actionMonitoringOverviewFragmentToQuestionFragment(
-                        it.first().id,
-                        args.intervieweeId
-                    )
-                findNavController().navigate(action)
-
-            }
-            recyclerView.withModels {
-                it.forEach {
-                    default {
-                        id(it.id)
-                        text(it.surveyName)
-                        onClick { _ ->
-                            (activity as MainActivity).hide_bottom_navigation()
-
-                            val action =
-                                MonitoringOverviewFragmentDirections.actionMonitoringOverviewFragmentToQuestionFragment(
-                                    it.id,
-                                    args.intervieweeId
-                                )
-                            findNavController().navigate(action)
-                        }
-                    }
-                }
-
-            }
-
-        })
 
     }
 
