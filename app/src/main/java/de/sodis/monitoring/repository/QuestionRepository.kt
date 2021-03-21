@@ -2,7 +2,6 @@ package de.sodis.monitoring.repository
 
 import android.content.Context
 import de.sodis.monitoring.api.MonitoringApi
-import de.sodis.monitoring.api.model.CompletedSurveyJson
 import de.sodis.monitoring.db.dao.*
 import de.sodis.monitoring.db.entity.*
 import de.sodis.monitoring.db.response.QuestionAnswer
@@ -35,14 +34,14 @@ class QuestionRepository(
         }
     }
 
-    suspend fun uploadSurveys() {
+    suspend fun syncCompletedSurveys() {
         // TODO implement after server endpoints are adjust
         monitoringApi.postCompletedSurveys(completedSurveyDao.getAllUnsubmitted())
         //upload answers
         //upload images
     }
 
-    suspend fun uploadAnswerImages(applicationContext: Context) {
+    suspend fun uploadSurveyImages(applicationContext: Context) {
         //check for not uploaded images where the answers are already synced.
         val notSubmittedImages = answerDao.getNotSubmittedImages()
         //upload the images

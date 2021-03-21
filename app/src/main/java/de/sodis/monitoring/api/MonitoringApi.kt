@@ -33,6 +33,16 @@ class MonitoringApi {
     suspend fun getSurveys(): List<SurveyHeader> {
         return monitoringApi.getAllSurveys()
     }
+    suspend fun getSections(): List<SurveySection> {
+        return monitoringApi.getAllSections()
+    }
+
+    suspend fun getOptionChoices(): List<OptionChoice> {
+        return monitoringApi.getAllOptionChoices()
+    }
+    suspend fun getInputTypes(): List<InputType> {
+        return monitoringApi.getAllInputTypes()
+    }
 
     suspend fun getInterviewees(): List<Interviewee> {
         return monitoringApi.getAllInterviewees()
@@ -42,16 +52,8 @@ class MonitoringApi {
         return monitoringApi.registerUser(user)
     }
 
-    suspend fun getAllUsers(): List<User> {
-        return monitoringApi.getAllUsers()
-    }
-
-    suspend fun getMyself(): User {
-        return monitoringApi.getMyself()
-    }
-
-    suspend fun postCompletedSurveys(completedSurveyJsonList: List<CompletedSurvey>): List<CompletedSurvey> {
-        return monitoringApi.postCompletedSurveys(completedSurveyJsonList)
+    suspend fun postCompletedSurveys(completedSurveyList: List<CompletedSurvey>): List<CompletedSurvey> {
+        return monitoringApi.postCompletedSurveys(completedSurveyList)
     }
 
     suspend fun getQuestionImages(): List<QuestionImage> {

@@ -30,8 +30,10 @@ class UploadWorker(appContext: Context, workerParams: WorkerParameters) :
         )
         return try {
             intervieweeRepository.syncInterviewee()
-            questionRepository.uploadSurveys()
-            questionRepository.uploadAnswerImages(applicationContext)
+            questionRepository.syncCompletedSurveys()
+            //TODO upload answers
+            questionRepository.uploadSurveyImages(applicationContext)
+
             intervieweeRepository.uploadProfilPictures()
 
             Result.success()

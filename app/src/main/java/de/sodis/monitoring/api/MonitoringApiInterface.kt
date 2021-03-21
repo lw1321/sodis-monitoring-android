@@ -8,20 +8,23 @@ interface MonitoringApiInterface {
     @GET("surveys")
     suspend fun getAllSurveys(): List<SurveyHeader>
 
+    @GET("survey-sections")
+    suspend fun getAllSections(): List<SurveySection>
+
+    @GET("questions")
+    suspend fun getAllQuestions(): List<Question>
+
+    @GET("option-choices")
+    suspend fun getAllOptionChoices(): List<OptionChoice>
+
     @GET("interviewees")
     suspend fun getAllInterviewees(): List<Interviewee>
 
     @POST("users/register")
     suspend fun registerUser(@Body user: User): User
 
-    @GET("myself")
-    suspend fun getMyself(): User
-
-    @GET("users")
-    suspend fun getAllUsers(): List<User>
-
     @POST("completed-surveys")
-    suspend fun postCompletedSurveys(@Body completedSurveyJson: List<CompletedSurvey>): List<CompletedSurvey>
+    suspend fun postCompletedSurveys(@Body completedSurveyList: List<CompletedSurvey>): List<CompletedSurvey>
 
     @GET("question-images")
     suspend fun getAllQuestionImages(): List<QuestionImage>
@@ -45,6 +48,9 @@ interface MonitoringApiInterface {
     @POST("interviewees")
     suspend fun postInterviewee(@Body interviewee: Interviewee): Interviewee
 
+    @POST("answers/")
+    suspend fun postAnswer(@Body answerList: List<Answer>): List<Answer>
+
     @Multipart
     @POST("answers/{answerId}/images")
     suspend fun postAnswerImage(
@@ -54,4 +60,7 @@ interface MonitoringApiInterface {
                     encoded = false
             ) answerId: String
     ): Answer
+
+    @GET("/questions/input-types/")
+    suspend fun getAllInputTypes(): List<InputType>
 }

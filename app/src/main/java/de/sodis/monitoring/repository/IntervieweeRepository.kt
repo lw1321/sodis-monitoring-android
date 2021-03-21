@@ -18,32 +18,25 @@ class IntervieweeRepository(
         private val monitoringApi: MonitoringApi
 ) {
 
-
-    suspend fun loadAll() {
-        //let's request a new list of interviewees to be sure our local data is up to data.
-        //load villages
+    suspend fun loadVillages(){
         val villageResponse = monitoringApi.getAllVillages()
         villageResponse.forEach {
             villageDao.insert(it)
         }
+    }
+
+    suspend fun loadFamilies() {
+        //let's request a new list of interviewees to be sure our local data is up to data.
+        //load villages
 
         val respo = monitoringApi.getInterviewees()
 
-        for (interviewee: IntervieweeJson in respo) {
+        for (interviewee: Interviewee in respo) {
             //insert interviewee
-            val intervieweeEntity = Interviewee(
-                    id = interviewee.id,
-                    name = interviewee.name,
-                    villageId = interviewee.village.id,
-                    userId = null,
-                    imagePath = null,//todo add attributes server side
-                    imageUrl = null//todo save image from url local
-            )
-
             if (intervieweeDao.exists(interviewee.id) == 0) {
-                intervieweeDao.insert(intervieweeEntity)
+                intervieweeDao.insert(interviewee)
             } else {
-                intervieweeDao.update(intervieweeEntity)
+                intervieweeDao.update(interviewee)
             }
         }
 
