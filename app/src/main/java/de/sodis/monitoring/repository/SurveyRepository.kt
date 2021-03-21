@@ -137,16 +137,26 @@ class SurveyRepository(
         }
     }
 
-    suspend fun syncCompletedSurveys(applicationContext: Context) {
+    suspend fun syncCompletedSurveys() {
         // TODO implement after server endpoints are adjust
         val surveysToSync = completedSurveyDao.getAllUnsubmitted()
         monitoringApi.postCompletedSurveys(surveysToSync)
+    }
+
+    suspend fun syncAnswers() {
         //upload answers
-        val answersToSync = answerDao.getAllBySurveys(surveysToSync.map { it.id })
+        val answersToSync = answerDao.getAllNotSubmitted()
         monitoringApi.postAnswers(answersToSync)
+        answersToSync.forEach { answer->
+            answer.submitted = true
+            answerDao.update(answer)
+        }
+    }
+
+    suspend fun syncAnswerImages(applicationContext: Context) {
         //upload images
         //check for not uploaded images where the answers are already synced.
-        val answerImagesToSync = answerDao.getNotSubmittedImages()
+        val answerImagesToSync = answerDao.getAllImageNotSynced()
         //upload the images
         answerImagesToSync.forEach { answer ->
             //Compress File
@@ -154,13 +164,17 @@ class SurveyRepository(
             val compressedImageFile =
                 Compressor.compress(applicationContext, File(answer.imagePath!!))
             monitoringApi.postAnswerImage(answer.id, compressedImageFile)
+            answer.imageSynced = true
+            answerDao.update(answer)
         }
     }
+
+
     fun getCompletedSurveys(): LiveData<List<CompletedSurveyOverview>> {
         return completedSurveyDao.getAll()
     }
 
-    fun getCompletedSurveysSorted():LiveData<List<CompletedSurveyOverview>> {
+    fun getCompletedSurveysSorted(): LiveData<List<CompletedSurveyOverview>> {
         return completedSurveyDao.getAllSorted()
     }
 

@@ -30,5 +30,6 @@ data class Answer(
     val questionId: Int,
     var completedSurveyId: String?,
     var imagePath: String?,
+    var submitted: Boolean = false,
     var imageSynced: Boolean?//TODO
 )

@@ -41,9 +41,9 @@ class UploadWorker(appContext: Context, workerParams: WorkerParameters) :
             placeRepository.syncInterviewee()
             placeRepository.uploadProfilPictures()
             //SYNC collected SURVEY DATA
-            surveyRepository.syncCompledSurveys(applicationContext)
+            surveyRepository.syncCompletedSurveys()
             surveyRepository.syncAnswers()
-            surveyRepository.syncAnswerImages()
+            surveyRepository.syncAnswerImages(applicationContext)
             Result.success()
         } catch (e: Exception) {
             val crashlytics = FirebaseCrashlytics.getInstance()
