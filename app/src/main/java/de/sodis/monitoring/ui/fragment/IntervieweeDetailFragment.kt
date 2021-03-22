@@ -12,9 +12,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.FileProvider
 import androidx.core.view.isGone
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
+import de.sodis.monitoring.MainActivity
+import de.sodis.monitoring.default
+import de.sodis.monitoring.hide_bottom_navigation
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
 import de.sodis.monitoring.viewmodel.PlaceViewModel
+import de.sodis.monitoring.viewmodel.SurveyViewModel
 import kotlinx.android.synthetic.main.continuable_list.view.*
 import kotlinx.android.synthetic.main.view_holder_picture.view.*
 import java.io.File
@@ -29,6 +36,12 @@ class IntervieweeDetailFragment : BaseListFragment() {
         ViewModelProviders.of(this, MyViewModelFactory(activity!!.application, emptyList()))
             .get(PlaceViewModel::class.java)
     }
+    private val surveyViewModel: SurveyViewModel by lazy {
+        ViewModelProviders.of(this, MyViewModelFactory(activity!!.application, emptyList()))
+            .get(SurveyViewModel::class.java)
+    }
+    val args: IntervieweeDetailFragmentArgs by navArgs()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -99,6 +112,35 @@ class IntervieweeDetailFragment : BaseListFragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = super.onCreateView(inflater, container, savedInstanceState)
+
+        placeViewModel.familyList.observe(viewLifecycleOwner, Observer { familyList ->
+            surveyViewModel.surveyList.observe(viewLifecycleOwner, Observer { surveyList ->
+                recyclerView.withModels {
+                    familyList.filter { it.id == args.intervieweeId }.forEach {
+                        default {//TODO USE families view holder
+                            id(it.id)
+                            text(it.name)
+                            onClick { clicked ->
+                                (activity as MainActivity).hide_bottom_navigation()
+                                //TODO go to surveys
+                            }
+                        }
+                    }
+                    surveyList.forEach { survey ->
+                        default {
+                            id(survey.surveyId)
+                            text(survey.surveyName + " / " + survey.projectName)
+                            onClick { clicked ->
+                                (activity as MainActivity).hide_bottom_navigation()
+                                //TODO go to surveys
+                            }
+                        }
+                    }
+                }
+            })
+
+        })
+
         view?.navigation_forward_button_1?.isGone = true
         view?.navigation_forward_button_left?.isGone = true
         return view

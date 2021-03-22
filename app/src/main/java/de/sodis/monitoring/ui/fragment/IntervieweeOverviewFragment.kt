@@ -56,10 +56,9 @@ class IntervieweeOverviewFragment : BaseListFragment() {
                             (activity as MainActivity).hide_bottom_navigation()
 
                             val action =
-                                QuestionFragmentDirections.actionQuestionFragmentToIntervieweeDetailFragment(
+                                IntervieweeOverviewFragmentDirections.actionIntervieweeOverviewFragmentToIntervieweeDetailFragment(
                                     intervieweeId = it.id
                                 )
-                            findNavController().navigate(action)
                             findNavController().navigate(action)
                         }
                     }

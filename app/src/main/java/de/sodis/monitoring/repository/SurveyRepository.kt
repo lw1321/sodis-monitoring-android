@@ -5,8 +5,7 @@ import androidx.lifecycle.LiveData
 import de.sodis.monitoring.api.MonitoringApi
 import de.sodis.monitoring.db.dao.*
 import de.sodis.monitoring.db.entity.*
-import de.sodis.monitoring.db.response.CompletedSurveyDetail
-import de.sodis.monitoring.db.response.CompletedSurveyOverview
+import de.sodis.monitoring.db.response.SurveyList
 import id.zelory.compressor.Compressor
 import java.io.File
 
@@ -167,5 +166,9 @@ class SurveyRepository(
             answer.imageSynced = true
             answerDao.update(answer)
         }
+    }
+
+    fun getSurveyList(): LiveData<List<SurveyList>> {
+        return surveyHeaderDao.getAllSurveys()
     }
 }

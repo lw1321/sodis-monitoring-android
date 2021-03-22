@@ -3,14 +3,11 @@ package de.sodis.monitoring.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import com.google.android.gms.location.FusedLocationProviderClient
 import de.sodis.monitoring.api.MonitoringApi
 import de.sodis.monitoring.db.MonitoringDatabase
 import de.sodis.monitoring.db.entity.Answer
-import de.sodis.monitoring.db.entity.Interviewee
-import de.sodis.monitoring.db.response.QuestionAnswer
-import de.sodis.monitoring.db.response.SurveyHeaderResponse
+import de.sodis.monitoring.db.response.SurveyList
 import de.sodis.monitoring.repository.SurveyRepository
 
 
@@ -29,6 +26,7 @@ class SurveyViewModel(
     fun setAnswer(Answer:Answer){
         TODO("Not implemented")
     }
+    var surveyList: LiveData<List<SurveyList>>
 
     /**
      * Repository for interviewee actions
@@ -47,14 +45,9 @@ class SurveyViewModel(
             completedSurveyDao = db.completedSurveyDao(),
             monitoringApi = MonitoringApi()
         )
-    /**
-     * holds all ui relevant informations for the questions
-     */
-    val questionItemList: MediatorLiveData<List<QuestionAnswer>> = MediatorLiveData()
-
-    /**
-     * Repository for interviewee actions
-     */
+        init {
+            surveyList = surveyRepository.getSurveyList()
+        }
 
     /**
      *Location Client, will be initialized when permission is granted
