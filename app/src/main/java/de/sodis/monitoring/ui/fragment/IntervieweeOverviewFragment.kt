@@ -15,10 +15,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.navigation.navOptions
 import com.google.android.material.snackbar.Snackbar
-import de.sodis.monitoring.MainActivity
-import de.sodis.monitoring.R
-import de.sodis.monitoring.pictureListItem
-import de.sodis.monitoring.show_bottom_navigation
+import de.sodis.monitoring.*
 import de.sodis.monitoring.viewmodel.PlaceViewModel
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
 import kotlinx.android.synthetic.main.continuable_list.view.*
@@ -39,7 +36,7 @@ class IntervieweeOverviewFragment : BaseListFragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        var villageId = args.villageId
+
     }
 
     override fun onCreateView(
@@ -48,6 +45,32 @@ class IntervieweeOverviewFragment : BaseListFragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = super.onCreateView(inflater, container, savedInstanceState)
+        var villageId = args.villageId
+        placeViewModel.familyList.observe(viewLifecycleOwner, Observer {familyList ->
+            recyclerView.withModels {
+                familyList.filter { it.villageId == villageId }.forEach {
+                    default {//TODO USE families view holder
+                        id(it.id)
+                        text(it.name)
+                        onClick { clicked ->
+                            (activity as MainActivity).hide_bottom_navigation()
+
+                            val action =
+                                QuestionFragmentDirections.actionQuestionFragmentToIntervieweeDetailFragment(
+                                    intervieweeId = it.id
+                                )
+                            findNavController().navigate(action)
+                            findNavController().navigate(action)
+                        }
+                    }
+                }
+            }
+        })
+
+
+
+
+
         view?.navigation_forward_button_1?.isGone = false
         view?.navigation_forward_button_1?.setImageResource(R.drawable.ic_person_add_black_24dp)
         view?.navigation_forward_button_1?.setOnClickListener {

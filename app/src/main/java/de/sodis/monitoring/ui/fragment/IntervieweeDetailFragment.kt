@@ -84,12 +84,11 @@ class IntervieweeDetailFragment : BaseListFragment() {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
             //save the image path in our database..
             //set image to iamgeview
-            if (currentPhotoPath != null) {//todo show image immediately
-                //store the file
-                placeViewModel.storeImagePath(currentPhotoPath)
-                BitmapFactory.decodeFile(currentPhotoPath)?.also { bitmap ->
-                    view!!.imageView.setImageBitmap(bitmap)
-                }
+            //todo show image immediately
+            //store the file
+            placeViewModel.storeImagePath(currentPhotoPath)
+            BitmapFactory.decodeFile(currentPhotoPath)?.also { bitmap ->
+                view!!.imageView.setImageBitmap(bitmap)
             }
         }
     }

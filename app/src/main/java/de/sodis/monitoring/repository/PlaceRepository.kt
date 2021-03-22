@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import de.sodis.monitoring.api.MonitoringApi
 import de.sodis.monitoring.db.dao.*
 import de.sodis.monitoring.db.entity.*
+import de.sodis.monitoring.db.response.FamilyList
 import de.sodis.monitoring.db.response.IntervieweeDetail
 import java.util.*
 
@@ -37,35 +38,9 @@ class PlaceRepository(
         }
     }
 
-    /*
-    just basic info
-     */
-    fun getAll(): LiveData<List<Interviewee>> {
-        return intervieweeDao.getAll()
-    }
 
-    fun getByName(name: String): LiveData<Interviewee> {
-        return intervieweeDao.getByName(name)
-    }
-
-    fun getAllVillages(): LiveData<List<Village>> {
-        return villageDao.getAll()
-    }
-
-    fun getVillageByID(id: Int): Village {
-        return villageDao.getById(id)
-    }
-
-    fun getByVillage(villageId: Int): LiveData<List<Interviewee>> {
-        return intervieweeDao.getByVillage(villageId)
-    }
-
-    fun searchByName(name: String): List<Interviewee> {
-        return intervieweeDao.searchByName(name)
-    }
-
-    fun getIntervieweeByID(intervieweeId: String): Interviewee {
-        return intervieweeDao.getById(intervieweeId)
+    fun getFamilyList(): LiveData<List<FamilyList>>{
+        return intervieweeDao.getFamilyList()
     }
 
     /**
@@ -86,17 +61,7 @@ class PlaceRepository(
         )
     }
 
-    fun saveInterviewee(interviewee: Interviewee) {
-        intervieweeDao.insert(interviewee)
-    }
 
-    fun updateImagePath(id: String, currentPhotoPath: String) {
-        val intervieweeByID = getIntervieweeByID(id)
-
-        intervieweeByID.imagePath = currentPhotoPath
-        intervieweeByID.synced = false
-        intervieweeDao.update(intervieweeByID)
-    }
 
     suspend fun syncProfilPictures() {
         val allNotSynced = intervieweeDao.getNotsyncedProfilePictures()
