@@ -53,8 +53,6 @@ class IntervieweeOverviewFragment : BaseListFragment() {
                         id(it.id)
                         text(it.name)
                         onClick { clicked ->
-                            (activity as MainActivity).hide_bottom_navigation()
-
                             val action =
                                 IntervieweeOverviewFragmentDirections.actionIntervieweeOverviewFragmentToIntervieweeDetailFragment(
                                     intervieweeId = it.id

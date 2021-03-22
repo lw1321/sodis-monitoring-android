@@ -43,7 +43,6 @@ class VillageFragment : BaseListFragment() {
                         id(it.id)
                         text(it.name)
                         onClick { clicked ->
-                            (activity as MainActivity).hide_bottom_navigation()
                             val action =
                                 VillageFragmentDirections.actionVillageFragmentToIntervieweeOverviewFragment(
                                     it.id!!

@@ -18,7 +18,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import de.sodis.monitoring.MainActivity
 import de.sodis.monitoring.default
-import de.sodis.monitoring.hide_bottom_navigation
+import de.sodis.monitoring.todolist.TodoDialog
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
 import de.sodis.monitoring.viewmodel.PlaceViewModel
 import de.sodis.monitoring.viewmodel.SurveyViewModel
@@ -97,7 +97,7 @@ class IntervieweeDetailFragment : BaseListFragment() {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
             //save the image path in our database..
             //set image to iamgeview
-            //todo show image immediately
+            //todo show image immediately, //recreate recyclerview
             //store the file
             placeViewModel.storeImagePath(currentPhotoPath)
             BitmapFactory.decodeFile(currentPhotoPath)?.also { bitmap ->
@@ -117,12 +117,10 @@ class IntervieweeDetailFragment : BaseListFragment() {
             surveyViewModel.surveyList.observe(viewLifecycleOwner, Observer { surveyList ->
                 recyclerView.withModels {
                     familyList.filter { it.id == args.intervieweeId }.forEach {
-                        default {//TODO USE families view holder
+                        default {//TODO USE families view holder, set image creation routine
                             id(it.id)
                             text(it.name)
                             onClick { clicked ->
-                                (activity as MainActivity).hide_bottom_navigation()
-                                //TODO go to surveys
                             }
                         }
                     }
@@ -131,8 +129,9 @@ class IntervieweeDetailFragment : BaseListFragment() {
                             id(survey.surveyId)
                             text(survey.surveyName + " / " + survey.projectName)
                             onClick { clicked ->
-                                (activity as MainActivity).hide_bottom_navigation()
-                                //TODO go to surveys
+                                //go to survey
+                                var dialog = SurveyDialogFragment(null, null,activity!!.applicationContext, null)
+                                dialog.show(childFragmentManager, "todo")
                             }
                         }
                     }

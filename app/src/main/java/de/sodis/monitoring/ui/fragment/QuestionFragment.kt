@@ -10,7 +10,9 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.text.InputType
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import androidx.core.content.FileProvider
 import androidx.core.view.isGone
 import androidx.core.widget.addTextChangedListener
@@ -54,9 +56,7 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        (activity as MainActivity).hide_bottom_navigation()
         surveyId = args.surveyId
-
 
         view?.navigation_forward_button_left?.setOnClickListener {
             val action = QuestionFragmentDirections.actionQuestionFragmentSelf(
