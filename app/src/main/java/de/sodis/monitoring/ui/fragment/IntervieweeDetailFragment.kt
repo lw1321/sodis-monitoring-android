@@ -14,11 +14,8 @@ import androidx.core.content.FileProvider
 import androidx.core.view.isGone
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import de.sodis.monitoring.MainActivity
 import de.sodis.monitoring.default
-import de.sodis.monitoring.todolist.TodoDialog
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
 import de.sodis.monitoring.viewmodel.PlaceViewModel
 import de.sodis.monitoring.viewmodel.SurveyViewModel
@@ -130,7 +127,8 @@ class IntervieweeDetailFragment : BaseListFragment() {
                             text(survey.surveyName + " / " + survey.projectName)
                             onClick { clicked ->
                                 //go to survey
-                                var dialog = SurveyDialogFragment(null, null,activity!!.applicationContext, null)
+                                surveyViewModel.startSurvey(survey.surveyId)
+                                var dialog = SurveyDialogFragment(surveyId = survey.surveyId)
                                 dialog.show(childFragmentManager, "todo")
                             }
                         }

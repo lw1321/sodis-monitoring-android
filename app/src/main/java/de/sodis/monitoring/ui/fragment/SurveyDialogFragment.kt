@@ -1,36 +1,26 @@
 package de.sodis.monitoring.ui.fragment
 
-import android.app.DatePickerDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import de.sodis.monitoring.R
-import de.sodis.monitoring.db.entity.Interviewee
-import de.sodis.monitoring.db.entity.TodoPoint
-import de.sodis.monitoring.viewmodel.PlaceViewModel
+import com.airbnb.epoxy.EpoxyRecyclerView
+import de.sodis.monitoring.MainActivity
+import de.sodis.monitoring.default
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
 import de.sodis.monitoring.viewmodel.SurveyViewModel
-import de.sodis.monitoring.viewmodel.TodoPointModel
-import java.text.SimpleDateFormat
+import kotlinx.android.synthetic.main.list.view.*
 import java.util.*
-import kotlin.collections.ArrayList
 
-class SurveyDialogFragment(
-    val passedInterviewee: Interviewee?,
-    val passedText: String?,
-    applicationContext: Context,
-    val onDismissListener: DialogInterface.OnDismissListener?
-) : DialogFragment() {
+class SurveyDialogFragment(val surveyId: Int) : DialogFragment() {
+
+    lateinit var recyclerView: EpoxyRecyclerView
 
     private val surveyViewModel: SurveyViewModel by lazy {
         ViewModelProviders.of(this, MyViewModelFactory(activity!!.application, emptyList()))
@@ -40,6 +30,69 @@ class SurveyDialogFragment(
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        super.onCreateView(inflater, container, savedInstanceState)
+        val view = inflater.inflate(de.sodis.monitoring.R.layout.continuable_list, container, false)
+        recyclerView = view.list
+        recyclerView.layoutManager = LinearLayoutManager(context)
+        recyclerView.recycledViewPool.clear()
+        surveyViewModel.question.observe(
+            viewLifecycleOwner,
+            androidx.lifecycle.Observer { questionList ->
+                recyclerView.withModels {
+                    default {
+                        id(questionList.first().id)
+                        text(questionList.first().name)
+                        onClick { clicked ->
+                        }
+                    }
+                    when (questionList.first().inputTypeId) {
+                        1 -> { //Single Choice
+                            questionList.forEach {
+                                default {
+                                    id(it.questionOptionId)
+                                    text(it.optionChoiceName)
+                                    onClick { clicked ->
+                                    }
+                                }
+                            }
+                        }
+                        2 -> { //Text
+                            default {
+                                id(questionList.first().questionOptionId)
+                                text("TEXTANTWORT")
+                                onClick { clicked ->
+                                }
+                            }
+                        }
+                        4 -> {
+                            default {
+                                id(questionList.first().questionOptionId)
+                                text("Bild aufnehmen!")
+                                onClick { clicked ->
+                                    //TODO image intent
+                                }
+                            }
+                        }
+                    }
+                }
+            })
+        //TODO add move forward and backward UI and Logic
+        return view
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        val imm: InputMethodManager =
+            (activity as MainActivity).getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view!!.windowToken, 0)
+
     }
 
     override fun onStart() {
@@ -54,16 +107,6 @@ class SurveyDialogFragment(
 
     override fun onDismiss(dialog: DialogInterface) {
         super.onDismiss(dialog)
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        super.onCreateView(inflater, container, savedInstanceState)
-        var view = inflater.inflate(R.layout.view_holder_question, container, false)
-        return view
     }
 
 

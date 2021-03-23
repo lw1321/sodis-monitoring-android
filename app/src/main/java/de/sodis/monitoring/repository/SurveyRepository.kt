@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import de.sodis.monitoring.api.MonitoringApi
 import de.sodis.monitoring.db.dao.*
 import de.sodis.monitoring.db.entity.*
+import de.sodis.monitoring.db.response.QuestionItem
 import de.sodis.monitoring.db.response.SurveyList
 import id.zelory.compressor.Compressor
 import java.io.File
@@ -171,4 +172,9 @@ class SurveyRepository(
     fun getSurveyList(): LiveData<List<SurveyList>> {
         return surveyHeaderDao.getAllSurveys()
     }
+
+    fun getQuestionList(surveyId: Int): List<QuestionItem> {
+        return questionDao.getQuestions(surveyId)
+    }
+
 }
