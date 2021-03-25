@@ -99,51 +99,8 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
                     dialog.show(childFragmentManager, "todo_in_survey")
                     */
                 } else {
-                    questionViewModel.listOfAnsweredQuestions += currentPosition
-                    val hasNext = questionViewModel.nextQuestion()
-                    if (hasNext) {
-                        val action =
-                            QuestionFragmentDirections.actionQuestionFragmentSelf(
-                                args.surveyId,
-                                intervieweeId = args.intervieweeId
-                            )
-                        findNavController().navigate(action)
-                    } else {
-                        val finishDialog: AlertDialog.Builder = AlertDialog.Builder(context!!)
-                        finishDialog.setTitle("enviar cuestionario")
-                        finishDialog.setMessage("¿Guardar respuestas?")
-                        finishDialog.setPositiveButton(
-                            "Si"
-                        ) { _, _ ->
-                            questionViewModel.finishSurvey()
-                            Snackbar.make(
-                                view!!.rootView.findViewById(R.id.nav_host_fragment),
-                                getString(R.string.message_monitoring_completed),
-                                Snackbar.LENGTH_LONG
-                            ).show()
-                            val action =
-                                QuestionFragmentDirections.actionQuestionFragmentToIntervieweeDetailFragment(
-                                    intervieweeId = args.intervieweeId
-                                )
-                            findNavController().navigate(action)
-                            (activity as MainActivity).show_bottom_navigation()
-                        }
-                        finishDialog.setNegativeButton(
-                            "No"
-                        ) { _, _ ->
-                            Snackbar.make(
-                                view!!.rootView.findViewById(R.id.nav_host_fragment),
-                                getString(R.string.message_monitoring_answer_required),
-                                Snackbar.LENGTH_LONG
-                            ).show()
-                        }
-                        val alert: AlertDialog = finishDialog.create()
-                        alert.setCanceledOnTouchOutside(false)
-                        alert.show()
-                    }
+                    nextQuestion()
                 }
-
-
             } else {
                 Snackbar.make(
                     view!!,
@@ -169,6 +126,51 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
 
 
         return view
+    }
+
+    private fun nextQuestion() {
+        questionViewModel.listOfAnsweredQuestions += currentPosition
+        val hasNext = questionViewModel.nextQuestion()
+        if (hasNext) {
+            val action =
+                QuestionFragmentDirections.actionQuestionFragmentSelf(
+                    args.surveyId,
+                    intervieweeId = args.intervieweeId
+                )
+            findNavController().navigate(action)
+        } else {
+            val finishDialog: AlertDialog.Builder = AlertDialog.Builder(context!!)
+            finishDialog.setTitle("enviar cuestionario")
+            finishDialog.setMessage("¿Guardar respuestas?")
+            finishDialog.setPositiveButton(
+                "Si"
+            ) { _, _ ->
+                questionViewModel.finishSurvey(args.intervieweeId)
+                Snackbar.make(
+                    view!!.rootView.findViewById(R.id.nav_host_fragment),
+                    getString(R.string.message_monitoring_completed),
+                    Snackbar.LENGTH_LONG
+                ).show()
+                val action =
+                    QuestionFragmentDirections.actionQuestionFragmentToIntervieweeDetailFragment(
+                        intervieweeId = args.intervieweeId
+                    )
+                findNavController().navigate(action)
+                (activity as MainActivity).show_bottom_navigation()
+            }
+            finishDialog.setNegativeButton(
+                "No"
+            ) { _, _ ->
+                Snackbar.make(
+                    view!!.rootView.findViewById(R.id.nav_host_fragment),
+                    getString(R.string.message_monitoring_answer_required),
+                    Snackbar.LENGTH_LONG
+                ).show()
+            }
+            val alert: AlertDialog = finishDialog.create()
+            alert.setCanceledOnTouchOutside(false)
+            alert.show()
+        }
     }
 
     private fun createQuestion(questionList: List<QuestionItem>) {
@@ -198,7 +200,8 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
                                     answerText = null,
                                     questionId = currentQuestion.first().id
                                 )
-
+                                // go directly to next question
+                                nextQuestion()
                             }
                         }
                     }
@@ -314,7 +317,7 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
             )
             findNavController().navigate(action)
         } else {
-            questionViewModel.finishSurvey()
+            questionViewModel.finishSurvey(args.intervieweeId)
             Snackbar.make(
                 view!!.rootView.findViewById(R.id.nav_host_fragment),
                 getString(R.string.message_monitoring_completed),

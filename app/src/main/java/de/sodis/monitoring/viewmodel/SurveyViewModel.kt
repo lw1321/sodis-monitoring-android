@@ -87,6 +87,7 @@ class SurveyViewModel(
 
     private fun saveSurvey(longitude: Double? = null, latitude: Double? = null) {
         surveyRepository.saveCompletedSurvey(
+            surveyHeaderId = surveyId,
             answerMap = answerMap,
             intervieweeId = currentInterviewee,
             longitude = longitude,

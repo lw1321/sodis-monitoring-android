@@ -35,17 +35,14 @@ import java.util.*
 
 class QuestionViewModel(
     private val mApplication: Application,
-    surveyId: Int
+    private val surveyId: Int
 ) : AndroidViewModel(mApplication) {
 
 
     /**
      * Selected Survey, joined sql Response
      */
-    /**
-     * Selected interviewee
-     */
-    var interviewee: IntervieweeDetail? = null
+
 
     lateinit var questionItemList: List<QuestionItem>
 
@@ -63,9 +60,9 @@ class QuestionViewModel(
     private lateinit var fusedLocationClient: FusedLocationProviderClient
 
 
-    val db = MonitoringDatabase.getDatabase(context = mApplication.applicationContext)
+    private val db = MonitoringDatabase.getDatabase(context = mApplication.applicationContext)
 
-    val surveyRepository =
+    private val surveyRepository =
         SurveyRepository(
             inputTypeDao = db.inputTypeDao(),
             optionChoiceDao = db.optionChoiceDao(),
@@ -78,13 +75,7 @@ class QuestionViewModel(
             completedSurveyDao = db.completedSurveyDao(),
             monitoringApi = MonitoringApi()
         )
-    private val placeRepository =
-        PlaceRepository(
-            intervieweeDao = db.intervieweeDao(),
-            villageDao = db.villageDao(),
-            userDao = db.userDao(),
-            monitoringApi = MonitoringApi()
-        )
+
 
     /**
      * current position in questionaire
@@ -108,11 +99,6 @@ class QuestionViewModel(
         }
     }
 
-    fun setInterviewee(id: String) {
-        viewModelScope.launch(Dispatchers.IO) {
-            interviewee = placeRepository.getById(id)
-        }
-    }
 
     fun setAnswer(questionId: Int, questionOption: Int?, imagePath: String?, answerText: String?) {
         // create Answer Object, map it with the position and replace if answer at
@@ -132,7 +118,7 @@ class QuestionViewModel(
     /**
      * increases the adapter position if possible, else starting saving routine
      */
-    fun finishSurvey() {
+    fun finishSurvey(intervieweeId: String) {
         viewModelScope.launch(Dispatchers.IO) {
             // GET last know location
             if (ContextCompat.checkSelfPermission(
@@ -146,17 +132,17 @@ class QuestionViewModel(
                     .addOnSuccessListener { location: Location? ->
                         // Got last known location. In some rare situations this can be null.
                         if (location != null) {
-                            saveSurvey(location.latitude, location.longitude)
+                            saveSurvey(intervieweeId, location.latitude, location.longitude)
                         } else {
-                            saveSurvey()
+                            saveSurvey(intervieweeId)
                         }
                     }.addOnFailureListener { it ->
                         //Location Request failed, save survey without location
-                        saveSurvey()
+                        saveSurvey(intervieweeId)
                     }
             } else {
                 //Location not granted, save survey without location
-                saveSurvey()
+                saveSurvey(intervieweeId)
             }
         }
         //start worker manager
@@ -186,22 +172,18 @@ class QuestionViewModel(
         return true
     }
 
-    private fun saveSurvey(latitude: Double? = null, longitude: Double? = null) {
+    private fun saveSurvey(intervieweeId: String, latitude: Double? = null, longitude: Double? = null) {
         viewModelScope.launch(Dispatchers.IO) {
             surveyRepository.saveCompletedSurvey(
+                surveyId,
                 answerMap,
-                intervieweeId = interviewee!!.interviewee.id,
+                intervieweeId = intervieweeId,
                 latitude = latitude,
                 longitude = longitude
             )
             answerMap.clear()
-            interviewee = null
         }
 
-    }
-
-    fun setSurveyId(surveyId: Int) {
-        createQuestionList(surveyId)
     }
 
     fun isAnswered(id: Int): Boolean {
@@ -222,11 +204,6 @@ class QuestionViewModel(
         }
         return false
     }
-
-    fun answerToID(id: Int): Answer? {
-        return answerMap[id];
-    }
-
 
     //returns true if the answer is "Escribir en la lista de tareas"
     fun createTodo(): Boolean {

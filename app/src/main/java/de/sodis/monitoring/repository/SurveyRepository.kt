@@ -128,12 +128,13 @@ class SurveyRepository(
      * Save questions in loval database, also try to upload them..Also save if the upload was successfully
      */
     fun saveCompletedSurvey(
+        surveyHeaderId: Int,
         answerMap: MutableMap<Int, Answer>,
         intervieweeId: String,
         latitude: Double?,
         longitude: Double?
     ) {
-        val surveyHeaderId = questionDao.findSurveyByQuestion(answerMap[0]!!.questionId)
+
         val completedSurveyId = UUID.randomUUID().toString()
 
         completedSurveyDao.insert(

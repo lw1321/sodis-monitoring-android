@@ -1,9 +1,6 @@
 package de.sodis.monitoring.apiCompletedSurveyJson
 
-import de.sodis.monitoring.api.models.IntervieweeJson
-import de.sodis.monitoring.api.models.QuestionJson
-import de.sodis.monitoring.api.models.SectionJson
-import de.sodis.monitoring.api.models.SurveyJson
+import de.sodis.monitoring.api.models.*
 import de.sodis.monitoring.db.entity.*
 import okhttp3.MultipartBody
 import retrofit2.http.*
@@ -28,7 +25,7 @@ interface MonitoringApiInterface {
     suspend fun registerUser(@Body user: User): User
 
     @POST("completed-surveys")
-    suspend fun postCompletedSurveys(@Body completedSurveyList: List<CompletedSurvey>): List<CompletedSurvey>
+    suspend fun postCompletedSurveys(@Body completedSurveyList: List<CompletedSurveyJson>): List<CompletedSurvey>
 
     @GET("question-images")
     suspend fun getAllQuestionImages(): List<QuestionImage>
@@ -56,7 +53,7 @@ interface MonitoringApiInterface {
     suspend fun postInterviewee(@Body interviewee: IntervieweeJson): IntervieweeJson
 
     @POST("answers/")
-    suspend fun postAnswer(@Body answerList: List<Answer>): List<Answer>
+    suspend fun postAnswer(@Body answerList: List<AnswerJson>): List<Answer>
 
     @Multipart
     @POST("answers/{answerId}/images")
