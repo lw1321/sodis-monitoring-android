@@ -6,7 +6,7 @@ data class CompletedSurveyJson (
     val id: String,
     val interviewee: Interviewee,
     val surveyHeader: SurveyHeader,
-    val timeStamp: String,
+    val creationDate: String,
     var submitted: Boolean = false,
     val latitude: Double? = null,
     val longitude: Double? = null

@@ -142,7 +142,7 @@ class SurveyRepository(
                 id = completedSurveyId,
                 intervieweeId = intervieweeId,
                 surveyHeaderId = surveyHeaderId,
-                timeStamp = System.currentTimeMillis().toString(),
+                creationDate = System.currentTimeMillis().toString(),
                 latitude = latitude,
                 longitude = longitude
             )

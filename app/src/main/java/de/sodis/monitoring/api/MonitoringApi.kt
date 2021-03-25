@@ -63,7 +63,7 @@ class MonitoringApi {
                     id = it.id,
                     longitude = it.longitude,
                     latitude = it.latitude,
-                    timeStamp = it.timeStamp,
+                    creationDate = it.creationDate,
                     surveyHeader = CompletedSurveyJson.SurveyHeader(
                         id = it.surveyHeaderId
                     ),
