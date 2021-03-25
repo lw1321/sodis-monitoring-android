@@ -1,4 +1,4 @@
-package de.sodis.monitoring.repository
+package de.sodis.monitoring
 
 import android.content.Context
 import android.content.ContextWrapper

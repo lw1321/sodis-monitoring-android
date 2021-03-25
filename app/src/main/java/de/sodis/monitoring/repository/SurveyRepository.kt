@@ -2,6 +2,7 @@ package de.sodis.monitoring.repository
 
 import android.content.Context
 import androidx.lifecycle.LiveData
+import de.sodis.monitoring.Utils
 import de.sodis.monitoring.api.MonitoringApi
 import de.sodis.monitoring.db.dao.*
 import de.sodis.monitoring.db.entity.*
@@ -9,6 +10,7 @@ import de.sodis.monitoring.db.response.QuestionItem
 import de.sodis.monitoring.db.response.SurveyList
 import id.zelory.compressor.Compressor
 import java.io.File
+import java.util.*
 
 
 class SurveyRepository(
@@ -125,14 +127,28 @@ class SurveyRepository(
     /**
      * Save questions in loval database, also try to upload them..Also save if the upload was successfully
      */
-    fun saveQuestions(
+    fun saveCompletedSurvey(
         answerMap: MutableMap<Int, Answer>,
-        completedSurvey: CompletedSurvey
+        intervieweeId: String,
+        latitude: Double?,
+        longitude: Double?
     ) {
-        completedSurveyDao.insert(completedSurvey)
+        val surveyHeaderId = questionDao.findSurveyByQuestion(answerMap[0]!!.questionId)
+        val completedSurveyId = UUID.randomUUID().toString()
+
+        completedSurveyDao.insert(
+            CompletedSurvey(
+                id = completedSurveyId,
+                intervieweeId = intervieweeId,
+                surveyHeaderId = surveyHeaderId,
+                timeStamp = System.currentTimeMillis().toString(),
+                latitude = latitude,
+                longitude = longitude
+            )
+        )
 
         for ((_, v) in answerMap) {
-            v.completedSurveyId = completedSurvey.id
+            v.completedSurveyId = completedSurveyId
             answerDao.insert(v)
         }
     }
@@ -175,6 +191,10 @@ class SurveyRepository(
 
     fun getQuestionList(surveyId: Int): List<QuestionItem> {
         return questionDao.getQuestions(surveyId)
+    }
+
+    fun getQuestionsDistinct(surveyId: Int): List<Int> {
+        return questionDao.getBySurveyHeader(surveyId)
     }
 
 }

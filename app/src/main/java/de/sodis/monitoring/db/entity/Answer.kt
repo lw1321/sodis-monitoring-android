@@ -28,8 +28,8 @@ data class Answer(
     val answerText: String?,
     val questionOptionId: Int?,
     val questionId: Int,
-    var completedSurveyId: String?,
+    var completedSurveyId: String? = null,
     var imagePath: String?,
     var submitted: Boolean = false,
-    var imageSynced: Boolean?//TODO
+    var imageSynced: Boolean = false
 )

@@ -2,6 +2,7 @@ package de.sodis.monitoring.repository
 
 import androidx.lifecycle.LiveData
 import de.sodis.monitoring.api.MonitoringApi
+import de.sodis.monitoring.api.models.IntervieweeJson
 import de.sodis.monitoring.db.dao.*
 import de.sodis.monitoring.db.entity.*
 import de.sodis.monitoring.db.response.FamilyList
@@ -27,19 +28,20 @@ class PlaceRepository(
         interviewees.forEach { interviewee ->
             intervieweeDao.insert(
                 Interviewee(
-                id = interviewee.id,
-                villageId = interviewee.village.id,
+                    id = interviewee.id,
+                    villageId = interviewee.village.id,
                     imagePath = null,
                     imageUrl = interviewee.imageUrl,
                     name = interviewee.name,
                     synced = true,
                     userId = null
-            ))
+                )
+            )
         }
     }
 
 
-    fun getFamilyList(): LiveData<List<FamilyList>>{
+    fun getFamilyList(): LiveData<List<FamilyList>> {
         return intervieweeDao.getFamilyList()
     }
 
@@ -62,7 +64,6 @@ class PlaceRepository(
     }
 
 
-
     suspend fun syncProfilPictures() {
         val allNotSynced = intervieweeDao.getNotsyncedProfilePictures()
         allNotSynced.forEach { interviewee ->
@@ -79,7 +80,17 @@ class PlaceRepository(
         val notSyncedInterviewee = intervieweeDao.getAllNotSynced()
         notSyncedInterviewee.forEach { interviewee ->
             //post interviewee
-            val postInterviewee = monitoringApi.postInterviewee(interviewee)
+            monitoringApi.postInterviewee(
+                IntervieweeJson(
+                    id = interviewee.id,
+                    name = interviewee.name,
+                    imageUrl = interviewee.imageUrl,
+                    village = IntervieweeJson.Village(
+                        id = interviewee.villageId,
+                        name = null
+                    )
+                )
+            )
             interviewee.synced = true
             intervieweeDao.update(interviewee = interviewee)
         }

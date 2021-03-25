@@ -8,6 +8,6 @@ data class QuestionItem (
     val path: String?,
     val inputTypeId: Int,
     val inputTypeName: String,
-    val questionOptionId: Int,
-    val optionChoiceName: String
+    val questionOptionId: Int?,
+    val optionChoiceName: String?
 )

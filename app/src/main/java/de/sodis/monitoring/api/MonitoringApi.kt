@@ -85,7 +85,7 @@ class MonitoringApi {
         return monitoringApi.getAllProjects()
     }
 
-    suspend fun postInterviewee(interviewee: Interviewee): Interviewee {
+    suspend fun postInterviewee(interviewee: IntervieweeJson): IntervieweeJson {
         return monitoringApi.postInterviewee(interviewee)
     }
 

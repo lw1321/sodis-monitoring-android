@@ -53,7 +53,7 @@ interface MonitoringApiInterface {
     suspend fun getAllVillages(): List<Village>
 
     @POST("interviewees")
-    suspend fun postInterviewee(@Body interviewee: Interviewee): Interviewee
+    suspend fun postInterviewee(@Body interviewee: IntervieweeJson): IntervieweeJson
 
     @POST("answers/")
     suspend fun postAnswer(@Body answerList: List<Answer>): List<Answer>
