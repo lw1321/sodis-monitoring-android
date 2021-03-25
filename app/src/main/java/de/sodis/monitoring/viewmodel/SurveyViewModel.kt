@@ -158,44 +158,46 @@ class SurveyViewModel(
     /**
      * increases the adapter position if possible, else starting saving routine
      */
-    fun nextQuestion(): Boolean {
-        if (currentPosition == (surveyQuestions.size - 1)) {
-            //done with the survey, save the input
-            viewModelScope.launch(Dispatchers.IO) {
-                // GET last know location
-                if (ContextCompat.checkSelfPermission(
-                        getApplication<Application>().applicationContext,
-                        Manifest.permission.ACCESS_FINE_LOCATION
-                    ) == PackageManager.PERMISSION_GRANTED
-                ) {
-                    fusedLocationClient =
-                        LocationServices.getFusedLocationProviderClient(mApplication.applicationContext)
-                    fusedLocationClient.lastLocation
-                        .addOnSuccessListener { location: Location? ->
-                            // Got last known location. In some rare situations this can be null.
-                            if(location != null){
-                                saveSurvey(location.latitude, location.longitude)
-                            }
-                            else{
-                                saveSurvey()
-                            }
-                        }.addOnFailureListener { it ->
-                            //Location Request failed, save survey without location
+    fun finishSurvey() {
+        viewModelScope.launch(Dispatchers.IO) {
+            // GET last know location
+            if (ContextCompat.checkSelfPermission(
+                    getApplication<Application>().applicationContext,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) == PackageManager.PERMISSION_GRANTED
+            ) {
+                fusedLocationClient =
+                    LocationServices.getFusedLocationProviderClient(mApplication.applicationContext)
+                fusedLocationClient.lastLocation
+                    .addOnSuccessListener { location: Location? ->
+                        // Got last known location. In some rare situations this can be null.
+                        if(location != null){
+                            saveSurvey(location.latitude, location.longitude)
+                        }
+                        else{
                             saveSurvey()
                         }
-                } else {
-                    //Location not granted, save survey without location
-                    saveSurvey()
-                }
+                    }.addOnFailureListener { it ->
+                        //Location Request failed, save survey without location
+                        saveSurvey()
+                    }
+            } else {
+                //Location not granted, save survey without location
+                saveSurvey()
             }
-            //start worker manager
-            val uploadWorkRequest = OneTimeWorkRequestBuilder<UploadWorker>().setConstraints(
-                Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
-            ).build()
-            WorkManager.getInstance(mApplication.applicationContext).enqueue(uploadWorkRequest)
+        }
+        //start worker manager
+        val uploadWorkRequest = OneTimeWorkRequestBuilder<UploadWorker>().setConstraints(
+            Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+        ).build()
+        WorkManager.getInstance(mApplication.applicationContext).enqueue(uploadWorkRequest)
 
-            currentPosition = 0
-            listOfAnsweredQuestions = mutableListOf()
+        currentPosition = 0
+        listOfAnsweredQuestions = mutableListOf()
+    }
+
+    fun nextQuestion(): Boolean {
+        if (currentPosition == (surveyQuestions.size - 1)) {
             return false
         }
         currentPosition++
