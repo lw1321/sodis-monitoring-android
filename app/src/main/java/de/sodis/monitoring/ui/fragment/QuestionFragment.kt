@@ -1,6 +1,7 @@
 package de.sodis.monitoring.ui.fragment
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -33,6 +34,7 @@ import de.sodis.monitoring.db.response.QuestionAnswer
 import de.sodis.monitoring.db.response.QuestionItem
 import de.sodis.monitoring.todolist.TodoDialog
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
+import de.sodis.monitoring.viewmodel.QuestionViewModel
 import de.sodis.monitoring.viewmodel.SurveyViewModel
 import kotlinx.android.synthetic.main.continuable_list.view.*
 import kotlinx.android.synthetic.main.view_holder_numeric.view.*
@@ -45,20 +47,34 @@ import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
-class QuestionFragment : BaseListFragment() {
+class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
 
 
-    private val surveyViewModel: SurveyViewModel by lazy {
-        ViewModelProviders.of(this, MyViewModelFactory(activity!!.application, emptyList()))
-            .get(SurveyViewModel::class.java)
+    private val questionViewModel: QuestionViewModel by lazy {
+        ViewModelProviders.of(
+            activity!!,
+            MyViewModelFactory(activity!!.application, listOf(args.surveyId))
+        )
+            .get(QuestionViewModel::class.java)
     }
 
-
     val args: QuestionFragmentArgs by navArgs()
+    private lateinit var currentQuestion: List<QuestionItem>
+    private var currentPosition: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        surveyViewModel.startSurvey()
+        (activity as MainActivity).hide_bottom_navigation()
+        questionViewModel.questionItemLiveList.observe(this, Observer { list ->
+            questionViewModel.currentPosition.observe(this, Observer { position ->
+                if (list.isNotEmpty()) {
+                    currentPosition = position
+                    currentQuestion =
+                        list.filter { it.id == questionViewModel.questionIdList[position] }
+                    createQuestion(currentQuestion)
+                }
+            })
+        })
     }
 
     override fun onCreateView(
@@ -67,52 +83,93 @@ class QuestionFragment : BaseListFragment() {
         savedInstanceState: Bundle?
     ): View? {
         var view = super.onCreateView(inflater, container, savedInstanceState)
-
-        //Survey logic
-        surveyViewModel.question.observe(viewLifecycleOwner, Observer { questionList ->
-            if (questionList != null) {
-                createQuestion(questionList)
-            }
-        })
-
-        //TODO add move forward and backward UI and Logic
         view?.navigation_forward_button_1?.setOnClickListener {
-            //TODO check if answer is set
-            surveyViewModel.position += 1
-            val action = QuestionFragmentDirections.actionQuestionFragmentSelf(
-                surveyId = args.surveyId,
-                intervieweeId = args.intervieweeId,
-                position = args.position + 1
-            )
-            findNavController().navigate(action)
+            if (questionViewModel.isAnswered(currentQuestion.first().id)) {
+                if (questionViewModel.createTodo()) { //todo: anpassen wenn yes/no question geändert
+                    /* //TODO pass the interviewee id, request interviewee entity in dialog from placeviewmodel
+                    val answerToCheck: Answer =
+                        questionViewModel.answerToID(currentQuestion.first().id)!!
+                    val dialog = TodoDialog(
+
+                        questionViewModel.interviewee,
+                        currentQuestion.title,
+                        context!!,
+                        this
+                    )
+                    dialog.show(childFragmentManager, "todo_in_survey")
+                    */
+                } else {
+                    questionViewModel.listOfAnsweredQuestions += currentPosition
+                    val hasNext = questionViewModel.nextQuestion()
+                    if (hasNext) {
+                        val action =
+                            QuestionFragmentDirections.actionQuestionFragmentSelf(
+                                args.surveyId,
+                                intervieweeId = args.intervieweeId
+                            )
+                        findNavController().navigate(action)
+                    } else {
+                        val finishDialog: AlertDialog.Builder = AlertDialog.Builder(context!!)
+                        finishDialog.setTitle("enviar cuestionario")
+                        finishDialog.setMessage("¿Guardar respuestas?")
+                        finishDialog.setPositiveButton(
+                            "Si"
+                        ) { _, _ ->
+                            questionViewModel.finishSurvey()
+                            Snackbar.make(
+                                view!!.rootView.findViewById(R.id.nav_host_fragment),
+                                getString(R.string.message_monitoring_completed),
+                                Snackbar.LENGTH_LONG
+                            ).show()
+                            val action =
+                                QuestionFragmentDirections.actionQuestionFragmentToIntervieweeDetailFragment(
+                                    intervieweeId = args.intervieweeId
+                                )
+                            findNavController().navigate(action)
+                            (activity as MainActivity).show_bottom_navigation()
+                        }
+                        finishDialog.setNegativeButton(
+                            "No"
+                        ) { _, _ ->
+                            Snackbar.make(
+                                view!!.rootView.findViewById(R.id.nav_host_fragment),
+                                getString(R.string.message_monitoring_answer_required),
+                                Snackbar.LENGTH_LONG
+                            ).show()
+                        }
+                        val alert: AlertDialog = finishDialog.create()
+                        alert.setCanceledOnTouchOutside(false)
+                        alert.show()
+                    }
+                }
+
+
+            } else {
+                Snackbar.make(
+                    view!!,
+                    getString(R.string.message_monitoring_answer_required),
+                    Snackbar.LENGTH_LONG
+                ).show()
+            }
         }
+
+        view?.navigation_forward_button_left?.isGone = currentPosition == 0
+
         view?.navigation_forward_button_left?.setOnClickListener {
-            surveyViewModel.position -= 1
-            val action = QuestionFragmentDirections.actionQuestionFragmentSelf(
-                surveyId = args.surveyId,
-                intervieweeId = args.intervieweeId,
-                position = args.position - 1
-            )
-            findNavController().navigate(action)
+            if (currentPosition != 0) {
+                questionViewModel.previousQuestion()
+                val action = QuestionFragmentDirections.actionQuestionFragmentSelf(
+                    args.surveyId,
+                    intervieweeId = args.intervieweeId
+                )
+                findNavController().navigate(action)
+            }
         }
+
+
+
         return view
     }
-
-    private fun finishSurvey(view: View?) {
-        surveyViewModel.requestLocationAndSaveSurvey()
-        Snackbar.make(
-            view!!.rootView.findViewById(R.id.nav_host_fragment),
-            getString(R.string.message_monitoring_completed),
-            Snackbar.LENGTH_LONG
-        ).show()
-        (activity as MainActivity).show_bottom_navigation()
-        val action =
-            QuestionFragmentDirections.actionQuestionFragmentToIntervieweeDetailFragment(
-                intervieweeId = args.intervieweeId
-            )
-        findNavController().navigate(action)
-    }
-
 
     private fun createQuestion(questionList: List<QuestionItem>) {
         recyclerView.recycledViewPool.clear()
@@ -135,18 +192,13 @@ class QuestionFragment : BaseListFragment() {
                             id(it.questionOptionId)
                             text(it.optionChoiceName)
                             onClick { clicked ->
-                                surveyViewModel.setAnswer(
+                                questionViewModel.setAnswer(
+                                    imagePath = null,
                                     questionOption = it.questionOptionId,
                                     answerText = null,
-                                    imagePath = null
+                                    questionId = currentQuestion.first().id
                                 )
-                                surveyViewModel.position += 1
-                                val action = QuestionFragmentDirections.actionQuestionFragmentSelf(
-                                    surveyId = args.surveyId,
-                                    intervieweeId = args.intervieweeId,
-                                    position = args.position + 1
-                                )
-                                findNavController().navigate(action)
+
                             }
                         }
                     }
@@ -161,10 +213,11 @@ class QuestionFragment : BaseListFragment() {
                             view.dataBinding.root.answerTextInput.requestFocus()
                             view.dataBinding.root.answerTextInput.addTextChangedListener {
                                 print("Text changed")
-                                surveyViewModel.setAnswer(
+                                questionViewModel.setAnswer(
+                                    imagePath = null,
                                     questionOption = null,
-                                    answerText = it!!.toString(),
-                                    imagePath = null
+                                    answerText = it.toString(),
+                                    questionId = currentQuestion.first().id
                                 )
                             }
                         }
@@ -193,10 +246,11 @@ class QuestionFragment : BaseListFragment() {
             //save the image path in our database..
             //set image to iamgeview
             //store the file
-            surveyViewModel.setAnswer(
+            questionViewModel.setAnswer(
                 imagePath = currentPhotoPath,
                 questionOption = null,
-                answerText = null
+                answerText = null,
+                questionId = currentQuestion.first().id
             )
         }
     }
@@ -249,5 +303,30 @@ class QuestionFragment : BaseListFragment() {
 
     }
 
+    override fun onDismiss(dialog: DialogInterface?) {
+        println("onDismissed called")
+        questionViewModel.listOfAnsweredQuestions += currentPosition
+        val hasNext = questionViewModel.nextQuestion()
+        if (hasNext) {
+            val action = QuestionFragmentDirections.actionQuestionFragmentSelf(
+                args.surveyId,
+                intervieweeId = args.intervieweeId
+            )
+            findNavController().navigate(action)
+        } else {
+            questionViewModel.finishSurvey()
+            Snackbar.make(
+                view!!.rootView.findViewById(R.id.nav_host_fragment),
+                getString(R.string.message_monitoring_completed),
+                Snackbar.LENGTH_LONG
+            ).show()
+            val action =
+                QuestionFragmentDirections.actionQuestionFragmentToIntervieweeDetailFragment(
+                    intervieweeId = args.intervieweeId
+                )
+            findNavController().navigate(action)
+            (activity as MainActivity).show_bottom_navigation()
 
+        }
+    }
 }

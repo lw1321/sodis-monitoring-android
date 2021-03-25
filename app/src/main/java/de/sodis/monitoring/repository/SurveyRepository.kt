@@ -190,7 +190,7 @@ class SurveyRepository(
     }
 
     fun getQuestionList(surveyId: Int): List<QuestionItem> {
-        return questionDao.getQuestions(surveyId)
+        return questionDao.getQuestionItems(surveyId)
     }
 
     fun getQuestionsDistinct(surveyId: Int): List<Int> {

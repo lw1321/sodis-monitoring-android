@@ -127,9 +127,6 @@
         <action
             android:id="@+id/action_questionFragment_to_intervieweeDetailFragment"
             app:destination="@id/intervieweeDetailFragment" />
-        <argument
-            android:name="position"
-            app:argType="integer" />
     </fragment>
     <fragment
         android:id="@+id/villageFragment"

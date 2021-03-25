@@ -70,8 +70,7 @@ class IntervieweeDetailFragment : BaseListFragment() {
                                 val action =
                                     IntervieweeDetailFragmentDirections.actionIntervieweeDetailFragmentToQuestionFragment(
                                         intervieweeId = args.intervieweeId,
-                                        surveyId = survey.surveyId,
-                                        position = 0
+                                        surveyId = survey.surveyId
                                     )
                                 findNavController().navigate(action)
                             }
