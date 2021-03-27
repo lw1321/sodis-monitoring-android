@@ -10,6 +10,7 @@ import de.sodis.monitoring.db.response.QuestionItem
 import de.sodis.monitoring.db.response.SurveyList
 import id.zelory.compressor.Compressor
 import java.io.File
+import java.sql.Timestamp
 import java.util.*
 
 
@@ -142,7 +143,7 @@ class SurveyRepository(
                 id = completedSurveyId,
                 intervieweeId = intervieweeId,
                 surveyHeaderId = surveyHeaderId,
-                creationDate = System.currentTimeMillis().toString(),
+                creationDate = Timestamp(System.currentTimeMillis()).toString(),
                 latitude = latitude,
                 longitude = longitude
             )
