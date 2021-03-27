@@ -80,7 +80,7 @@ class QuestionViewModel(
     /**
      * current position in questionaire
      */
-    var currentPosition: MutableLiveData<Int> = MutableLiveData()
+    var currentPosition: Int = 0
 
     var listOfAnsweredQuestions: List<Int> = mutableListOf()
 
@@ -88,7 +88,6 @@ class QuestionViewModel(
 
     init {
         createQuestionList(surveyId)
-        currentPosition.postValue(0)
     }
 
     private fun createQuestionList(surveyId: Int) {
@@ -151,19 +150,19 @@ class QuestionViewModel(
         ).build()
         WorkManager.getInstance(mApplication.applicationContext).enqueue(uploadWorkRequest)
 
-        currentPosition.postValue(0)
+        currentPosition = 0
         listOfAnsweredQuestions = mutableListOf()
     }
 
     fun nextQuestion(): Boolean {
-        if (currentPosition.value!! == (questionIdList.size - 1)) {
+        if (currentPosition == (questionIdList.size - 1)) {
             return false
         }
-        currentPosition.postValue(currentPosition.value!! + 1)
+        currentPosition = currentPosition  + 1
         //check if current question has a  depended question. if so check if the depended question was
         //answered how excepected. If not call this function again. Recursive algorithm
-        val questionItem = questionItemList.first { it.id == questionIdList[currentPosition.value!!] }
-        if (questionItem.dependentQuestionId != 0) {
+        val questionItem = questionItemList.first { it.id == questionIdList[currentPosition] }
+        if (questionItem.dependentQuestionId != null) {
             //ok there is a depended question, so lets check the answer
             if (answerMap[questionItem.dependentQuestionId]?.questionOptionId != questionItem.dependentQuestionOptionId) {
                 return nextQuestion()
@@ -194,12 +193,12 @@ class QuestionViewModel(
     }
 
     fun previousQuestion(): Boolean {
-        if (currentPosition.value!! != 0) {
+        if (currentPosition != 0) {
             val lastPosition = listOfAnsweredQuestions.last()
             answerMap.remove(questionIdList[lastPosition])
             listOfAnsweredQuestions =
                 listOfAnsweredQuestions.subList(0, listOfAnsweredQuestions.size - 1)
-            currentPosition.postValue(lastPosition)
+            currentPosition = lastPosition
             return true
         }
         return false
@@ -208,12 +207,16 @@ class QuestionViewModel(
     //returns true if the answer is "Escribir en la lista de tareas"
     fun createTodo(): Boolean {
         //optional questions
-        if (!answerMap.contains(questionIdList[currentPosition.value!!])) {
+        if (!answerMap.contains(questionIdList[currentPosition])) {
             return false
         }
-        return answerMap[questionIdList[currentPosition.value!!]]!!.answerText.equals(
+        return answerMap[questionIdList[currentPosition]]!!.answerText.equals(
             "Escribir en la lista de tareas"
         ) //todo be aware of translation changes...
+    }
+
+    fun setSurvey(surveyId: Int) {
+        createQuestionList(surveyId)
     }
 
 

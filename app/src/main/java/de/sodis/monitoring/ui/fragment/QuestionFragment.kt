@@ -60,20 +60,17 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
 
     val args: QuestionFragmentArgs by navArgs()
     private lateinit var currentQuestion: List<QuestionItem>
-    private var currentPosition: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         (activity as MainActivity).hide_bottom_navigation()
+        questionViewModel.setSurvey(args.surveyId)
         questionViewModel.questionItemLiveList.observe(this, Observer { list ->
-            questionViewModel.currentPosition.observe(this, Observer { position ->
-                if (list.isNotEmpty()) {
-                    currentPosition = position
-                    currentQuestion =
-                        list.filter { it.id == questionViewModel.questionIdList[position] }
-                    createQuestion(currentQuestion)
-                }
-            })
+            if (list.isNotEmpty()) {
+                currentQuestion =
+                    list.filter { it.id == questionViewModel.questionIdList[questionViewModel.currentPosition] }
+                createQuestion(currentQuestion)
+            }
         })
     }
 
@@ -110,10 +107,10 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
             }
         }
 
-        view?.navigation_forward_button_left?.isGone = currentPosition == 0
+        view?.navigation_forward_button_left?.isGone = questionViewModel.currentPosition == 0
 
         view?.navigation_forward_button_left?.setOnClickListener {
-            if (currentPosition != 0) {
+            if (questionViewModel.currentPosition != 0) {
                 questionViewModel.previousQuestion()
                 val action = QuestionFragmentDirections.actionQuestionFragmentSelf(
                     args.surveyId,
@@ -129,7 +126,7 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
     }
 
     private fun nextQuestion() {
-        questionViewModel.listOfAnsweredQuestions += currentPosition
+        questionViewModel.listOfAnsweredQuestions += questionViewModel.currentPosition
         val hasNext = questionViewModel.nextQuestion()
         if (hasNext) {
             val action =
@@ -174,71 +171,74 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
     }
 
     private fun createQuestion(questionList: List<QuestionItem>) {
-        recyclerView.recycledViewPool.clear()
-        recyclerView.withModels {
-            question {
-                id("question")
-                questionText(questionList.first().name)
-                onBind { model, view, position ->
-                    if (questionList.first().path != null) {
-                        view.dataBinding.root.question_image.load(File(questionList.first().path!!))
+        if (questionList.isNotEmpty()) {
+            recyclerView.recycledViewPool.clear()
+            recyclerView.withModels {
+                question {
+                    id("question")
+                    questionText(questionList.first().name)
+                    onBind { model, view, position ->
+                        if (questionList.first().path != null) {
+                            view.dataBinding.root.question_image.load(File(questionList.first().path!!))
+                        }
                     }
                 }
-            }
-            when (questionList.first().inputTypeId) {
+                when (questionList.first().inputTypeId) {
 
-                1 -> {
-                    //Single Choice
-                    questionList.forEach {
+                    1 -> {
+                        //Single Choice
+                        questionList.forEach {
+                            default {
+                                id(it.questionOptionId)
+                                text(it.optionChoiceName)
+                                onClick { clicked ->
+                                    questionViewModel.setAnswer(
+                                        imagePath = null,
+                                        questionOption = it.questionOptionId,
+                                        answerText = null,
+                                        questionId = currentQuestion.first().id
+                                    )
+                                    // go directly to next question
+                                    nextQuestion()
+                                }
+                            }
+                        }
+                    }
+                    2 -> {
+                        // Text
+                        textInput {
+                            id("textInput")
+                            hint(getString(R.string.hint_monitoring_answer))
+                            inputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME)
+                            onBind { model, view, position ->
+                                view.dataBinding.root.answerTextInput.requestFocus()
+                                view.dataBinding.root.answerTextInput.addTextChangedListener {
+                                    print("Text changed")
+                                    questionViewModel.setAnswer(
+                                        imagePath = null,
+                                        questionOption = null,
+                                        answerText = it.toString(),
+                                        questionId = currentQuestion.first().id
+                                    )
+                                }
+                            }
+                        }
+                    }
+
+                    4 -> {
+                        //Image
                         default {
-                            id(it.questionOptionId)
-                            text(it.optionChoiceName)
+                            id(questionList.first().questionOptionId)
+                            text("Bild aufnehmen!")
                             onClick { clicked ->
-                                questionViewModel.setAnswer(
-                                    imagePath = null,
-                                    questionOption = it.questionOptionId,
-                                    answerText = null,
-                                    questionId = currentQuestion.first().id
-                                )
-                                // go directly to next question
-                                nextQuestion()
+                                dispatchTakePictureIntent()
                             }
-                        }
-                    }
-                }
-                2 -> {
-                    // Text
-                    textInput {
-                        id("textInput")
-                        hint(getString(R.string.hint_monitoring_answer))
-                        inputType(InputType.TYPE_TEXT_VARIATION_PERSON_NAME)
-                        onBind { model, view, position ->
-                            view.dataBinding.root.answerTextInput.requestFocus()
-                            view.dataBinding.root.answerTextInput.addTextChangedListener {
-                                print("Text changed")
-                                questionViewModel.setAnswer(
-                                    imagePath = null,
-                                    questionOption = null,
-                                    answerText = it.toString(),
-                                    questionId = currentQuestion.first().id
-                                )
-                            }
-                        }
-                    }
-                }
-
-                4 -> {
-                    //Image
-                    default {
-                        id(questionList.first().questionOptionId)
-                        text("Bild aufnehmen!")
-                        onClick { clicked ->
-                            dispatchTakePictureIntent()
                         }
                     }
                 }
             }
         }
+
     }
 
 
@@ -308,7 +308,7 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
 
     override fun onDismiss(dialog: DialogInterface?) {
         println("onDismissed called")
-        questionViewModel.listOfAnsweredQuestions += currentPosition
+        questionViewModel.listOfAnsweredQuestions += questionViewModel.currentPosition
         val hasNext = questionViewModel.nextQuestion()
         if (hasNext) {
             val action = QuestionFragmentDirections.actionQuestionFragmentSelf(
