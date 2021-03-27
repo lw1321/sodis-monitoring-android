@@ -75,7 +75,6 @@ class IntervieweeDetailFragment : BaseListFragment() {
                         }
                     }
                     var nutriSurveys = surveyList.filter { it.projectName == "Nutricion" }
-
                     technology {
                         id("Nutricion")
                         survey1OnClick { clicked ->
@@ -92,17 +91,24 @@ class IntervieweeDetailFragment : BaseListFragment() {
                             view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_iconwash)
                         }
                     }
-                    /*
-                    surveyList.forEach { survey ->
-                        default {
-                            id(survey.surveyId)
-                            text(survey.surveyName + " / " + survey.projectName)
-                            onClick { clicked ->
-                                //go to survey
+                    var quariWarmiSurvey = surveyList.filter { it.projectName == "Quari Warmi" }
+                    technology {
+                        id("QuariWarmi")
+                        survey1OnClick { clicked ->
+                            var surveyId = quariWarmiSurvey[0].surveyId
+                            openSurvey(surveyId)
 
-                            }
                         }
-                    }*/
+                        survey2OnClick { clicked ->
+                            var surveyId = quariWarmiSurvey[1].surveyId
+                            openSurvey(surveyId)
+                        }
+                        onBind { model, view, position ->
+                            view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_iconunternehmertum)//TODO icons einfügen
+                            view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_iconwash)
+                        }
+                    }
+                    //TODO add hasco surveys
                 }
             })
 
@@ -175,15 +181,7 @@ class IntervieweeDetailFragment : BaseListFragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
-            //save the image path in our database..
-            //set image to iamgeview
-            //todo show image immediately, //recreate recyclerview
-            //store the file
             placeViewModel.storeImagePath(currentPhotoPath, args.intervieweeId)
-            /*
-               BitmapFactory.decodeFile(currentPhotoPath)?.also { bitmap ->
-                view!!.imageView.setImageBitmap(bitmap)
-            }*/
         }
     }
 
