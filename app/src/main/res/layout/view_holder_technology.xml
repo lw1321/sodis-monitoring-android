@@ -5,29 +5,16 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
-        <variable
-            name="state"
-            type="String" />
-
-        <variable
-            name="knowledgeState"
-            type="String" />
-
         <variable
             name="name"
             type="String" />
 
         <variable
-            name="taskName"
-            type="String" />
-
-        <variable
-            name="onClickTechnology"
+            name="survey1OnClick"
             type="android.view.View.OnClickListener"
             />
         <variable
-            name="onClickPerson"
+            name="survey2OnClick"
             type="android.view.View.OnClickListener"
             />
 
@@ -43,9 +30,8 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/technologView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:foreground="?android:attr/selectableItemBackground"
-
             android:padding="12dp"
             app:cardCornerRadius="5dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -53,34 +39,34 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
-                android:id="@+id/textView5"
+            <ImageView
+                android:foreground="?android:attr/selectableItemBackground"
+                android:id="@+id/survey1Icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{name}"
-                android:textSize="24sp"
+                android:layout_marginStart="32dp"
+                android:layout_marginLeft="32dp"
+                android:layout_marginTop="16dp"
+                android:background="#00C853"
+                android:onClick="@{survey1OnClick}"
+                app:layout_constraintEnd_toStartOf="@+id/survey2Icon"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="TechnologyName" />
+                app:srcCompat="@drawable/ic_iconunternehmertum" />
 
-            <Button
-                android:id="@+id/button"
-                android:layout_width="111dp"
-                android:layout_height="85dp"
-                android:text="Button"
-                app:icon="@drawable/ic_family_silhouette_svgrepo_com"
-                tools:layout_editor_absoluteX="12dp"
-                tools:layout_editor_absoluteY="44dp" />
-
-            <Button
-                android:id="@+id/button2"
+            <ImageView
+                android:foreground="?android:attr/selectableItemBackground"
+                android:id="@+id/survey2Icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="60dp"
-                android:layout_marginLeft="60dp"
-                android:text="Button"
-                app:layout_constraintStart_toEndOf="@+id/button"
-                tools:layout_editor_absoluteY="56dp" />
+                android:layout_marginStart="72dp"
+                android:layout_marginLeft="72dp"
+                android:layout_marginTop="16dp"
+                android:background="#9AD50000"
+                android:onClick="@{survey2OnClick}"
+                app:layout_constraintStart_toEndOf="@+id/survey1Icon"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_iconusotechnologia" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

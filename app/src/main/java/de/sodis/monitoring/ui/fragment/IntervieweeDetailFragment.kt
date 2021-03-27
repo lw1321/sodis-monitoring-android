@@ -18,8 +18,10 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import coil.api.load
+import de.sodis.monitoring.R
 import de.sodis.monitoring.default
 import de.sodis.monitoring.picture
+import de.sodis.monitoring.technology
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
 import de.sodis.monitoring.viewmodel.PlaceViewModel
 import de.sodis.monitoring.viewmodel.SurveyViewModel
@@ -27,6 +29,7 @@ import kotlinx.android.synthetic.main.continuable_list.view.*
 import kotlinx.android.synthetic.main.todo_dialog_layout.*
 import kotlinx.android.synthetic.main.view_holder_picture.view.*
 import kotlinx.android.synthetic.main.view_holder_question.view.*
+import kotlinx.android.synthetic.main.view_holder_technology.view.*
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -70,25 +73,36 @@ class IntervieweeDetailFragment : BaseListFragment() {
                             }
 
                         }
-
                     }
+                    var nutriSurveys = surveyList.filter { it.projectName == "Nutricion" }
 
+                    technology {
+                        id("Nutricion")
+                        survey1OnClick { clicked ->
+                            var surveyId = nutriSurveys[0].surveyId
+                            openSurvey(surveyId)
+
+                        }
+                        survey2OnClick { clicked ->
+                            var surveyId = nutriSurveys[1].surveyId
+                            openSurvey(surveyId)
+                        }
+                        onBind { model, view, position ->
+                            view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_iconunternehmertum)//TODO icons einfügen
+                            view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_iconwash)
+                        }
+                    }
+                    /*
                     surveyList.forEach { survey ->
                         default {
                             id(survey.surveyId)
                             text(survey.surveyName + " / " + survey.projectName)
                             onClick { clicked ->
                                 //go to survey
-                                surveyViewModel.surveyId = survey.surveyId
-                                val action =
-                                    IntervieweeDetailFragmentDirections.actionIntervieweeDetailFragmentToQuestionFragment(
-                                        intervieweeId = args.intervieweeId,
-                                        surveyId = survey.surveyId
-                                    )
-                                findNavController().navigate(action)
+
                             }
                         }
-                    }
+                    }*/
                 }
             })
 
@@ -97,6 +111,16 @@ class IntervieweeDetailFragment : BaseListFragment() {
         view?.navigation_forward_button_1?.isGone = true
         view?.navigation_forward_button_left?.isGone = true
         return view
+    }
+
+    private fun openSurvey(surveyId: Int) {
+        surveyViewModel.surveyId = surveyId
+        val action =
+            IntervieweeDetailFragmentDirections.actionIntervieweeDetailFragmentToQuestionFragment(
+                intervieweeId = args.intervieweeId,
+                surveyId = surveyId
+            )
+        findNavController().navigate(action)
     }
 
 
