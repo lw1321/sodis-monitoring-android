@@ -24,7 +24,6 @@ interface AnswerDao {
     @Query("SELECT * FROM Answer WHERE Answer.submitted=0")
     fun getAllNotSubmitted(): List<Answer>
 
-    @Query("SELECT * FROM Answer WHERE Answer.imageSynced=0")
-    fun getAllImageNotSynced(): List<Answer>
+
 
 }

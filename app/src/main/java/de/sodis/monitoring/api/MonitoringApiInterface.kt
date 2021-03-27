@@ -25,7 +25,7 @@ interface MonitoringApiInterface {
     suspend fun registerUser(@Body user: User): User
 
     @POST("completed-surveys")
-    suspend fun postCompletedSurveys(@Body completedSurveyList: List<CompletedSurveyJson>): List<CompletedSurvey>
+    suspend fun postCompletedSurveys(@Body completedSurvey: CompletedSurveyJson): CompletedSurvey
 
     @GET("question-images")
     suspend fun getAllQuestionImages(): List<QuestionImage>
@@ -53,7 +53,7 @@ interface MonitoringApiInterface {
     suspend fun postInterviewee(@Body interviewee: IntervieweeJson): IntervieweeJson
 
     @POST("answers/")
-    suspend fun postAnswer(@Body answerList: List<AnswerJson>): List<Answer>
+    suspend fun postAnswer(@Body answerList: AnswerJson): Answer
 
     @Multipart
     @POST("answers/{answerId}/images")

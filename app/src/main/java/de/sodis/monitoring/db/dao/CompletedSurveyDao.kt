@@ -1,10 +1,7 @@
 package de.sodis.monitoring.db.dao
 
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
-import androidx.room.Query
+import androidx.room.*
 import de.sodis.monitoring.db.entity.*
 import de.sodis.monitoring.db.response.CompletedSurveyDetail
 import de.sodis.monitoring.db.response.CompletedSurveyOverview
@@ -14,6 +11,9 @@ interface CompletedSurveyDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insert(completedSurvey: CompletedSurvey)
+
+    @Update
+    fun update(completedSurvey: CompletedSurvey)
 
     @Query("SELECT * FROM CompletedSurvey WHERE submitted=0")
     fun getAllUnsubmitted(): List<CompletedSurvey>
@@ -29,5 +29,6 @@ interface CompletedSurveyDao {
 
     @Query("SELECT Interviewee.name, SurveyHeader.surveyName, CompletedSurvey.id FROM CompletedSurvey JOIN Interviewee ON CompletedSurvey.intervieweeId=Interviewee.id JOIN SurveyHeader ON CompletedSurvey.surveyHeaderId=SurveyHeader.id ORDER BY creationDate DESC")
     fun getAllSorted(): LiveData<List<CompletedSurveyOverview>>
+
 
 }

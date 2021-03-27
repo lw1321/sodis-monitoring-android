@@ -157,14 +157,18 @@ class SurveyRepository(
     suspend fun syncCompletedSurveys() {
         // TODO implement after server endpoints are adjust
         val surveysToSync = completedSurveyDao.getAllUnsubmitted()
-        monitoringApi.postCompletedSurveys(surveysToSync)
+        surveysToSync.forEach {
+            monitoringApi.postCompletedSurveys(it)
+            it.submitted = true
+            completedSurveyDao.update(it)
+        }
     }
 
     suspend fun syncAnswers() {
         //upload answers
         val answersToSync = answerDao.getAllNotSubmitted()
-        monitoringApi.postAnswers(answersToSync)
         answersToSync.forEach { answer ->
+            monitoringApi.postAnswers(answer)
             answer.submitted = true
             answerDao.update(answer)
         }
@@ -173,7 +177,7 @@ class SurveyRepository(
     suspend fun syncAnswerImages(applicationContext: Context) {
         //upload images
         //check for not uploaded images where the answers are already synced.
-        val answerImagesToSync = answerDao.getAllImageNotSynced()
+        val answerImagesToSync = answerDao.getNotSubmittedImages()
         //upload the images
         answerImagesToSync.forEach { answer ->
             //Compress File

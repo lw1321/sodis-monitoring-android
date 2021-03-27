@@ -4,8 +4,8 @@ import androidx.room.PrimaryKey
 
 data class AnswerJson(
     val id: String,
-    val answerText: String?,
-    val questionOption: QuestionOption,
+    val answerText: String? = null,
+    var questionOption: QuestionOption? = null,
     val question: Question,
     var completedSurvey: CompletedSurvey
 ) {

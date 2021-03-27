@@ -55,26 +55,22 @@ class MonitoringApi {
         return monitoringApi.registerUser(user)
     }
 
-    suspend fun postCompletedSurveys(completedSurveyList: List<CompletedSurvey>): List<CompletedSurvey> {
-        var completedSurveyJsonList = mutableListOf<CompletedSurveyJson>()
-        completedSurveyList.forEach {
-            completedSurveyJsonList.add(
-                CompletedSurveyJson(
-                    id = it.id,
-                    longitude = it.longitude,
-                    latitude = it.latitude,
-                    creationDate = it.creationDate,
-                    surveyHeader = CompletedSurveyJson.SurveyHeader(
-                        id = it.surveyHeaderId
-                    ),
-                    submitted = it.submitted,
-                    interviewee = CompletedSurveyJson.Interviewee(
-                        id = it.intervieweeId
-                    )
+    suspend fun postCompletedSurveys(completedSurvey: CompletedSurvey): CompletedSurvey {
+        return monitoringApi.postCompletedSurveys(
+            CompletedSurveyJson(
+                id = completedSurvey.id,
+                longitude = completedSurvey.longitude,
+                latitude = completedSurvey.latitude,
+                creationDate = completedSurvey.creationDate,
+                surveyHeader = CompletedSurveyJson.SurveyHeader(
+                    id = completedSurvey.surveyHeaderId
+                ),
+                submitted = completedSurvey.submitted,
+                interviewee = CompletedSurveyJson.Interviewee(
+                    id = completedSurvey.intervieweeId
                 )
             )
-        }
-        return monitoringApi.postCompletedSurveys(completedSurveyJsonList)
+        )
     }
 
     suspend fun getQuestionImages(): List<QuestionImage> {
@@ -116,26 +112,26 @@ class MonitoringApi {
         return monitoringApi.postAnswerImage(body, id)
     }
 
-    suspend fun postAnswers(answers: List<Answer>): List<Answer> {
-        var answerJsonList = mutableListOf<AnswerJson>()
-        answers.forEach {
-            answerJsonList.add(
-                AnswerJson(
-                    id = it.id,
-                    completedSurvey = AnswerJson.CompletedSurvey(
-                        id = it.completedSurveyId!!
-                    ),
-                    answerText = it.answerText,
-                    questionOption = AnswerJson.QuestionOption(
-                        id = it.questionOptionId
-                    ),
-                    question = AnswerJson.Question(
-                        it.questionId
-                    )
-                )
+    suspend fun postAnswers(answer: Answer) {
+        var answerJson = AnswerJson(
+            id = answer.id,
+            completedSurvey = AnswerJson.CompletedSurvey(
+                id = answer.completedSurveyId!!
+            ),
+            answerText = answer.answerText,
+            question = AnswerJson.Question(
+                answer.questionId
+            )
+        )
+        if (answer.questionOptionId != null) {
+            answerJson.questionOption = AnswerJson.QuestionOption(
+                id = answer.questionOptionId
             )
         }
-        return monitoringApi.postAnswer(answerJsonList)
+        monitoringApi.postAnswer(
+            answerJson
+        )
+
     }
 
     suspend fun getAllQuestions(): List<QuestionJson> {
