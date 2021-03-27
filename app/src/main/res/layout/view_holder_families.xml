@@ -30,29 +30,16 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/name"
-            android:layout_width="220dp"
-            android:layout_height="60dp"
-            android:layout_marginStart="44dp"
-            android:layout_marginLeft="44dp"
-            android:layout_marginTop="20dp"
-            android:text="@{key}"
-            android:textSize="30sp"
-            app:layout_constraintStart_toEndOf="@+id/imageView2"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Anna Ernst" />
-
         <ImageView
             android:id="@+id/imageView2"
             android:layout_width="139dp"
             android:layout_height="150dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginLeft="8dp"
             android:tint="@color/colorPrimary"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0"
             app:srcCompat="@drawable/ic_family_silhouette_svgrepo_com" />
 
 

@@ -33,7 +33,10 @@ class PlaceViewModel(application: Application) : AndroidViewModel(application) {
         familyList = placeRepository.getFamilyList()
     }
 
-    fun storeImagePath(currentPhotoPath: String) {
+    fun storeImagePath(currentPhotoPath: String, intervieweeId: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            placeRepository.storeIntervieweeImagePath(currentPhotoPath, intervieweeId)
+        }
     }
 
 

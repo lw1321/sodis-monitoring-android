@@ -17,13 +17,16 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import coil.api.load
 import de.sodis.monitoring.default
+import de.sodis.monitoring.picture
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
 import de.sodis.monitoring.viewmodel.PlaceViewModel
 import de.sodis.monitoring.viewmodel.SurveyViewModel
 import kotlinx.android.synthetic.main.continuable_list.view.*
 import kotlinx.android.synthetic.main.todo_dialog_layout.*
 import kotlinx.android.synthetic.main.view_holder_picture.view.*
+import kotlinx.android.synthetic.main.view_holder_question.view.*
 import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
@@ -53,13 +56,23 @@ class IntervieweeDetailFragment : BaseListFragment() {
             surveyViewModel.surveyList.observe(viewLifecycleOwner, Observer { surveyList ->
                 recyclerView.withModels {
                     familyList.filter { it.id == args.intervieweeId }.forEach {
-                        default {//TODO USE families view holder, set image creation routine
+                        picture {
                             id(it.id)
-                            text(it.name)
+                            name(it.name)
+                            village(it.villageName)
                             onClick { clicked ->
+                                dispatchTakePictureIntent()
                             }
+                            onBind { model, view, position ->
+                                if (it.imagePath != null) {
+                                    view.dataBinding.root.imageView.load(File(it.imagePath))
+                                }
+                            }
+
                         }
+
                     }
+
                     surveyList.forEach { survey ->
                         default {
                             id(survey.surveyId)
@@ -142,10 +155,11 @@ class IntervieweeDetailFragment : BaseListFragment() {
             //set image to iamgeview
             //todo show image immediately, //recreate recyclerview
             //store the file
-            placeViewModel.storeImagePath(currentPhotoPath)
-            BitmapFactory.decodeFile(currentPhotoPath)?.also { bitmap ->
+            placeViewModel.storeImagePath(currentPhotoPath, args.intervieweeId)
+            /*
+               BitmapFactory.decodeFile(currentPhotoPath)?.also { bitmap ->
                 view!!.imageView.setImageBitmap(bitmap)
-            }
+            }*/
         }
     }
 

@@ -109,4 +109,11 @@ class PlaceRepository(
         )
         intervieweeDao.insert(newInterviewee)
     }
+
+    fun storeIntervieweeImagePath(currentPhotoPath: String, intervieweeId: String) {
+        val intervieweeOld = intervieweeDao.getById(intervieweeId)
+        intervieweeOld.imagePath = currentPhotoPath
+        intervieweeOld.imageUrl = null // set null because image is not uploaded yet
+        intervieweeDao.update(intervieweeOld)
+    }
 }
