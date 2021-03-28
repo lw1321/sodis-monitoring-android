@@ -38,7 +38,8 @@ class UploadWorker(appContext: Context, workerParams: WorkerParameters) :
             intervieweeDao = db.intervieweeDao(),
             technologyDao = db.technologyDao(),
             userDao = db.userDao(),
-            villageDao = db.villageDao()
+            villageDao = db.villageDao(),
+            todoPointDao = db.todoPointDao()
         )
         return try {
             questionRepository.uploadQuestions()

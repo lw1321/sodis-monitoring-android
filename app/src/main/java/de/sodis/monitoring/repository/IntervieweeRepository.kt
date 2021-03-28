@@ -14,6 +14,7 @@ class IntervieweeRepository(
     private val technologyDao: TechnologyDao,
     private val intervieweeTechnologyDao: IntervieweeTechnologyDao,
     private val userDao: UserDao,
+    private val todoPointDao: TodoPointDao,
     private val monitoringApi: MonitoringApi
 ) {
 
@@ -122,11 +123,13 @@ class IntervieweeRepository(
         if (interviewee.userId != null) {
             localExpert = userDao.getByLocalExpertId(interviewee.userId)
         }
+        var todoPoints = todoPointDao.getUndoneTasksByInterviewee(interviewee.id)
         return IntervieweeDetail(
             interviewee = interviewee,
             intervieweeTechnologies = intervieweeTechnologies,
             village = village,
-            user = localExpert
+            user = localExpert,
+            todoPoints = todoPoints.value
         )
     }
 

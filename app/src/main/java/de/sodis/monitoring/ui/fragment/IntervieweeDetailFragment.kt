@@ -32,6 +32,7 @@ import com.google.android.material.snackbar.Snackbar
 import de.sodis.monitoring.*
 import de.sodis.monitoring.db.entity.QuestionImage
 import de.sodis.monitoring.db.entity.SurveyHeader
+import de.sodis.monitoring.todolist.TodoDialog
 import de.sodis.monitoring.viewmodel.IntervieweeModel
 import de.sodis.monitoring.viewmodel.MonitoringOverviewModel
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
@@ -66,6 +67,7 @@ class IntervieweeDetailFragment : BaseListFragment() {
         super.onCreate(savedInstanceState)
         intervieweeId = args.intervieweeId
         intervieweeModel.setInterviewee(intervieweeId)
+
         intervieweeModel.intervieweeDetail.observe(this, Observer { intervieweeD ->
             (activity as MainActivity).supportActionBar!!.title = intervieweeD.interviewee.name
             recyclerView.withModels {
@@ -130,6 +132,39 @@ class IntervieweeDetailFragment : BaseListFragment() {
                                 )
                             findNavController().navigate(action)
                         }
+                    }
+                }
+
+                intervieweeD.todoPoints?.forEach {
+                    todoPoint ->
+                    task {
+                        id(todoPoint.id.toString()+"td")
+                        text(todoPoint.text)
+                        checked(todoPoint.done)
+                        date(SimpleDateFormat("dd.MM.yyyy").format(todoPoint.duedate!!.time))
+                        onClickedCheckbox { _ -> Thread(Runnable{
+                            intervieweeModel.checkChangeTodoPoint(todoPoint = todoPoint)
+                        }).start()
+                        }
+                    }
+                }
+                centeredButton {
+                    id("addtodobutton")
+                    text("Añadir una tarea")
+                    onClick { _ ->
+                        Thread(Runnable {
+                            val dialog = TodoDialog(
+                                intervieweeModel.getByID(intervieweeId),
+                                null,
+                                context!!,
+                                null
+                            )
+                            activity!!.runOnUiThread {
+                                dialog.show(childFragmentManager, "todo_in_survey")
+                            }
+
+                        }).start()
+
                     }
                 }
 

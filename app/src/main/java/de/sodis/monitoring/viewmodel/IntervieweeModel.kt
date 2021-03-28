@@ -1,6 +1,7 @@
 package de.sodis.monitoring.viewmodel
 
 import android.app.Application
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -10,9 +11,11 @@ import de.sodis.monitoring.api.MonitoringApi
 import de.sodis.monitoring.db.MonitoringDatabase
 import de.sodis.monitoring.db.entity.Interviewee
 import de.sodis.monitoring.db.entity.IntervieweeTechnology
+import de.sodis.monitoring.db.entity.TodoPoint
 import de.sodis.monitoring.db.entity.Village
 import de.sodis.monitoring.db.response.IntervieweeDetail
 import de.sodis.monitoring.repository.IntervieweeRepository
+import de.sodis.monitoring.repository.TodoPointRepository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
@@ -37,8 +40,11 @@ class IntervieweeModel(application: Application) : AndroidViewModel(application)
             userDao = monitoringDatabase.userDao(),
             intervieweeTechnologyDao = monitoringDatabase.intervieweeTechnologyDao(),
             technologyDao = monitoringDatabase.technologyDao(),
+            todoPointDao = monitoringDatabase.todoPointDao(),
             monitoringApi = MonitoringApi()
         )
+
+    private val todoPointRepository = TodoPointRepository(monitoringDatabase.todoPointDao(), MonitoringApi())
 
     init {
         intervieweeList = intervieweeRepository.getAll()
@@ -46,6 +52,21 @@ class IntervieweeModel(application: Application) : AndroidViewModel(application)
         intervieweeDetail = MutableLiveData()
         villageName = MutableLiveData()
         villageName.postValue("")
+    }
+
+    fun checkChangeTodoPoint(todoPoint: TodoPoint) {
+        var toSet = todoPoint
+        if(!todoPoint.done!!) {
+            toSet.done=true
+            toSet.duedate = Calendar.getInstance()
+        }
+        else {
+            toSet.done=false
+            toSet.duedate = null
+        }
+        todoPointRepository.updateTodoPoint(
+            todoPoint = toSet
+        )
     }
 
     fun getByVillage(villageId: Int): LiveData<List<Interviewee>> {
@@ -76,9 +97,17 @@ class IntervieweeModel(application: Application) : AndroidViewModel(application)
                     intervieweeDetail.postValue(value)
                 }
             })
+        todoPointRepository.getUndonePointsOfFamily(intervieweeId).observeForever {
+            if(intervieweeDetail.value!=null) {
+                val value = intervieweeDetail.value
+                value!!.todoPoints = it;
+                intervieweeDetail.postValue(value)
+            }
+        }
         viewModelScope.launch(Dispatchers.IO) {
             intervieweeDetail.postValue(intervieweeRepository.getById(intervieweeId = intervieweeId))
         }
+
     }
 
     fun getByID(intervieweeId: String): Interviewee {
