@@ -201,6 +201,7 @@ class IntervieweeDetailFragment : BaseListFragment() {
      */
 
     val REQUEST_TAKE_PHOTO = 1
+    lateinit var currentPhotoPath: String
 
     private fun dispatchTakePictureIntent() {
         Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
@@ -227,9 +228,6 @@ class IntervieweeDetailFragment : BaseListFragment() {
         }
     }
 
-
-    lateinit var currentPhotoPath: String
-
     @Throws(IOException::class)
     private fun createImageFile(): File {
         // Create an image file name
@@ -247,7 +245,11 @@ class IntervieweeDetailFragment : BaseListFragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
-            placeViewModel.storeImagePath(currentPhotoPath, args.intervieweeId)
+            // Store image path (currentPhotoPath) in database. data also includes thumbnail and full size image to set
+            // it manually to the UI, better use Livedata observe on the imagePath to set the image automatically
+            // if the imagePath in the database has changed. (See Line 60-72 IntervieweeDetailFragment)
+            // Store Image path with the family(intervieweeId)
+            // placeViewModel.storeImagePath(currentPhotoPath, args.intervieweeId)
         }
     }
 
