@@ -11,6 +11,7 @@ import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.view.isGone
 import androidx.lifecycle.Observer
@@ -71,44 +72,109 @@ class IntervieweeDetailFragment : BaseListFragment() {
                                     view.dataBinding.root.imageView.load(File(it.imagePath))
                                 }
                             }
-
                         }
                     }
-                    var nutriSurveys = surveyList.filter { it.projectName == "Nutricion" }
                     technology {
                         id("Nutricion")
                         survey1OnClick { clicked ->
-                            var surveyId = nutriSurveys[0].surveyId
-                            openSurvey(surveyId)
+                            //Agriculture
+                            openSurvey(surveyList.filter { it.projectName == "Nutricion" }[0].surveyId)
 
                         }
                         survey2OnClick { clicked ->
-                            var surveyId = nutriSurveys[1].surveyId
-                            openSurvey(surveyId)
+                            //Nutricion
+                            openSurvey(surveyList.filter { it.projectName == "Nutricion" }[1].surveyId)
                         }
                         onBind { model, view, position ->
-                            view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_iconunternehmertum)//TODO icons einfügen
-                            view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_iconwash)
+                            view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_agriculture)//TODO icons einfügen
+                            view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_vegetables)
+                            view.dataBinding.root.survey1Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorGreen700))
+                            view.dataBinding.root.survey2Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorGrey700))
+
                         }
                     }
-                    var quariWarmiSurvey = surveyList.filter { it.projectName == "Quari Warmi" }
                     technology {
                         id("QuariWarmi")
                         survey1OnClick { clicked ->
-                            var surveyId = quariWarmiSurvey[0].surveyId
-                            openSurvey(surveyId)
-
+                            //Empresa
+                            openSurvey(surveyList.first { it.surveyName == "empresa" }.surveyId)
                         }
                         survey2OnClick { clicked ->
-                            var surveyId = quariWarmiSurvey[1].surveyId
-                            openSurvey(surveyId)
+                            //Tara
+                            openSurvey(surveyList.first { it.surveyName == "Tara" }.surveyId)
                         }
                         onBind { model, view, position ->
                             view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_iconunternehmertum)//TODO icons einfügen
-                            view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_iconwash)
+                            view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_iconunternehmertum)//TODO einfärben nach status
+                            view.dataBinding.root.survey1Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorYellow700))
+                            view.dataBinding.root.survey2Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorGreen700))
+
                         }
                     }
-                    //TODO add hasco surveys
+                    //cocina
+                    technology {
+                        id("Cocina Ecologica")
+                        survey1OnClick { clicked ->
+                            openSurvey(surveyList.first { it.surveyName == "Cocinas Ecológicas" }.surveyId)
+                        }
+                        survey2OnClick { clicked ->
+                            openSurvey(surveyList.first { it.surveyName == "Mantenimiento" }.surveyId)
+                        }
+                        onBind { model, view, position ->
+                            view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_iconcocina)//TODO icons einfügen
+                            view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_iconusotechnologia)//TODO einfärben nach status
+                            view.dataBinding.root.survey1Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorGrey700))
+                            view.dataBinding.root.survey2Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorRed700))
+                        }
+                    }
+                    //cocina
+                    technology {
+                        id("filtro")
+                        survey1OnClick { clicked ->
+                            openSurvey(surveyList.first { it.surveyName == "Filtro de Agua" }.surveyId)
+                        }
+                        survey2OnClick { clicked ->
+                            openSurvey(surveyList.first { it.surveyName == "Agua Segura (Filtro)\n" }.surveyId)
+                        }
+                        onBind { model, view, position ->
+                            view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_iconfiltro)//TODO icons einfügen
+                            view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_iconusotechnologia)//TODO einfärben nach status
+                            view.dataBinding.root.survey1Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorGreen700))
+                            view.dataBinding.root.survey2Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorGrey700))
+                        }
+                    }
+                    //cocina
+                    technology {
+                        id("toilet")
+                        survey1OnClick { clicked ->
+                            openSurvey(surveyList.first { it.surveyName == "Baños (Saneamiento)" }.surveyId)
+                        }
+                        survey2OnClick { clicked ->
+                            openSurvey(surveyList.first { it.surveyName == "Saneamiento (Baños)" }.surveyId)
+                        }
+                        onBind { model, view, position ->
+                            view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_iconba_o)//TODO icons einfügen
+                            view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_iconusotechnologia)//TODO einfärben nach status
+                            view.dataBinding.root.survey1Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorRed700))
+                            view.dataBinding.root.survey2Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorYellow700))
+                        }
+                    }
+                    //cocina
+                    technology {
+                        id("wash")
+                        survey1OnClick { clicked ->
+                            openSurvey(surveyList.first { it.surveyName == "Lavado de manos (Higiene)" }.surveyId)
+                        }
+                        survey2OnClick { clicked ->
+                        }
+                        onBind { model, view, position ->
+                            view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_iconwash)//TODO icons einfügen
+                            view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_iconusotechnologia)//TODO einfärben nach status
+                            view.dataBinding.root.survey1Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorGreen700))
+                            view.dataBinding.root.survey2Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorGrey700))
+                        }
+                    }
+
                 }
             })
 

@@ -11,12 +11,11 @@
 
         <variable
             name="survey1OnClick"
-            type="android.view.View.OnClickListener"
-            />
+            type="android.view.View.OnClickListener" />
+
         <variable
             name="survey2OnClick"
-            type="android.view.View.OnClickListener"
-            />
+            type="android.view.View.OnClickListener" />
 
     </data>
 
@@ -40,14 +39,13 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
-                android:foreground="?android:attr/selectableItemBackground"
                 android:id="@+id/survey1Icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:layout_marginStart="32dp"
                 android:layout_marginLeft="32dp"
                 android:layout_marginTop="16dp"
-                android:background="#00C853"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:onClick="@{survey1OnClick}"
                 app:layout_constraintEnd_toStartOf="@+id/survey2Icon"
                 app:layout_constraintStart_toStartOf="parent"
@@ -55,14 +53,13 @@
                 app:srcCompat="@drawable/ic_iconunternehmertum" />
 
             <ImageView
-                android:foreground="?android:attr/selectableItemBackground"
                 android:id="@+id/survey2Icon"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
                 android:layout_marginStart="72dp"
                 android:layout_marginLeft="72dp"
                 android:layout_marginTop="16dp"
-                android:background="#9AD50000"
+                android:foreground="?android:attr/selectableItemBackground"
                 android:onClick="@{survey2OnClick}"
                 app:layout_constraintStart_toEndOf="@+id/survey1Icon"
                 app:layout_constraintTop_toTopOf="parent"

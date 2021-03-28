@@ -227,9 +227,8 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
 
                     4 -> {
                         //Image
-                        default {
+                        answerImage {
                             id(questionList.first().questionOptionId)
-                            text("Bild aufnehmen!")
                             onClick { clicked ->
                                 dispatchTakePictureIntent()
                             }
