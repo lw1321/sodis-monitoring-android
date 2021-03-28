@@ -12,7 +12,7 @@
 
     <item
         android:id="@+id/tasks"
-        android:icon="@drawable/ic_baseline_playlist_add_check"
+        android:icon="@drawable/task_icon"
         android:title="@string/tasks"/>
 
 </menu>

@@ -3,6 +3,7 @@ package de.sodis.monitoring.todolist
 
 import android.app.Activity
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -104,6 +105,18 @@ class TodoListAdapter(val activity: Activity, @NonNull todoPointS: List<TodoPoin
             holder.familyDescriptionField.visibility = GONE
             holder.familyField.visibility = GONE
         }
+
+        if(todoPoints[position].picturePath!=null) {
+            val bo : BitmapFactory.Options = BitmapFactory.Options()
+            bo.inSampleSize = 8
+            BitmapFactory.decodeFile(todoPoints[position].picturePath, bo)
+                ?.also { bitmap ->
+                    holder.imageView.setImageBitmap(bitmap)
+
+                }
+        }
+
+
         if(todoPoints[position].village!=null) {
             Thread(Runnable{
                 val ts = intervieweeModel.getVillageByID(todoPoints[position].village!!).name

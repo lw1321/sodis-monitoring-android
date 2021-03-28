@@ -23,7 +23,7 @@ interface TodoPointDao {
     fun update(todoPoint: TodoPoint): Int
 
     @Query("SELECT * FROM TodoPoint WHERE family=:familyId")
-    fun getTasksByInterviewee(familyId: Int): LiveData<List<TodoPoint>>
+    fun getTasksByInterviewee(familyId: String): LiveData<List<TodoPoint>>
 
     @Delete
     fun delete(todoPoint: TodoPoint)
@@ -45,5 +45,8 @@ interface TodoPointDao {
 
     @Query("SELECT * FROM TodoPoint WHERE donedate>=:calendar OR done=0 ORDER BY village ASC")
     fun getUndoneTodoPointsSortedByVillage(calendar: Calendar):LiveData<List<TodoPoint>>
+
+    @Query("SELECT * FROM TodoPoint WHERE family=:id AND done=0 ORDER BY duedate ASC")
+    fun getUndoneTasksByInterviewee(id: String):LiveData<List<TodoPoint>>
 
 }

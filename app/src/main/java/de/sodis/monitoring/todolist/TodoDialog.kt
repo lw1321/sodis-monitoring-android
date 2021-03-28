@@ -1,9 +1,15 @@
 package de.sodis.monitoring.todolist
 
+import android.app.Activity.RESULT_OK
 import android.app.DatePickerDialog
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
 import android.text.Editable
 import android.text.Layout
 import android.text.TextWatcher
@@ -11,6 +17,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.content.FileProvider
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
@@ -25,7 +32,10 @@ import de.sodis.monitoring.repository.IntervieweeRepository
 import de.sodis.monitoring.viewmodel.IntervieweeModel
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
 import de.sodis.monitoring.viewmodel.TodoPointModel
+import kotlinx.android.synthetic.main.view_holder_picture.view.*
 import kotlinx.coroutines.selects.select
+import java.io.File
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -37,6 +47,61 @@ class TodoDialog(
     applicationContext: Context,
     val onDismissListener: DialogInterface.OnDismissListener?
 ) : DialogFragment() {
+
+
+
+
+    val REQUEST_TAKE_PHOTO = 1
+    private fun dispatchTakePictureIntent() {
+        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+            // Ensure that there's a camera activity to handle the intent
+            takePictureIntent.resolveActivity(activity!!.packageManager)?.also {
+                // Create the File where the photo should go
+                val photoFile: File? = try {
+                    createImageFile()
+                } catch (ex: IOException) {
+                    // Error occurred while creating the File
+                    null
+                }
+                // Continue only if the File was successfully created
+                photoFile?.also {
+                    val photoURI: Uri = FileProvider.getUriForFile(
+                        activity!!,
+                        "com.example.android.fileprovider",
+                        it
+                    )
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                    startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO)
+                }
+            }
+        }
+    }
+    @Throws(IOException::class)
+    private fun createImageFile(): File {
+        // Create an image file name
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val storageDir: File? = activity!!.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        return File.createTempFile(
+            "JPEG_${timeStamp}_todo", /* prefix */
+            ".jpg", /* suffix */
+            storageDir /* directory */
+        ).apply {
+            // Save a file: path for use with ACTION_VIEW intents
+            savedPath = absolutePath
+        }
+    }
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
+            setPicture()
+        }
+    }
+
+
+
+
+
+
+    //bis hier reinkopiert
 
     private val intervieweeModel: IntervieweeModel by lazy {
         ViewModelProviders.of(this, MyViewModelFactory(activity!!.application, emptyList()))
@@ -53,6 +118,8 @@ class TodoDialog(
     lateinit var titleText: EditText
     lateinit var dueText: EditText
 
+    lateinit var imageView:ImageView
+
     lateinit var cancelButton: Button
     lateinit var continueButton: Button
 
@@ -63,6 +130,24 @@ class TodoDialog(
     lateinit var datePickerDialog: DatePickerDialog
 
     lateinit var dueTextOnClickListener: View.OnClickListener
+
+    var takePhotoOnClickListener: View.OnClickListener = View.OnClickListener {
+        dispatchTakePictureIntent()
+    }
+
+    fun setPicture() {
+        if (savedPath != null) {
+            val bo : BitmapFactory.Options = BitmapFactory.Options()
+            bo.inSampleSize = 8
+            BitmapFactory.decodeFile(savedPath, bo)
+                ?.also { bitmap ->
+                    imageView.setImageBitmap(bitmap)
+
+                }
+        } else {
+            imageView.setImageResource(R.drawable.ic_camera_alt_black_24dp)
+        }
+    }
 
     var onCancelPressed: View.OnClickListener
 
@@ -82,6 +167,8 @@ class TodoDialog(
         }
     }
 
+    var savedPath:String? = null
+
     fun saveAndDismiss() {
         var intervieweeidtoset: String? = null
         var villageidtoset: Int? = null
@@ -99,7 +186,8 @@ class TodoDialog(
             null,
             intervieweeidtoset,
             villageidtoset,
-            titleText.text.toString()
+            titleText.text.toString(),
+            savedPath
         )
         Thread(
             Runnable { todoPointModel.insertTodoPoint(todoPoint!!) }).start()
@@ -211,6 +299,10 @@ class TodoDialog(
         dueText.setOnTouchListener(onTouchListener)
         cancelButton.setOnClickListener(onCancelPressed)
         continueButton.setOnClickListener(onSavePressed)
+
+        imageView = view.findViewById(R.id.todoDialogImageView)
+        imageView.setOnClickListener(takePhotoOnClickListener)
+        setPicture()
         return view
     }
 

@@ -2,6 +2,7 @@ package de.sodis.monitoring.todolist
 
 import android.view.View
 import android.widget.CheckBox
+import android.widget.ImageView
 import android.widget.RadioButton
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -15,6 +16,7 @@ class TodoListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     lateinit var familyDescriptionField: TextView
     lateinit var villageField: TextView
     lateinit var villageDescriptionField: TextView
+    lateinit var imageView: ImageView
 
     init {
         checkBox = itemView.findViewById(R.id.checkbox)
@@ -24,6 +26,7 @@ class TodoListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         familyDescriptionField = itemView.findViewById(R.id.familyDescriptionView)
         villageField = itemView.findViewById(R.id.villageView)
         villageDescriptionField = itemView.findViewById(R.id.villageDescriptionView)
+        imageView = itemView.findViewById(R.id.todoListImageView)
     }
 
 }

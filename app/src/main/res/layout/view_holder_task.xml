@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+        <variable
+            name="text"
+            type="String" />
+
+        <variable
+            name="checked"
+            type="Boolean"/>
+
+        <variable
+            name="date"
+            type="String"
+            />
+
+        <variable
+            name="onClickedCheckbox"
+            type="android.view.View.OnClickListener" />
+    </data>
+
+
+    <com.google.android.material.card.MaterialCardView
+        android:foreground="?android:attr/selectableItemBackground"
+        android:id="@+id/surveyHeaderCardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        app:cardCornerRadius="5dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_margin="8dp">
+
+            <CheckBox
+                android:layout_margin="8dp"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:buttonTint="@color/colorPrimary"
+                app:buttonTint="@color/colorPrimary"
+                android:checked="@{checked}"
+                android:onClick="@{onClickedCheckbox}"
+                >
+            </CheckBox>
+
+            <LinearLayout
+                android:layout_margin="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{text}"
+                    android:layout_marginBottom="8dp">
+
+                </TextView>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    >
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="debido a:"
+                        android:layout_gravity="start"
+                        ></TextView>
+
+                    <TextView
+                        android:layout_marginLeft="8dp"
+                        android:textStyle="bold"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:text="@{date}"
+                        ></TextView>
+
+
+
+                </LinearLayout>
+
+
+
+
+
+            </LinearLayout>
+
+
+
+
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+</layout>
