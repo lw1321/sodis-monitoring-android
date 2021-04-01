@@ -78,12 +78,13 @@ class IntervieweeDetailFragment : BaseListFragment() {
                         id("Nutricion")
                         survey1OnClick { clicked ->
                             //Agriculture
-                            openSurvey(surveyList.filter { it.projectName == "Nutricion" }[0].surveyId)
+                            openSurvey(surveyList.first { it.surveyName == "Agricultura / disponibilidad de agua" }.surveyId)
 
                         }
                         survey2OnClick { clicked ->
                             //Nutricion
-                            openSurvey(surveyList.filter { it.projectName == "Nutricion" }[1].surveyId)
+                            openSurvey(surveyList.first { it.surveyName == "Nutrición" }.surveyId)
+
                         }
                         onBind { model, view, position ->
                             view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_agriculture)//TODO icons einfügen
@@ -105,7 +106,7 @@ class IntervieweeDetailFragment : BaseListFragment() {
                         }
                         onBind { model, view, position ->
                             view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_iconunternehmertum)//TODO icons einfügen
-                            view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_iconunternehmertum)//TODO einfärben nach status
+                            view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_icontaraplant)//TODO einfärben nach status
                             view.dataBinding.root.survey1Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorYellow700))
                             view.dataBinding.root.survey2Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorGreen700))
 
@@ -118,7 +119,7 @@ class IntervieweeDetailFragment : BaseListFragment() {
                             openSurvey(surveyList.first { it.surveyName == "Cocinas Ecológicas" }.surveyId)
                         }
                         survey2OnClick { clicked ->
-                            openSurvey(surveyList.first { it.surveyName == "Mantenimiento" }.surveyId)
+                            openSurvey(surveyList.first { it.surveyName == "Uso Cocinas Ecológicas" }.surveyId)
                         }
                         onBind { model, view, position ->
                             view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_iconcocina)//TODO icons einfügen
@@ -134,7 +135,7 @@ class IntervieweeDetailFragment : BaseListFragment() {
                             openSurvey(surveyList.first { it.surveyName == "Filtro de Agua" }.surveyId)
                         }
                         survey2OnClick { clicked ->
-                            openSurvey(surveyList.first { it.surveyName == "Agua Segura (Filtro)\n" }.surveyId)
+                            openSurvey(surveyList.first { it.surveyName == "Uso Filtro de Agua" }.surveyId)
                         }
                         onBind { model, view, position ->
                             view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_iconfiltro)//TODO icons einfügen
@@ -147,10 +148,10 @@ class IntervieweeDetailFragment : BaseListFragment() {
                     technology {
                         id("toilet")
                         survey1OnClick { clicked ->
-                            openSurvey(surveyList.first { it.surveyName == "Baños (Saneamiento)" }.surveyId)
+                            openSurvey(surveyList.first { it.surveyName == "Baños" }.surveyId)
                         }
                         survey2OnClick { clicked ->
-                            openSurvey(surveyList.first { it.surveyName == "Saneamiento (Baños)" }.surveyId)
+                            openSurvey(surveyList.first { it.surveyName == "Uso Baños" }.surveyId)
                         }
                         onBind { model, view, position ->
                             view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_iconba_o)//TODO icons einfügen
@@ -163,9 +164,10 @@ class IntervieweeDetailFragment : BaseListFragment() {
                     technology {
                         id("wash")
                         survey1OnClick { clicked ->
-                            openSurvey(surveyList.first { it.surveyName == "Lavado de manos (Higiene)" }.surveyId)
+                            openSurvey(surveyList.first { it.surveyName == "Lavado de manos" }.surveyId)
                         }
                         survey2OnClick { clicked ->
+                            openSurvey(surveyList.first { it.surveyName == "Uso Lavado de manos " }.surveyId)
                         }
                         onBind { model, view, position ->
                             view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_iconwash)//TODO icons einfügen
