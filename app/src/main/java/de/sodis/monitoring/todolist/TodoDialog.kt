@@ -24,12 +24,11 @@ import androidx.recyclerview.widget.RecyclerView
 import de.sodis.monitoring.R
 import de.sodis.monitoring.db.entity.Interviewee
 import de.sodis.monitoring.db.entity.TodoPoint
+import de.sodis.monitoring.db.response.IntervieweeItem
 import de.sodis.monitoring.viewmodel.PlaceViewModel
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
 import de.sodis.monitoring.viewmodel.TodoPointModel
 
-import kotlinx.android.synthetic.main.view_holder_picture.view.*
-import kotlinx.coroutines.selects.select
 import java.io.File
 import java.io.IOException
 
@@ -38,7 +37,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 class TodoDialog(
-        val passedInterviewee: Interviewee?,
+        val intervieweeId: String?,
         val passedText: String?,
         applicationContext: Context,
         val onDismissListener: DialogInterface.OnDismissListener?
@@ -117,8 +116,9 @@ class TodoDialog(
     lateinit var continueButton: Button
 
     var due: Calendar
-    var intervieweeChosen: Interviewee?
-    lateinit var intervieweeResults: List<Interviewee>
+    lateinit var intervieweeChosen: IntervieweeItem
+
+    lateinit var intervieweeResults: List<IntervieweeItem>
 
     lateinit var datePickerDialog: DatePickerDialog
 
@@ -149,7 +149,6 @@ class TodoDialog(
 
     init {
         due = Calendar.getInstance()
-        intervieweeChosen = passedInterviewee
 
         onCancelPressed = View.OnClickListener {
             dismiss()
@@ -167,9 +166,7 @@ class TodoDialog(
         var villageidtoset: Int? = null
         if (intervieweeChosen != null) {
             intervieweeidtoset = intervieweeChosen!!.id
-            if (intervieweeChosen!!.villageId != null) {
-                villageidtoset = intervieweeChosen!!.villageId
-            }
+            villageidtoset = intervieweeChosen!!.villageId
         }
         var todoPoint = TodoPoint(
                 null,
@@ -244,56 +241,58 @@ class TodoDialog(
             datePickerDialog.show()
             return@OnTouchListener true
         }
-        var view = inflater.inflate(R.layout.todo_dialog_layout, container, false)
-        searchEditText = view.findViewById(R.id.tododialog_searchview)
-        if (passedInterviewee != null) {
-            searchEditText.setText(passedInterviewee.name)
-        }
 
-        searchRecyclerView = view.findViewById(R.id.tododialog_recyclerview)
+
+        searchRecyclerView = view!!.findViewById(R.id.tododialog_recyclerview)
         searchRecyclerView.layoutManager = LinearLayoutManager(context)
         searchAdapter = SearchAdapter(intervieweeResults, requireContext(), object : CallBackTodo {
-            override fun OnIntervieweeChosen(interviewee: Interviewee?) {
-                intervieweeChosen = interviewee
+            override fun OnIntervieweeChosen(interviewee: IntervieweeItem?) {
+                intervieweeChosen = interviewee!!
             }
         }, null)
         searchRecyclerView.adapter = searchAdapter
-        searchEditText.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
 
-            }
 
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+        placeViewModel.intervieweeItem.observe(viewLifecycleOwner, androidx.lifecycle.Observer { intervieweeList ->
+            intervieweeChosen = intervieweeList.first { intervieweeItem -> intervieweeItem.id == intervieweeId }
+            val view = inflater.inflate(R.layout.todo_dialog_layout, container, false)
+            searchEditText = view.findViewById(R.id.tododialog_searchview)
+            searchEditText.setText(intervieweeChosen.name)
+            searchEditText.addTextChangedListener(object : TextWatcher {
+                override fun afterTextChanged(s: Editable?) {
 
-            }
+                }
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                searchAdapter.filter.filter(s)
-            }
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
 
+                }
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    searchAdapter.filter.filter(s)
+                }
+
+            })
+
+
+
+            searchAdapter?.setDataSet(intervieweeList)
+            searchAdapter?.filter.filter(searchEditText?.text)
         })
-
-
-        /*
-        //TODO
-    placeViewModel.intervieweeList.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-        searchAdapter?.setDataSet(it)
-        searchAdapter?.filter.filter(searchEditText?.text)
-    })*/
-        titleText = view.findViewById(R.id.tododialog_title)
+        titleText = view!!.findViewById(R.id.tododialog_title)
         if (passedText != null) {
             titleText.setText(passedText)
         }
-        dueText = view.findViewById(R.id.tododialog_due)
+        //TODO databinding
+        dueText = view!!.findViewById(R.id.tododialog_due)
         dueText.setText(SimpleDateFormat("dd.MM.yyyy").format(due.time))
-        cancelButton = view.findViewById(R.id.tododialog_cancel)
-        continueButton = view.findViewById(R.id.tododialog_save)
+        cancelButton = view!!.findViewById(R.id.tododialog_cancel)
+        continueButton = view!!.findViewById(R.id.tododialog_save)
         //dueText.setOnClickListener(dueTextOnClickListener)
         dueText.setOnTouchListener(onTouchListener)
         cancelButton.setOnClickListener(onCancelPressed)
         continueButton.setOnClickListener(onSavePressed)
 
-        imageView = view.findViewById(R.id.todoDialogImageView)
+        imageView = view!!.findViewById(R.id.todoDialogImageView)
         imageView.setOnClickListener(takePhotoOnClickListener)
         setPicture()
         return view
@@ -303,10 +302,10 @@ class TodoDialog(
 }
 
 class SearchAdapter(
-        interviewees: List<Interviewee>,
+        interviewees: List<IntervieweeItem>,
         val context: Context,
         val callBack: CallBackTodo,
-        originallySelected: Interviewee?
+        originallySelected: IntervieweeItem?
 ) : Filterable, RecyclerView.Adapter<SearchListViewHolder>() {
     var filteredInterviewees: ArrayList<Array<Any>>
     var originalInterviewees: ArrayList<Array<Any>>
@@ -373,14 +372,14 @@ class SearchAdapter(
         return ourFilter
     }
 
-    fun setDataSet(newInterviewees: List<Interviewee>) {
+    fun setDataSet(newInterviewees: List<IntervieweeItem>) {
         val selectedbeforeArray: Array<Any>? = originalInterviewees.firstOrNull {
             it[0] as Boolean
         }
-        var selectedbefore: Interviewee? = null
+        var selectedbefore: IntervieweeItem? = null
         if (selectedbeforeArray != null) {
             if (selectedbeforeArray[1] != null) {
-                selectedbefore = selectedbeforeArray[1] as Interviewee
+                selectedbefore = selectedbeforeArray[1] as IntervieweeItem
             }
         }
         this.originalInterviewees = ArrayList()
@@ -444,7 +443,7 @@ class SearchAdapter(
             }
         }
         if (checked) {
-            callBack.OnIntervieweeChosen(filteredInterviewees[position][1] as Interviewee)
+            callBack.OnIntervieweeChosen(filteredInterviewees[position][1] as IntervieweeItem)
         } else {
             callBack.OnIntervieweeChosen(null)
         }
@@ -453,7 +452,7 @@ class SearchAdapter(
 }
 
 interface CallBackTodo {
-    fun OnIntervieweeChosen(interviewee: Interviewee?)
+    fun OnIntervieweeChosen(interviewee: IntervieweeItem?)
 }
 
 

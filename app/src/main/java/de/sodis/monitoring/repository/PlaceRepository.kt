@@ -5,8 +5,7 @@ import de.sodis.monitoring.api.MonitoringApi
 import de.sodis.monitoring.api.models.IntervieweeJson
 import de.sodis.monitoring.db.dao.*
 import de.sodis.monitoring.db.entity.*
-import de.sodis.monitoring.db.response.FamilyList
-import de.sodis.monitoring.db.response.IntervieweeDetail
+import de.sodis.monitoring.db.response.IntervieweeItem
 import java.util.*
 
 class PlaceRepository(
@@ -41,7 +40,7 @@ class PlaceRepository(
     }
 
 
-    fun getFamilyList(): LiveData<List<FamilyList>> {
+    fun getFamilyList(): LiveData<List<IntervieweeItem>> {
         return intervieweeDao.getFamilyList()
     }
 

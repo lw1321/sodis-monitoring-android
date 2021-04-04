@@ -15,6 +15,7 @@ import com.google.android.gms.location.LocationServices
 import de.sodis.monitoring.api.MonitoringApi
 import de.sodis.monitoring.db.MonitoringDatabase
 import de.sodis.monitoring.db.entity.Answer
+import de.sodis.monitoring.db.entity.CompletedSurvey
 import de.sodis.monitoring.db.response.QuestionItem
 import de.sodis.monitoring.db.response.SurveyList
 import de.sodis.monitoring.repository.SurveyRepository
@@ -108,6 +109,9 @@ class SurveyViewModel(
 
     var surveyList: LiveData<List<SurveyList>>
 
+    var completedSurveyList : LiveData<List<CompletedSurvey>>
+
+
     private lateinit var currentQuestion: List<QuestionItem>
 
     private val answerMap = mutableMapOf<Int, Answer>()
@@ -132,6 +136,7 @@ class SurveyViewModel(
 
     init {
         surveyList = surveyRepository.getSurveyList()
+        completedSurveyList = surveyRepository.getAllCompletedSurveys()
     }
 
 

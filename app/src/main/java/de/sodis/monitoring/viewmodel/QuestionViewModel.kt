@@ -86,11 +86,14 @@ class QuestionViewModel(
 
     var answerMap = mutableMapOf<Int, Answer>()
 
+    private var currentSurveyId : Int = 0
+
     init {
         createQuestionList(surveyId)
     }
 
     private fun createQuestionList(surveyId: Int) {
+        currentSurveyId = surveyId
         viewModelScope.launch(Dispatchers.IO) {
             questionIdList = surveyRepository.getQuestionsDistinct(surveyId)
             questionItemList = surveyRepository.getQuestionList(surveyId)
@@ -174,7 +177,7 @@ class QuestionViewModel(
     private fun saveSurvey(intervieweeId: String, latitude: Double? = null, longitude: Double? = null) {
         viewModelScope.launch(Dispatchers.IO) {
             surveyRepository.saveCompletedSurvey(
-                surveyId,
+                currentSurveyId,
                 answerMap,
                 intervieweeId = intervieweeId,
                 latitude = latitude,

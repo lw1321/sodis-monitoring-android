@@ -203,4 +203,8 @@ class SurveyRepository(
         return questionDao.getBySurveyHeader(surveyId)
     }
 
+    fun getAllCompletedSurveys(): LiveData<List<CompletedSurvey>> {
+        return completedSurveyDao.getAll()
+    }
+
 }

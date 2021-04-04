@@ -2,7 +2,6 @@ package de.sodis.monitoring.ui.fragment
 
 import android.app.AlertDialog
 import android.content.DialogInterface
-import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,13 +12,11 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.navigation.navOptions
 import com.google.android.material.snackbar.Snackbar
 import de.sodis.monitoring.*
 import de.sodis.monitoring.viewmodel.PlaceViewModel
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
 import kotlinx.android.synthetic.main.continuable_list.view.*
-import kotlinx.android.synthetic.main.view_holder_picture_list_item.view.imageView
 
 
 //TODO refactor redundant code
@@ -46,7 +43,7 @@ class IntervieweeOverviewFragment : BaseListFragment() {
     ): View? {
         val view = super.onCreateView(inflater, container, savedInstanceState)
         var villageId = args.villageId
-        placeViewModel.familyList.observe(viewLifecycleOwner, Observer {familyList ->
+        placeViewModel.intervieweeItem.observe(viewLifecycleOwner, Observer { familyList ->
             recyclerView.withModels {
                 familyList.filter { it.villageId == villageId }.forEach {
                     default {//TODO USE families view holder

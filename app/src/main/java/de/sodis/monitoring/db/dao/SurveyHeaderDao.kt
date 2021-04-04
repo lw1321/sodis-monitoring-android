@@ -39,7 +39,7 @@ interface SurveyHeaderDao {
     @Query("SELECT COUNT(*) FROM SurveyHeader WHERE id=:id")
     fun exists(id: Int): Int
 
-    @Query("SELECT sh.surveyName,  sh.id as surveyId, pr.id as projectId, pr.name as projectName  FROM SurveyHeader sh JOIN project pr ON pr.id = sh.projectId")
+    @Query("SELECT sh.surveyName, sh.id as surveyId, pr.id as projectId, pr.name as projectName  FROM SurveyHeader sh JOIN project pr ON pr.id = sh.projectId")
     fun getAllSurveys(): LiveData<List<SurveyList>>
 
 }

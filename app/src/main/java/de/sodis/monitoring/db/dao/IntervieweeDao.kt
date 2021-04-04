@@ -3,7 +3,7 @@ package de.sodis.monitoring.db.dao
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import de.sodis.monitoring.db.entity.Interviewee
-import de.sodis.monitoring.db.response.FamilyList
+import de.sodis.monitoring.db.response.IntervieweeItem
 
 @Dao
 interface IntervieweeDao {
@@ -38,6 +38,6 @@ interface IntervieweeDao {
     fun getNotsyncedProfilePictures(): List<Interviewee>
 
     @Query("SELECT i.id, i.name, i.imagePath, v.name as villageName, v.id as villageId FROM Interviewee i JOIN village v ON v.id = i.villageId")
-    fun getFamilyList(): LiveData<List<FamilyList>>
+    fun getFamilyList(): LiveData<List<IntervieweeItem>>
 
 }

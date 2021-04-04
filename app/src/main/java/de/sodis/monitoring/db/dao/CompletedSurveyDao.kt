@@ -17,8 +17,8 @@ interface CompletedSurveyDao {
     @Query("SELECT * FROM CompletedSurvey WHERE submitted=0")
     fun getAllUnsubmitted(): List<CompletedSurvey>
 
-    @Query("SELECT Interviewee.name, SurveyHeader.surveyName, CompletedSurvey.id FROM CompletedSurvey JOIN Interviewee ON CompletedSurvey.intervieweeId=Interviewee.id JOIN SurveyHeader ON CompletedSurvey.surveyHeaderId=SurveyHeader.id")
-    fun getAll(): LiveData<List<CompletedSurveyOverview>>
+    @Query("SELECT * FROM CompletedSurvey")
+    fun getAll(): LiveData<List<CompletedSurvey>>
 
     @Query("UPDATE CompletedSurvey SET submitted=1 WHERE id IN (:ids)")
     fun setSubmitted(ids: List<String>)
