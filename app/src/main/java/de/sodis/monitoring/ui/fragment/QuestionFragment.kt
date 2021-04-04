@@ -101,22 +101,6 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
 
 
     private fun nextQuestion() {
-//todo check if a task should be created, if so show dialog
-/*
-if (questionViewModel.createTodo()) {
-    val answerToCheck: Answer =
-        questionViewModel.answerToID(currentQuestion.first().id)!!
-    val dialog = TodoDialog(
-
-        questionViewModel.interviewee,
-        currentQuestion.title,
-        context!!,
-        this
-    )
-    dialog.show(childFragmentManager, "todo_in_survey")
-}
-*/
-
         questionViewModel.listOfAnsweredQuestions += questionViewModel.currentPosition
         val hasNext = questionViewModel.nextQuestion()
         if (hasNext) {
@@ -159,6 +143,7 @@ if (questionViewModel.createTodo()) {
             alert.setCanceledOnTouchOutside(false)
             alert.show()
         }
+
     }
 
     private fun createQuestion(questionList: List<QuestionItem>) {
@@ -189,8 +174,18 @@ if (questionViewModel.createTodo()) {
                                             answerText = null,
                                             questionId = currentQuestion.first().id
                                     )
+                                    if (it.optionChoiceName == "Escribir en la lista de tareas") {
+                                        val dialog = TodoDialog(args.intervieweeId,
+                                                currentQuestion.first().name,
+                                                context!!,
+                                                this@QuestionFragment
+                                        )
+                                        dialog.show(childFragmentManager, "todo_in_survey")
+                                    } else {
+                                        nextQuestion()
+                                    }
                                     // go directly to next question
-                                    nextQuestion()
+
                                 }
                             }
                         }
@@ -293,7 +288,7 @@ if (questionViewModel.createTodo()) {
                 (activity as MainActivity).getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view!!.windowToken, 0)
 
-//Cancel survey dialog todo
+        //Cancel survey dialog todo
         view?.navigation_cancel_button?.setOnClickListener {
             val alertDialog: AlertDialog.Builder = AlertDialog.Builder(context!!)
             alertDialog.setTitle("cancelar el cuestionario")
@@ -329,29 +324,6 @@ if (questionViewModel.createTodo()) {
 
     override fun onDismiss(dialog: DialogInterface?) {
         println("onDismissed called")
-        //TODO call nextQuestion()
-        questionViewModel.listOfAnsweredQuestions += questionViewModel.currentPosition
-        val hasNext = questionViewModel.nextQuestion()
-        if (hasNext) {
-            val action = QuestionFragmentDirections.actionQuestionFragmentSelf(
-                    args.surveyId,
-                    intervieweeId = args.intervieweeId
-            )
-            findNavController().navigate(action)
-        } else {
-            questionViewModel.finishSurvey(args.intervieweeId)
-            Snackbar.make(
-                    view!!.rootView.findViewById(R.id.nav_host_fragment),
-                    getString(R.string.message_monitoring_completed),
-                    Snackbar.LENGTH_LONG
-            ).show()
-            val action =
-                    QuestionFragmentDirections.actionQuestionFragmentToIntervieweeDetailFragment(
-                            intervieweeId = args.intervieweeId
-                    )
-            findNavController().navigate(action)
-            (activity as MainActivity).show_bottom_navigation()
-
-        }
+        nextQuestion()
     }
 }

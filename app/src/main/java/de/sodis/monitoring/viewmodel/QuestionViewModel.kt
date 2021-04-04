@@ -34,8 +34,8 @@ import java.util.*
 
 
 class QuestionViewModel(
-    private val mApplication: Application,
-    private val surveyId: Int
+        private val mApplication: Application,
+        private val surveyId: Int
 ) : AndroidViewModel(mApplication) {
 
 
@@ -63,18 +63,18 @@ class QuestionViewModel(
     private val db = MonitoringDatabase.getDatabase(context = mApplication.applicationContext)
 
     private val surveyRepository =
-        SurveyRepository(
-            inputTypeDao = db.inputTypeDao(),
-            optionChoiceDao = db.optionChoiceDao(),
-            questionDao = db.questionDao(),
-            questionOptionDao = db.questionOptionDao(),
-            surveyHeaderDao = db.surveyHeaderDao(),
-            surveySectionDao = db.surveySectionDao(),
-            questionImageDao = db.questionImageDao(),
-            answerDao = db.answerDao(),
-            completedSurveyDao = db.completedSurveyDao(),
-            monitoringApi = MonitoringApi()
-        )
+            SurveyRepository(
+                    inputTypeDao = db.inputTypeDao(),
+                    optionChoiceDao = db.optionChoiceDao(),
+                    questionDao = db.questionDao(),
+                    questionOptionDao = db.questionOptionDao(),
+                    surveyHeaderDao = db.surveyHeaderDao(),
+                    surveySectionDao = db.surveySectionDao(),
+                    questionImageDao = db.questionImageDao(),
+                    answerDao = db.answerDao(),
+                    completedSurveyDao = db.completedSurveyDao(),
+                    monitoringApi = MonitoringApi()
+            )
 
 
     /**
@@ -86,7 +86,7 @@ class QuestionViewModel(
 
     var answerMap = mutableMapOf<Int, Answer>()
 
-    private var currentSurveyId : Int = 0
+    private var currentSurveyId: Int = 0
 
     init {
         createQuestionList(surveyId)
@@ -106,14 +106,14 @@ class QuestionViewModel(
         // create Answer Object, map it with the position and replace if answer at
         // this position already exists
         answerMap[questionId] = Answer(
-            id = UUID.randomUUID().toString(),
-            questionId = questionId,
-            imagePath = imagePath,
-            answerText = answerText,
-            questionOptionId = questionOption,
-            completedSurveyId = null,
-            imageSynced = false,
-            submitted = false
+                id = UUID.randomUUID().toString(),
+                questionId = questionId,
+                imagePath = imagePath,
+                answerText = answerText,
+                questionOptionId = questionOption,
+                completedSurveyId = null,
+                imageSynced = false,
+                submitted = false
         )
     }
 
@@ -124,24 +124,24 @@ class QuestionViewModel(
         viewModelScope.launch(Dispatchers.IO) {
             // GET last know location
             if (ContextCompat.checkSelfPermission(
-                    getApplication<Application>().applicationContext,
-                    Manifest.permission.ACCESS_FINE_LOCATION
-                ) == PackageManager.PERMISSION_GRANTED
+                            getApplication<Application>().applicationContext,
+                            Manifest.permission.ACCESS_FINE_LOCATION
+                    ) == PackageManager.PERMISSION_GRANTED
             ) {
                 fusedLocationClient =
-                    LocationServices.getFusedLocationProviderClient(mApplication.applicationContext)
+                        LocationServices.getFusedLocationProviderClient(mApplication.applicationContext)
                 fusedLocationClient.lastLocation
-                    .addOnSuccessListener { location: Location? ->
-                        // Got last known location. In some rare situations this can be null.
-                        if (location != null) {
-                            saveSurvey(intervieweeId, location.latitude, location.longitude)
-                        } else {
+                        .addOnSuccessListener { location: Location? ->
+                            // Got last known location. In some rare situations this can be null.
+                            if (location != null) {
+                                saveSurvey(intervieweeId, location.latitude, location.longitude)
+                            } else {
+                                saveSurvey(intervieweeId)
+                            }
+                        }.addOnFailureListener { it ->
+                            //Location Request failed, save survey without location
                             saveSurvey(intervieweeId)
                         }
-                    }.addOnFailureListener { it ->
-                        //Location Request failed, save survey without location
-                        saveSurvey(intervieweeId)
-                    }
             } else {
                 //Location not granted, save survey without location
                 saveSurvey(intervieweeId)
@@ -149,7 +149,7 @@ class QuestionViewModel(
         }
         //start worker manager
         val uploadWorkRequest = OneTimeWorkRequestBuilder<UploadWorker>().setConstraints(
-            Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+                Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
         ).build()
         WorkManager.getInstance(mApplication.applicationContext).enqueue(uploadWorkRequest)
 
@@ -161,7 +161,7 @@ class QuestionViewModel(
         if (currentPosition == (questionIdList.size - 1)) {
             return false
         }
-        currentPosition = currentPosition  + 1
+        currentPosition = currentPosition + 1
         //check if current question has a  depended question. if so check if the depended question was
         //answered how excepected. If not call this function again. Recursive algorithm
         val questionItem = questionItemList.first { it.id == questionIdList[currentPosition] }
@@ -177,11 +177,11 @@ class QuestionViewModel(
     private fun saveSurvey(intervieweeId: String, latitude: Double? = null, longitude: Double? = null) {
         viewModelScope.launch(Dispatchers.IO) {
             surveyRepository.saveCompletedSurvey(
-                currentSurveyId,
-                answerMap,
-                intervieweeId = intervieweeId,
-                latitude = latitude,
-                longitude = longitude
+                    currentSurveyId,
+                    answerMap,
+                    intervieweeId = intervieweeId,
+                    latitude = latitude,
+                    longitude = longitude
             )
             answerMap.clear()
         }
@@ -200,23 +200,13 @@ class QuestionViewModel(
             val lastPosition = listOfAnsweredQuestions.last()
             answerMap.remove(questionIdList[lastPosition])
             listOfAnsweredQuestions =
-                listOfAnsweredQuestions.subList(0, listOfAnsweredQuestions.size - 1)
+                    listOfAnsweredQuestions.subList(0, listOfAnsweredQuestions.size - 1)
             currentPosition = lastPosition
             return true
         }
         return false
     }
 
-    //returns true if the answer is "Escribir en la lista de tareas"
-    fun createTodo(): Boolean {
-        //optional questions
-        if (!answerMap.contains(questionIdList[currentPosition])) {
-            return false
-        }
-        return answerMap[questionIdList[currentPosition]]!!.answerText.equals(
-            "Escribir en la lista de tareas"
-        ) //todo be aware of translation changes...
-    }
 
     fun setSurvey(surveyId: Int) {
         createQuestionList(surveyId)
