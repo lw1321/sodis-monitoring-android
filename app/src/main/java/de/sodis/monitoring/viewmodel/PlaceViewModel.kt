@@ -43,10 +43,10 @@ class PlaceViewModel(application: Application) : AndroidViewModel(application) {
 
 
     fun getByID(family: String): String {
-        TODO("Not yet implemented")
+        return placeRepository.getFamilyNameById(family)
     }
 
     fun getVillageByID(village: Int): String {
-        TODO("Not yet implemented")
+       return placeRepository.getVillageNameById(village)
     }
 }

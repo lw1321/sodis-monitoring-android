@@ -215,6 +215,7 @@ class TodoDialog(
             savedInstanceState: Bundle?
     ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
+        val view = inflater.inflate(R.layout.todo_dialog_layout, container, false)
 
         intervieweeResults = listOf()
 
@@ -254,10 +255,11 @@ class TodoDialog(
 
 
         placeViewModel.intervieweeItem.observe(viewLifecycleOwner, androidx.lifecycle.Observer { intervieweeList ->
-            intervieweeChosen = intervieweeList.first { intervieweeItem -> intervieweeItem.id == intervieweeId }
-            val view = inflater.inflate(R.layout.todo_dialog_layout, container, false)
             searchEditText = view.findViewById(R.id.tododialog_searchview)
-            searchEditText.setText(intervieweeChosen.name)
+            if(intervieweeId != null){
+                intervieweeChosen = intervieweeList.first { intervieweeItem -> intervieweeItem.id == intervieweeId }
+                searchEditText.setText(intervieweeChosen.name)
+            }
             searchEditText.addTextChangedListener(object : TextWatcher {
                 override fun afterTextChanged(s: Editable?) {
 
@@ -270,11 +272,7 @@ class TodoDialog(
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                     searchAdapter.filter.filter(s)
                 }
-
             })
-
-
-
             searchAdapter?.setDataSet(intervieweeList)
             searchAdapter?.filter.filter(searchEditText?.text)
         })
@@ -343,7 +341,7 @@ class SearchAdapter(
                     if (array[0] as Boolean) {
                         filteredToReturn.add(0, array)
                     } else {
-                        if ((array[1] as Interviewee).name.toLowerCase()
+                        if ((array[1] as IntervieweeItem).name.toLowerCase()
                                         .contains(constraint.toString().toLowerCase())
                         ) {
                             filteredToReturn.add(array)
@@ -359,7 +357,7 @@ class SearchAdapter(
 
         override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
             filteredInterviewees.clear()
-            if (results != null) {
+            if (results!!.values != null) {
                 filteredInterviewees.addAll(results.values as ArrayList<Array<Any>>)
             }
             notifyDataSetChanged()
@@ -411,7 +409,7 @@ class SearchAdapter(
 
     override fun onBindViewHolder(holder: SearchListViewHolder, position: Int) {
         holder.checkBox.isChecked = filteredInterviewees[position][0] as Boolean
-        holder.contentField.text = (filteredInterviewees[position][1] as Interviewee).name
+        holder.contentField.text = (filteredInterviewees[position][1] as IntervieweeItem).name
         holder.checkBox.setOnCheckedChangeListener(CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
             holder.checkBox.isChecked = isChecked; manageCheckedChange(position, isChecked)
         })
@@ -429,14 +427,14 @@ class SearchAdapter(
             }
         }
         originalInterviewees.forEach {
-            if ((it[1] as Interviewee).id == (filteredInterviewees[position][1] as Interviewee).id) {
+            if ((it[1] as IntervieweeItem).id == (filteredInterviewees[position][1] as IntervieweeItem).id) {
                 it[0] = checked
             } else {
                 it[0] = false
             }
         }
         originalInterviewees.forEach {
-            if ((it[1] as Interviewee).id == (filteredInterviewees[position][1] as Interviewee).id) {
+            if ((it[1] as IntervieweeItem).id == (filteredInterviewees[position][1] as IntervieweeItem).id) {
                 it[0] = checked
             } else {
                 it[0] = false

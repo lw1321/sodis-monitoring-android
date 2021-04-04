@@ -96,4 +96,12 @@ class PlaceRepository(
         intervieweeOld.imageUrl = null // set null because image is not uploaded yet
         intervieweeDao.update(intervieweeOld)
     }
+
+    fun getVillageNameById(village: Int): String {
+        return villageDao.getNameById(village)
+    }
+
+    fun getFamilyNameById(family: String): String {
+        return intervieweeDao.getNameById(family)
+    }
 }

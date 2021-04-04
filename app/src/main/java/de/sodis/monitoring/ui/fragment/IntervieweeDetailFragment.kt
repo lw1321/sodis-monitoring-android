@@ -93,18 +93,13 @@ class IntervieweeDetailFragment : BaseListFragment() {
                                 id("addtodobutton")
                                 text("Añadir una tarea")
                                 onClick { _ ->
-                                    Thread(Runnable {
-                                        val dialog = TodoDialog(
-                                                args.intervieweeId,
-                                                null,
-                                                context!!,
-                                                null
-                                        )
-                                        activity!!.runOnUiThread {
-                                            dialog.show(childFragmentManager, "todo_in_survey")
-                                        }
-
-                                    }).start()
+                                    val dialog = TodoDialog(
+                                            args.intervieweeId,
+                                            null,
+                                            context!!,
+                                            null
+                                    )
+                                    dialog.show(childFragmentManager, "todo_in_survey")
                                 }
                             }
                             //SURVEYS

@@ -40,4 +40,7 @@ interface IntervieweeDao {
     @Query("SELECT i.id, i.name, i.imagePath, v.name as villageName, v.id as villageId FROM Interviewee i JOIN village v ON v.id = i.villageId")
     fun getFamilyList(): LiveData<List<IntervieweeItem>>
 
+    @Query("SELECT i.name FROM Interviewee i WHERE id=:family")
+    fun getNameById(family: String): String
+
 }
