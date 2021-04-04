@@ -4,6 +4,8 @@ import android.app.Activity
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -30,6 +32,7 @@ import de.sodis.monitoring.todolist.TodoDialog
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
 import de.sodis.monitoring.viewmodel.QuestionViewModel
 import kotlinx.android.synthetic.main.continuable_list.view.*
+import kotlinx.android.synthetic.main.view_holder_answer_image.*
 import kotlinx.android.synthetic.main.view_holder_question.view.*
 import kotlinx.android.synthetic.main.view_holder_text_input.view.*
 import java.io.File
@@ -189,6 +192,10 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
                                 }
                             }
                         }
+                        //Add placeholder to present the last answer option properly
+                        placeholder {
+                            id("placeholder")
+                        }
                     }
                     2 -> {
                         // Text
@@ -232,6 +239,11 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == Activity.RESULT_OK) {
             //save the image path in our database..
             //set image to iamgeview
+            val bo: BitmapFactory.Options = BitmapFactory.Options()
+            bo.inSampleSize = 8
+            BitmapFactory.decodeFile(currentPhotoPath, bo)?.also { bitmap ->
+                        answerImage.setImageBitmap(bitmap)
+                    }
             //store the file
             questionViewModel.setAnswer(
                     imagePath = currentPhotoPath,

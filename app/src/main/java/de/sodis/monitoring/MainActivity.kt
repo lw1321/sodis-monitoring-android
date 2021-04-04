@@ -35,15 +35,12 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         when (item.itemId) {
             R.id.dashboard -> {
                 findNavController(R.id.nav_host_fragment).navigate(R.id.villageFragment)
-                supportActionBar!!.title = getString(R.string.village)
             }
             R.id.monitoring_history -> {
                 findNavController(R.id.nav_host_fragment).navigate(R.id.monitoringHistoryFragment)
-                supportActionBar!!.title = getString(R.string.tab_history)
             }
             R.id.tasks -> {
                 findNavController(R.id.nav_host_fragment).navigate(R.id.todoFragment)
-                supportActionBar!!.title = getString(R.string.tasks)
             }
         }
         return true
@@ -60,7 +57,6 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         bottomNavigation.setOnNavigationItemSelectedListener(this)
 
         findNavController(R.id.nav_host_fragment).navigate(R.id.villageFragment)
-        supportActionBar!!.title = getString(R.string.village)
 
         // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance()
@@ -88,7 +84,6 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         //Registration/Login Process if no user//TODO test offline
         if (auth.currentUser == null) {
             //todo store token, store name?!
-            supportActionBar!!.title = "Registro"
             this.hide_bottom_navigation()
             findNavController(R.id.nav_host_fragment).navigate(R.id.registrationOverviewwFragment)
             return
