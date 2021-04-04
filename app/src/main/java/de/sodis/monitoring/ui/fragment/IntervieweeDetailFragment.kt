@@ -23,9 +23,12 @@ import de.sodis.monitoring.R
 import de.sodis.monitoring.default
 import de.sodis.monitoring.picture
 import de.sodis.monitoring.technology
-import de.sodis.monitoring.viewmodel.MyViewModelFactory
-import de.sodis.monitoring.viewmodel.PlaceViewModel
-import de.sodis.monitoring.viewmodel.SurveyViewModel
+import com.google.android.material.snackbar.Snackbar
+import de.sodis.monitoring.*
+import de.sodis.monitoring.db.entity.QuestionImage
+import de.sodis.monitoring.db.entity.SurveyHeader
+import de.sodis.monitoring.todolist.TodoDialog
+import de.sodis.monitoring.viewmodel.*
 import kotlinx.android.synthetic.main.continuable_list.view.*
 import kotlinx.android.synthetic.main.todo_dialog_layout.*
 import kotlinx.android.synthetic.main.view_holder_picture.view.*
@@ -41,159 +44,195 @@ class IntervieweeDetailFragment : BaseListFragment() {
 
     private val placeViewModel: PlaceViewModel by lazy {
         ViewModelProviders.of(this, MyViewModelFactory(activity!!.application, emptyList()))
-            .get(PlaceViewModel::class.java)
+                .get(PlaceViewModel::class.java)
     }
     private val surveyViewModel: SurveyViewModel by lazy {
         ViewModelProviders.of(this, MyViewModelFactory(activity!!.application, emptyList()))
-            .get(SurveyViewModel::class.java)
+                .get(SurveyViewModel::class.java)
+    }
+    private val todoViewModel: TodoPointModel by lazy {
+        ViewModelProviders.of(this, MyViewModelFactory(activity!!.application, emptyList()))
+                .get(TodoPointModel::class.java)
     }
     val args: IntervieweeDetailFragmentArgs by navArgs()
 
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         val view = super.onCreateView(inflater, container, savedInstanceState)
         placeViewModel.familyList.observe(viewLifecycleOwner, Observer { familyList ->
             surveyViewModel.surveyList.observe(viewLifecycleOwner, Observer { surveyList ->
-                recyclerView.withModels {
-                    familyList.filter { it.id == args.intervieweeId }.forEach {
-                        picture {
-                            id(it.id)
-                            name(it.name)
-                            village(it.villageName)
-                            onClick { clicked ->
-                                dispatchTakePictureIntent()
-                            }
-                            onBind { model, view, position ->
-                                if (it.imagePath != null) {
-                                    view.dataBinding.root.imageView.load(File(it.imagePath))
+                todoViewModel.todoPointList.observe(viewLifecycleOwner, Observer { todoList ->
+                    recyclerView.withModels {
+                        familyList.filter { it.id == args.intervieweeId }.forEach {
+                            picture {
+                                id(it.id)
+                                name(it.name)
+                                village(it.villageName)
+                                onClick { clicked ->
+                                    dispatchTakePictureIntent()
+                                }
+                                onBind { model, view, position ->
+                                    if (it.imagePath != null) {
+                                        view.dataBinding.root.imageView.load(File(it.imagePath))
+                                    }
                                 }
                             }
                         }
-                    }
-                    technology {
-                        id("Nutricion")
-                        survey1OnClick { clicked ->
-                            //Agriculture
-                            openSurvey(surveyList.first { it.surveyName == "Agricultura / disponibilidad de agua" }.surveyId)
+                        todoList.filter { it.family == args.intervieweeId }.forEach { todoPoint ->
+                            task {
+                                id(todoPoint.id.toString() + "td")
+                                text(todoPoint.text)
+                                checked(todoPoint.done)
+                                date(SimpleDateFormat("dd.MM.yyyy").format(todoPoint.duedate!!.time))
+                                onClickedCheckbox { _ ->
+                                    Thread(Runnable {
+                                        //todo intervieweeModel.checkChangeTodoPoint(todoPoint = todoPoint)
+                                    }).start()
+                                }
+                            }
+                        }
 
-                        }
-                        survey2OnClick { clicked ->
-                            //Nutricion
-                            openSurvey(surveyList.first { it.surveyName == "Nutrición" }.surveyId)
+                        centeredButton {
+                            id("addtodobutton")
+                            text("Añadir una tarea")
+                            onClick { _ ->
+                                Thread(Runnable {
+                                    /*
+                                    val dialog = TodoDialog(
+                                            intervieweeModel.getByID(intervieweeId),
+                                            null,
+                                            context!!,
+                                            null
+                                    )
+                                    activity!!.runOnUiThread {
+                                        dialog.show(childFragmentManager, "todo_in_survey")
+                                    }*/
 
+                                }).start()
+                            }
                         }
-                        onBind { model, view, position ->
-                            view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_agriculture)//TODO icons einfügen
-                            view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_vegetables)
-                            view.dataBinding.root.survey1Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorGreen700))
-                            view.dataBinding.root.survey2Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorGrey700))
 
-                        }
-                    }
-                    technology {
-                        id("QuariWarmi")
-                        survey1OnClick { clicked ->
-                            //Empresa
-                            openSurvey(surveyList.first { it.surveyName == "empresa" }.surveyId)
-                        }
-                        survey2OnClick { clicked ->
-                            //Tara
-                            openSurvey(surveyList.first { it.surveyName == "Tara" }.surveyId)
-                        }
-                        onBind { model, view, position ->
-                            view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_iconunternehmertum)//TODO icons einfügen
-                            view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_icontaraplant)//TODO einfärben nach status
-                            view.dataBinding.root.survey1Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorYellow700))
-                            view.dataBinding.root.survey2Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorGreen700))
+                        technology {
+                            id("Nutricion")
+                            survey1OnClick { clicked ->
+                                //Agriculture
+                                openSurvey(surveyList.first { it.surveyName == "Agricultura / disponibilidad de agua" }.surveyId)
 
+                            }
+                            survey2OnClick { clicked ->
+                                //Nutricion
+                                openSurvey(surveyList.first { it.surveyName == "Nutrición" }.surveyId)
+                            }
+                            onBind { model, view, position ->
+                                view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_agriculture)//TODO icons einfügen
+                                view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_vegetables)
+                                view.dataBinding.root.survey1Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorGreen700))
+                                view.dataBinding.root.survey2Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorGrey700))
+                            }
                         }
-                    }
-                    //cocina
-                    technology {
-                        id("Cocina Ecologica")
-                        survey1OnClick { clicked ->
-                            openSurvey(surveyList.first { it.surveyName == "Cocinas Ecológicas" }.surveyId)
-                        }
-                        survey2OnClick { clicked ->
-                            openSurvey(surveyList.first { it.surveyName == "Uso Cocinas Ecológicas" }.surveyId)
-                        }
-                        onBind { model, view, position ->
-                            view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_iconcocina)//TODO icons einfügen
-                            view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_iconusotechnologia)//TODO einfärben nach status
-                            view.dataBinding.root.survey1Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorGrey700))
-                            view.dataBinding.root.survey2Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorRed700))
-                        }
-                    }
-                    //cocina
-                    technology {
-                        id("filtro")
-                        survey1OnClick { clicked ->
-                            openSurvey(surveyList.first { it.surveyName == "Filtro de Agua" }.surveyId)
-                        }
-                        survey2OnClick { clicked ->
-                            openSurvey(surveyList.first { it.surveyName == "Uso Filtro de Agua" }.surveyId)
-                        }
-                        onBind { model, view, position ->
-                            view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_iconfiltro)//TODO icons einfügen
-                            view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_iconusotechnologia)//TODO einfärben nach status
-                            view.dataBinding.root.survey1Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorGreen700))
-                            view.dataBinding.root.survey2Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorGrey700))
-                        }
-                    }
-                    //cocina
-                    technology {
-                        id("toilet")
-                        survey1OnClick { clicked ->
-                            openSurvey(surveyList.first { it.surveyName == "Baños" }.surveyId)
-                        }
-                        survey2OnClick { clicked ->
-                            openSurvey(surveyList.first { it.surveyName == "Uso Baños" }.surveyId)
-                        }
-                        onBind { model, view, position ->
-                            view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_iconba_o)//TODO icons einfügen
-                            view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_iconusotechnologia)//TODO einfärben nach status
-                            view.dataBinding.root.survey1Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorRed700))
-                            view.dataBinding.root.survey2Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorYellow700))
-                        }
-                    }
-                    //cocina
-                    technology {
-                        id("wash")
-                        survey1OnClick { clicked ->
-                            openSurvey(surveyList.first { it.surveyName == "Lavado de manos" }.surveyId)
-                        }
-                        survey2OnClick { clicked ->
-                            openSurvey(surveyList.first { it.surveyName == "Uso Lavado de manos " }.surveyId)
-                        }
-                        onBind { model, view, position ->
-                            view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_iconwash)//TODO icons einfügen
-                            view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_iconusotechnologia)//TODO einfärben nach status
-                            view.dataBinding.root.survey1Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorGreen700))
-                            view.dataBinding.root.survey2Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorGrey700))
-                        }
-                    }
+                        technology {
+                            id("QuariWarmi")
+                            survey1OnClick { clicked ->
+                                //Empresa
+                                openSurvey(surveyList.first { it.surveyName == "empresa" }.surveyId)
+                            }
+                            survey2OnClick { clicked ->
+                                //Tara
+                                openSurvey(surveyList.first { it.surveyName == "Tara" }.surveyId)
+                            }
+                            onBind { model, view, position ->
+                                view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_iconunternehmertum)//TODO icons einfügen
+                                view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_icontaraplant)//TODO einfärben nach status
+                                view.dataBinding.root.survey1Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorYellow700))
+                                view.dataBinding.root.survey2Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorGreen700))
 
-                }
+                            }
+                        }
+                        //cocina
+                        technology {
+                            id("Cocina Ecologica")
+                            survey1OnClick { clicked ->
+                                openSurvey(surveyList.first { it.surveyName == "Cocinas Ecológicas" }.surveyId)
+                            }
+                            survey2OnClick { clicked ->
+                                openSurvey(surveyList.first { it.surveyName == "Uso Cocinas Ecológicas" }.surveyId)
+                            }
+                            onBind { model, view, position ->
+                                view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_iconcocina)//TODO icons einfügen
+                                view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_iconusotechnologia)//TODO einfärben nach status
+                                view.dataBinding.root.survey1Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorGrey700))
+                                view.dataBinding.root.survey2Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorRed700))
+                            }
+                        }
+                        //cocina
+                        technology {
+                            id("filtro")
+                            survey1OnClick { clicked ->
+                                openSurvey(surveyList.first { it.surveyName == "Filtro de Agua" }.surveyId)
+                            }
+                            survey2OnClick { clicked ->
+                                openSurvey(surveyList.first { it.surveyName == "Uso Filtro de Agua" }.surveyId)
+                            }
+                            onBind { model, view, position ->
+                                view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_iconfiltro)//TODO icons einfügen
+                                view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_iconusotechnologia)//TODO einfärben nach status
+                                view.dataBinding.root.survey1Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorGreen700))
+                                view.dataBinding.root.survey2Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorGrey700))
+                            }
+                        }
+                        //cocina
+                        technology {
+                            id("toilet")
+                            survey1OnClick { clicked ->
+                                openSurvey(surveyList.first { it.surveyName == "Baños" }.surveyId)
+                            }
+                            survey2OnClick { clicked ->
+                                openSurvey(surveyList.first { it.surveyName == "Uso Baños" }.surveyId)
+                            }
+                            onBind { model, view, position ->
+                                view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_iconba_o)//TODO icons einfügen
+                                view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_iconusotechnologia)//TODO einfärben nach status
+                                view.dataBinding.root.survey1Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorRed700))
+                                view.dataBinding.root.survey2Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorYellow700))
+                            }
+                        }
+                        //cocina
+                        technology {
+                            id("wash")
+                            survey1OnClick { clicked ->
+                                openSurvey(surveyList.first { it.surveyName == "Lavado de manos" }.surveyId)
+                            }
+                            survey2OnClick { clicked ->
+                                openSurvey(surveyList.first { it.surveyName == "Uso Lavado de manos " }.surveyId)
+                            }
+                            onBind { model, view, position ->
+                                view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_iconwash)//TODO icons einfügen
+                                view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_iconusotechnologia)//TODO einfärben nach status
+                                view.dataBinding.root.survey1Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorGreen700))
+                                view.dataBinding.root.survey2Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorGrey700))
+                            }
+                        }
+                    }
+                })
             })
-
         })
-
         view?.navigation_forward_button_1?.isGone = true
         view?.navigation_forward_button_left?.isGone = true
+        view?.navigation_cancel_button?.isGone = true
         return view
     }
 
     private fun openSurvey(surveyId: Int) {
         surveyViewModel.surveyId = surveyId
         val action =
-            IntervieweeDetailFragmentDirections.actionIntervieweeDetailFragmentToQuestionFragment(
-                intervieweeId = args.intervieweeId,
-                surveyId = surveyId
-            )
+                IntervieweeDetailFragmentDirections.actionIntervieweeDetailFragmentToQuestionFragment(
+                        intervieweeId = args.intervieweeId,
+                        surveyId = surveyId
+                )
         findNavController().navigate(action)
     }
 
@@ -219,9 +258,9 @@ class IntervieweeDetailFragment : BaseListFragment() {
                 // Continue only if the File was successfully created
                 photoFile?.also {
                     val photoURI: Uri = FileProvider.getUriForFile(
-                        activity!!,
-                        "com.example.android.fileprovider",
-                        it
+                            activity!!,
+                            "com.example.android.fileprovider",
+                            it
                     )
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
                     startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO)
@@ -236,9 +275,9 @@ class IntervieweeDetailFragment : BaseListFragment() {
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
         val storageDir: File? = activity!!.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         return File.createTempFile(
-            "JPEG_${timeStamp}_", /* prefix */
-            ".jpg", /* suffix */
-            storageDir /* directory */
+                "JPEG_${timeStamp}_", /* prefix */
+                ".jpg", /* suffix */
+                storageDir /* directory */
         ).apply {
             // Save a file: path for use with ACTION_VIEW intents
             currentPhotoPath = absolutePath
@@ -251,8 +290,7 @@ class IntervieweeDetailFragment : BaseListFragment() {
             // it manually to the UI, better use Livedata observe on the imagePath to set the image automatically
             // if the imagePath in the database has changed. (See Line 60-72 IntervieweeDetailFragment)
             // Store Image path with the family(intervieweeId)
-            // placeViewModel.storeImagePath(currentPhotoPath, args.intervieweeId)
+            placeViewModel.storeImagePath(currentPhotoPath, args.intervieweeId)
         }
     }
-
 }

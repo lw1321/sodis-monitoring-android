@@ -3,7 +3,6 @@ package de.sodis.monitoring.db.dao
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import de.sodis.monitoring.db.entity.*
-import de.sodis.monitoring.db.response.CompletedSurveyDetail
 import de.sodis.monitoring.db.response.CompletedSurveyOverview
 
 @Dao

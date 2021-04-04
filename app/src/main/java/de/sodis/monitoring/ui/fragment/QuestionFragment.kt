@@ -1,25 +1,22 @@
 package de.sodis.monitoring.ui.fragment
 
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.text.InputType
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.FileProvider
 import androidx.core.view.isGone
 import androidx.core.widget.addTextChangedListener
-import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
@@ -28,19 +25,12 @@ import coil.api.load
 import com.google.android.material.snackbar.Snackbar
 import de.sodis.monitoring.*
 import de.sodis.monitoring.db.entity.Answer
-import de.sodis.monitoring.db.entity.QuestionOption
-import de.sodis.monitoring.db.entity.QuestionOptionChoice
-import de.sodis.monitoring.db.response.QuestionAnswer
 import de.sodis.monitoring.db.response.QuestionItem
 import de.sodis.monitoring.todolist.TodoDialog
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
 import de.sodis.monitoring.viewmodel.QuestionViewModel
-import de.sodis.monitoring.viewmodel.SurveyViewModel
 import kotlinx.android.synthetic.main.continuable_list.view.*
-import kotlinx.android.synthetic.main.view_holder_numeric.view.*
-import kotlinx.android.synthetic.main.view_holder_picture.view.*
 import kotlinx.android.synthetic.main.view_holder_question.view.*
-import kotlinx.android.synthetic.main.view_holder_text_choice.view.*
 import kotlinx.android.synthetic.main.view_holder_text_input.view.*
 import java.io.File
 import java.io.IOException
@@ -52,10 +42,10 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
 
     private val questionViewModel: QuestionViewModel by lazy {
         ViewModelProviders.of(
-            activity!!,
-            MyViewModelFactory(activity!!.application, listOf(args.surveyId))
+                activity!!,
+                MyViewModelFactory(activity!!.application, listOf(args.surveyId))
         )
-            .get(QuestionViewModel::class.java)
+                .get(QuestionViewModel::class.java)
     }
 
     val args: QuestionFragmentArgs by navArgs()
@@ -68,41 +58,27 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
         questionViewModel.questionItemLiveList.observe(this, Observer { list ->
             if (list.isNotEmpty()) {
                 currentQuestion =
-                    list.filter { it.id == questionViewModel.questionIdList[questionViewModel.currentPosition] }
+                        list.filter { it.id == questionViewModel.questionIdList[questionViewModel.currentPosition] }
                 createQuestion(currentQuestion)
             }
         })
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
-        var view = super.onCreateView(inflater, container, savedInstanceState)
+        val view = super.onCreateView(inflater, container, savedInstanceState)
+
         view?.navigation_forward_button_1?.setOnClickListener {
             if (questionViewModel.isAnswered(currentQuestion.first().id)) {
-                if (questionViewModel.createTodo()) { //todo: anpassen wenn yes/no question geändert
-                    /* //TODO pass the interviewee id, request interviewee entity in dialog from placeviewmodel
-                    val answerToCheck: Answer =
-                        questionViewModel.answerToID(currentQuestion.first().id)!!
-                    val dialog = TodoDialog(
-
-                        questionViewModel.interviewee,
-                        currentQuestion.title,
-                        context!!,
-                        this
-                    )
-                    dialog.show(childFragmentManager, "todo_in_survey")
-                    */
-                } else {
-                    nextQuestion()
-                }
+                nextQuestion()
             } else {
                 Snackbar.make(
-                    view!!,
-                    getString(R.string.message_monitoring_answer_required),
-                    Snackbar.LENGTH_LONG
+                        view!!,
+                        getString(R.string.message_monitoring_answer_required),
+                        Snackbar.LENGTH_LONG
                 ).show()
             }
         }
@@ -113,55 +89,70 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
             if (questionViewModel.currentPosition != 0) {
                 questionViewModel.previousQuestion()
                 val action = QuestionFragmentDirections.actionQuestionFragmentSelf(
-                    args.surveyId,
-                    intervieweeId = args.intervieweeId
+                        args.surveyId,
+                        intervieweeId = args.intervieweeId
                 )
                 findNavController().navigate(action)
             }
         }
 
-
-
         return view
     }
 
+
     private fun nextQuestion() {
+//todo check if a task should be created, if so show dialog
+/*
+if (questionViewModel.createTodo()) {
+    val answerToCheck: Answer =
+        questionViewModel.answerToID(currentQuestion.first().id)!!
+    val dialog = TodoDialog(
+
+        questionViewModel.interviewee,
+        currentQuestion.title,
+        context!!,
+        this
+    )
+    dialog.show(childFragmentManager, "todo_in_survey")
+}
+*/
+
         questionViewModel.listOfAnsweredQuestions += questionViewModel.currentPosition
         val hasNext = questionViewModel.nextQuestion()
         if (hasNext) {
             val action =
-                QuestionFragmentDirections.actionQuestionFragmentSelf(
-                    args.surveyId,
-                    intervieweeId = args.intervieweeId
-                )
+                    QuestionFragmentDirections.actionQuestionFragmentSelf(
+                            args.surveyId,
+                            intervieweeId = args.intervieweeId
+                    )
             findNavController().navigate(action)
         } else {
-            val finishDialog: AlertDialog.Builder = AlertDialog.Builder(context!!)
+            val finishDialog: androidx.appcompat.app.AlertDialog.Builder = androidx.appcompat.app.AlertDialog.Builder(context!!)
             finishDialog.setTitle("enviar cuestionario")
             finishDialog.setMessage("¿Guardar respuestas?")
             finishDialog.setPositiveButton(
-                "Si"
+                    "Si"
             ) { _, _ ->
                 questionViewModel.finishSurvey(args.intervieweeId)
                 Snackbar.make(
-                    view!!.rootView.findViewById(R.id.nav_host_fragment),
-                    getString(R.string.message_monitoring_completed),
-                    Snackbar.LENGTH_LONG
+                        view!!.rootView.findViewById(R.id.nav_host_fragment),
+                        getString(R.string.message_monitoring_completed),
+                        Snackbar.LENGTH_LONG
                 ).show()
                 val action =
-                    QuestionFragmentDirections.actionQuestionFragmentToIntervieweeDetailFragment(
-                        intervieweeId = args.intervieweeId
-                    )
+                        QuestionFragmentDirections.actionQuestionFragmentToIntervieweeDetailFragment(
+                                intervieweeId = args.intervieweeId
+                        )
                 findNavController().navigate(action)
                 (activity as MainActivity).show_bottom_navigation()
             }
             finishDialog.setNegativeButton(
-                "No"
+                    "No"
             ) { _, _ ->
                 Snackbar.make(
-                    view!!.rootView.findViewById(R.id.nav_host_fragment),
-                    getString(R.string.message_monitoring_answer_required),
-                    Snackbar.LENGTH_LONG
+                        view!!.rootView.findViewById(R.id.nav_host_fragment),
+                        getString(R.string.message_monitoring_answer_required),
+                        Snackbar.LENGTH_LONG
                 ).show()
             }
             val alert: AlertDialog = finishDialog.create()
@@ -193,10 +184,10 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
                                 text(it.optionChoiceName)
                                 onClick { clicked ->
                                     questionViewModel.setAnswer(
-                                        imagePath = null,
-                                        questionOption = it.questionOptionId,
-                                        answerText = null,
-                                        questionId = currentQuestion.first().id
+                                            imagePath = null,
+                                            questionOption = it.questionOptionId,
+                                            answerText = null,
+                                            questionId = currentQuestion.first().id
                                     )
                                     // go directly to next question
                                     nextQuestion()
@@ -215,10 +206,10 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
                                 view.dataBinding.root.answerTextInput.addTextChangedListener {
                                     print("Text changed")
                                     questionViewModel.setAnswer(
-                                        imagePath = null,
-                                        questionOption = null,
-                                        answerText = it.toString(),
-                                        questionId = currentQuestion.first().id
+                                            imagePath = null,
+                                            questionOption = null,
+                                            answerText = it.toString(),
+                                            questionId = currentQuestion.first().id
                                     )
                                 }
                             }
@@ -240,7 +231,6 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
 
     }
 
-
     val REQUEST_TAKE_PHOTO = 1
     lateinit var currentPhotoPath: String
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -249,23 +239,23 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
             //set image to iamgeview
             //store the file
             questionViewModel.setAnswer(
-                imagePath = currentPhotoPath,
-                questionOption = null,
-                answerText = null,
-                questionId = currentQuestion.first().id
+                    imagePath = currentPhotoPath,
+                    questionOption = null,
+                    answerText = null,
+                    questionId = currentQuestion.first().id
             )
         }
     }
 
     @Throws(IOException::class)
     private fun createImageFile(): File {
-        // Create an image file name
+// Create an image file name
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
         val storageDir: File? = activity!!.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         return File.createTempFile(
-            "JPEG_${timeStamp}_", /* prefix */
-            ".jpg", /* suffix */
-            storageDir /* directory */
+                "JPEG_${timeStamp}_", /* prefix */
+                ".jpg", /* suffix */
+                storageDir /* directory */
         ).apply {
             // Save a file: path for use with ACTION_VIEW intents
             currentPhotoPath = absolutePath
@@ -286,9 +276,9 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
                 // Continue only if the File was successfully created
                 photoFile?.also {
                     val photoURI: Uri = FileProvider.getUriForFile(
-                        activity!!,
-                        "com.example.android.fileprovider",
-                        it
+                            activity!!,
+                            "com.example.android.fileprovider",
+                            it
                     )
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
                     startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO)
@@ -300,32 +290,65 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         val imm: InputMethodManager =
-            (activity as MainActivity).getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                (activity as MainActivity).getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(view!!.windowToken, 0)
 
+//Cancel survey dialog todo
+        view?.navigation_cancel_button?.setOnClickListener {
+            val alertDialog: AlertDialog.Builder = AlertDialog.Builder(context!!)
+            alertDialog.setTitle("cancelar el cuestionario")
+            alertDialog.setMessage("¿Descartar todas las respuestas?")
+            alertDialog.setPositiveButton(
+                    "Si"
+            ) { _, _ ->
+                questionViewModel.currentPosition = 0
+                questionViewModel.listOfAnsweredQuestions = mutableListOf()
+                Snackbar.make(
+                        view!!.rootView.findViewById(R.id.nav_host_fragment),
+                        getString(R.string.message_monitoring_cancelled),
+                        Snackbar.LENGTH_LONG
+                ).show()
+
+                val action =
+                        QuestionFragmentDirections.actionQuestionFragmentToIntervieweeDetailFragment(
+                                intervieweeId = args.intervieweeId
+                        )
+                findNavController().navigate(action)
+                (activity as MainActivity).show_bottom_navigation()
+            }
+            alertDialog.setNegativeButton(
+                    "No"
+            ) { _, _ -> }
+            val alert: AlertDialog = alertDialog.create()
+            alert.setCanceledOnTouchOutside(false)
+            alert.show()
+
+        }
     }
+
 
     override fun onDismiss(dialog: DialogInterface?) {
         println("onDismissed called")
+        //TODO call nextQuestion()
         questionViewModel.listOfAnsweredQuestions += questionViewModel.currentPosition
         val hasNext = questionViewModel.nextQuestion()
         if (hasNext) {
             val action = QuestionFragmentDirections.actionQuestionFragmentSelf(
-                args.surveyId,
-                intervieweeId = args.intervieweeId
+                    args.surveyId,
+                    intervieweeId = args.intervieweeId
             )
             findNavController().navigate(action)
         } else {
             questionViewModel.finishSurvey(args.intervieweeId)
             Snackbar.make(
-                view!!.rootView.findViewById(R.id.nav_host_fragment),
-                getString(R.string.message_monitoring_completed),
-                Snackbar.LENGTH_LONG
+                    view!!.rootView.findViewById(R.id.nav_host_fragment),
+                    getString(R.string.message_monitoring_completed),
+                    Snackbar.LENGTH_LONG
             ).show()
             val action =
-                QuestionFragmentDirections.actionQuestionFragmentToIntervieweeDetailFragment(
-                    intervieweeId = args.intervieweeId
-                )
+                    QuestionFragmentDirections.actionQuestionFragmentToIntervieweeDetailFragment(
+                            intervieweeId = args.intervieweeId
+                    )
             findNavController().navigate(action)
             (activity as MainActivity).show_bottom_navigation()
 

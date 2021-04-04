@@ -9,6 +9,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import androidx.work.OneTimeWorkRequestBuilder
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import de.sodis.monitoring.api.MonitoringApi
@@ -26,6 +27,12 @@ class SurveyViewModel(
     private val mApplication: Application
 ) : AndroidViewModel(mApplication) {
 
+    var surveyId: Int = 0
+    var position: Int = 0
+    var intervieweeId: Int = 2
+
+    lateinit var currentInterviewee: String
+
     fun setAnswer(questionOption: Int?, imagePath: String?, answerText: String?) {
         // create Answer Object, map it with the position and replace if answer at
         // this position already exists
@@ -40,7 +47,7 @@ class SurveyViewModel(
             submitted = false
         )
     }
-    //TODO REFACTOR, cause of this call the model is new created and local properties are reset. Use old logic.
+
     fun startSurvey() {
         viewModelScope.launch(Dispatchers.IO) {
             //Get first question of survey
@@ -95,11 +102,6 @@ class SurveyViewModel(
         )
     }
 
-    var surveyId: Int = 0
-    var position: Int = 0
-    var intervieweeId: Int = 2
-
-    lateinit var currentInterviewee: String
 
 
     var question: MutableLiveData<List<QuestionItem>> = MutableLiveData()

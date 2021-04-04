@@ -47,7 +47,10 @@ data class TodoPoint(
     var village: Int?,
 
     @ColumnInfo(name = "text")
-    var text: String
+    var text: String,
+
+    @ColumnInfo(name="picturePath")
+    var picturePath: String?
 
 
 

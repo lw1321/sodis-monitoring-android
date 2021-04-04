@@ -55,5 +55,9 @@ class TodoPointRepository (private val todoPointDao: TodoPointDao, private val m
         return todoPointDao.getUndoneTodoPointsSortedByVillage(calendar)
     }
 
+    fun getUndonePointsOfFamily(familyID: String):LiveData<List<TodoPoint>> {
+        return todoPointDao.getUndoneTasksByInterviewee(familyID)
+    }
+
 
 }

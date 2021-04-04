@@ -1,15 +1,22 @@
 package de.sodis.monitoring.todolist
 
+import android.app.Activity.RESULT_OK
 import android.app.DatePickerDialog
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
+import android.graphics.BitmapFactory
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.content.FileProvider
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,31 +27,91 @@ import de.sodis.monitoring.db.entity.TodoPoint
 import de.sodis.monitoring.viewmodel.PlaceViewModel
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
 import de.sodis.monitoring.viewmodel.TodoPointModel
+
+import kotlinx.android.synthetic.main.view_holder_picture.view.*
+import kotlinx.coroutines.selects.select
+import java.io.File
+import java.io.IOException
+
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
 class TodoDialog(
-    val passedInterviewee: Interviewee?,
-    val passedText: String?,
-    applicationContext: Context,
-    val onDismissListener: DialogInterface.OnDismissListener?
+        val passedInterviewee: Interviewee?,
+        val passedText: String?,
+        applicationContext: Context,
+        val onDismissListener: DialogInterface.OnDismissListener?
 ) : DialogFragment() {
 
     private val placeViewModel: PlaceViewModel by lazy {
         ViewModelProviders.of(this, MyViewModelFactory(activity!!.application, emptyList()))
-            .get(PlaceViewModel::class.java)
+                .get(PlaceViewModel::class.java)
     }
+
+
+    val REQUEST_TAKE_PHOTO = 1
+    private fun dispatchTakePictureIntent() {
+        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+            // Ensure that there's a camera activity to handle the intent
+            takePictureIntent.resolveActivity(activity!!.packageManager)?.also {
+                // Create the File where the photo should go
+                val photoFile: File? = try {
+                    createImageFile()
+                } catch (ex: IOException) {
+                    // Error occurred while creating the File
+                    null
+                }
+                // Continue only if the File was successfully created
+                photoFile?.also {
+                    val photoURI: Uri = FileProvider.getUriForFile(
+                            activity!!,
+                            "com.example.android.fileprovider",
+                            it
+                    )
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                    startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO)
+                }
+            }
+        }
+    }
+
+    @Throws(IOException::class)
+    private fun createImageFile(): File {
+        // Create an image file name
+        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val storageDir: File? = activity!!.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        return File.createTempFile(
+                "JPEG_${timeStamp}_todo", /* prefix */
+                ".jpg", /* suffix */
+                storageDir /* directory */
+        ).apply {
+            // Save a file: path for use with ACTION_VIEW intents
+            savedPath = absolutePath
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
+            setPicture()
+        }
+    }
+
+
+    //bis hier reinkopiert
+
 
     private val todoPointModel: TodoPointModel by lazy {
         ViewModelProviders.of(this, MyViewModelFactory(activity!!.application, emptyList()))
-            .get(TodoPointModel::class.java)
+                .get(TodoPointModel::class.java)
     }
 
     lateinit var searchEditText: EditText
     lateinit var searchRecyclerView: RecyclerView
     lateinit var titleText: EditText
     lateinit var dueText: EditText
+
+    lateinit var imageView: ImageView
 
     lateinit var cancelButton: Button
     lateinit var continueButton: Button
@@ -56,6 +123,24 @@ class TodoDialog(
     lateinit var datePickerDialog: DatePickerDialog
 
     lateinit var dueTextOnClickListener: View.OnClickListener
+
+    var takePhotoOnClickListener: View.OnClickListener = View.OnClickListener {
+        dispatchTakePictureIntent()
+    }
+
+    fun setPicture() {
+        if (savedPath != null) {
+            val bo: BitmapFactory.Options = BitmapFactory.Options()
+            bo.inSampleSize = 8
+            BitmapFactory.decodeFile(savedPath, bo)
+                    ?.also { bitmap ->
+                        imageView.setImageBitmap(bitmap)
+
+                    }
+        } else {
+            imageView.setImageResource(R.drawable.ic_camera_alt_black_24dp)
+        }
+    }
 
     var onCancelPressed: View.OnClickListener
 
@@ -75,6 +160,8 @@ class TodoDialog(
         }
     }
 
+    var savedPath: String? = null
+
     fun saveAndDismiss() {
         var intervieweeidtoset: String? = null
         var villageidtoset: Int? = null
@@ -85,17 +172,18 @@ class TodoDialog(
             }
         }
         var todoPoint = TodoPoint(
-            null,
-            false,
-            Calendar.getInstance(),
-            due,
-            null,
-            intervieweeidtoset,
-            villageidtoset,
-            titleText.text.toString()
+                null,
+                false,
+                Calendar.getInstance(),
+                due,
+                null,
+                intervieweeidtoset,
+                villageidtoset,
+                titleText.text.toString(),
+                savedPath
         )
         Thread(
-            Runnable { todoPointModel.insertTodoPoint(todoPoint!!) }).start()
+                Runnable { todoPointModel.insertTodoPoint(todoPoint!!) }).start()
         dismiss()
     }
 
@@ -125,9 +213,9 @@ class TodoDialog(
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
 
@@ -136,16 +224,16 @@ class TodoDialog(
 
 
         datePickerDialog = DatePickerDialog(
-            context!!,
-            DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
-                due.set(Calendar.YEAR, year)
-                due.set(Calendar.MONTH, month)
-                due.set(Calendar.DAY_OF_MONTH, dayOfMonth)
-                dueText.setText(SimpleDateFormat("dd.MM.yyyy").format(due.time))
-            },
-            due.get(Calendar.YEAR),
-            due.get(Calendar.MONTH),
-            due.get(Calendar.DAY_OF_MONTH)
+                context!!,
+                DatePickerDialog.OnDateSetListener { view, year, month, dayOfMonth ->
+                    due.set(Calendar.YEAR, year)
+                    due.set(Calendar.MONTH, month)
+                    due.set(Calendar.DAY_OF_MONTH, dayOfMonth)
+                    dueText.setText(SimpleDateFormat("dd.MM.yyyy").format(due.time))
+                },
+                due.get(Calendar.YEAR),
+                due.get(Calendar.MONTH),
+                due.get(Calendar.DAY_OF_MONTH)
 
         )
         dueTextOnClickListener = View.OnClickListener {
@@ -186,13 +274,12 @@ class TodoDialog(
         })
 
 
-
-            /*
-            //TODO
-        placeViewModel.intervieweeList.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
-            searchAdapter?.setDataSet(it)
-            searchAdapter?.filter.filter(searchEditText?.text)
-        })*/
+        /*
+        //TODO
+    placeViewModel.intervieweeList.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
+        searchAdapter?.setDataSet(it)
+        searchAdapter?.filter.filter(searchEditText?.text)
+    })*/
         titleText = view.findViewById(R.id.tododialog_title)
         if (passedText != null) {
             titleText.setText(passedText)
@@ -205,6 +292,10 @@ class TodoDialog(
         dueText.setOnTouchListener(onTouchListener)
         cancelButton.setOnClickListener(onCancelPressed)
         continueButton.setOnClickListener(onSavePressed)
+
+        imageView = view.findViewById(R.id.todoDialogImageView)
+        imageView.setOnClickListener(takePhotoOnClickListener)
+        setPicture()
         return view
     }
 
@@ -212,10 +303,10 @@ class TodoDialog(
 }
 
 class SearchAdapter(
-    interviewees: List<Interviewee>,
-    val context: Context,
-    val callBack: CallBackTodo,
-    originallySelected: Interviewee?
+        interviewees: List<Interviewee>,
+        val context: Context,
+        val callBack: CallBackTodo,
+        originallySelected: Interviewee?
 ) : Filterable, RecyclerView.Adapter<SearchListViewHolder>() {
     var filteredInterviewees: ArrayList<Array<Any>>
     var originalInterviewees: ArrayList<Array<Any>>
@@ -254,7 +345,7 @@ class SearchAdapter(
                         filteredToReturn.add(0, array)
                     } else {
                         if ((array[1] as Interviewee).name.toLowerCase()
-                                .contains(constraint.toString().toLowerCase())
+                                        .contains(constraint.toString().toLowerCase())
                         ) {
                             filteredToReturn.add(array)
                         }
@@ -311,7 +402,7 @@ class SearchAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): SearchListViewHolder {
         var toReturnView =
-            LayoutInflater.from(context).inflate(R.layout.todo_dialog_searchitem, parent, false)
+                LayoutInflater.from(context).inflate(R.layout.todo_dialog_searchitem, parent, false)
         return SearchListViewHolder(toReturnView)
     }
 

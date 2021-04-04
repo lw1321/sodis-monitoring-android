@@ -45,25 +45,6 @@ class PlaceRepository(
         return intervieweeDao.getFamilyList()
     }
 
-    /**
-     * Full infos
-     * interviewee, technologies, village
-     */
-    suspend fun getById(intervieweeId: String): IntervieweeDetail {
-        val interviewee = intervieweeDao.getById(intervieweeId)
-        val village = villageDao.getById(interviewee.villageId)
-        var localExpert: User? = null
-        if (interviewee.userId != null) {
-            localExpert = userDao.getByLocalExpertId(interviewee.userId)
-        }
-        return IntervieweeDetail(
-            interviewee = interviewee,
-            village = village,
-            user = localExpert
-        )
-    }
-
-
     suspend fun syncProfilPictures() {
         val allNotSynced = intervieweeDao.getNotsyncedProfilePictures()
         allNotSynced.forEach { interviewee ->
