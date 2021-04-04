@@ -6,45 +6,41 @@ import androidx.work.WorkerParameters
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import de.sodis.monitoring.api.MonitoringApi
 import de.sodis.monitoring.db.MonitoringDatabase
-import de.sodis.monitoring.db.entity.Interviewee
-import de.sodis.monitoring.repository.IntervieweeRepository
-import de.sodis.monitoring.repository.QuestionRepository
+import de.sodis.monitoring.repository.PlaceRepository
+import de.sodis.monitoring.repository.SurveyRepository
 
 class UploadWorker(appContext: Context, workerParams: WorkerParameters) :
     CoroutineWorker(appContext, workerParams) {
     override suspend fun doWork(): Result {
         val db = MonitoringDatabase.getDatabase(applicationContext)
-        val questionRepository = QuestionRepository(
-            questionDao = MonitoringDatabase.getDatabase(applicationContext).questionDao(),
-            questionOptionDao = MonitoringDatabase.getDatabase(applicationContext)
-                .questionOptionDao(),
-            questionImageDao = MonitoringDatabase.getDatabase(applicationContext)
-                .questionImageDao(),
-            answerDao = MonitoringDatabase.getDatabase(applicationContext).answerDao(),
-            optionChoiceDao = MonitoringDatabase.getDatabase(applicationContext).optionChoiceDao(),
-            completedSurveyDao = MonitoringDatabase.getDatabase(applicationContext)
-                .completedSurveyDao(),
-            monitoringApi = MonitoringApi(),
-            intervieweeTechnologyDao = MonitoringDatabase.getDatabase(applicationContext.applicationContext)
-                .intervieweeTechnologyDao(),
-            surveyHeaderDao = MonitoringDatabase.getDatabase(applicationContext.applicationContext)
-                .surveyHeaderDao(),
-            intervieweeDao =    MonitoringDatabase.getDatabase(applicationContext.applicationContext)
-                .intervieweeDao()
-        )
-        val intervieweeRepository = IntervieweeRepository(
-            intervieweeTechnologyDao = db.intervieweeTechnologyDao(),
+        val placeRepository = PlaceRepository(
             monitoringApi = MonitoringApi(),
             intervieweeDao = db.intervieweeDao(),
-            technologyDao = db.technologyDao(),
             userDao = db.userDao(),
-            villageDao = db.villageDao(),
-            todoPointDao = db.todoPointDao()
+            villageDao = db.villageDao()
         )
-        return try {
-            questionRepository.uploadQuestions()
-            intervieweeRepository.uploadProfilPictures()
+        val surveyRepository =
+            SurveyRepository(
+                inputTypeDao = db.inputTypeDao(),
+                optionChoiceDao = db.optionChoiceDao(),
+                questionDao = db.questionDao(),
+                questionOptionDao = db.questionOptionDao(),
+                surveyHeaderDao = db.surveyHeaderDao(),
+                surveySectionDao = db.surveySectionDao(),
+                questionImageDao = db.questionImageDao(),
+                answerDao = db.answerDao(),
+                completedSurveyDao = db.completedSurveyDao(),
+                monitoringApi = MonitoringApi()
+            )
 
+        return try {
+            //SYNC Places
+            placeRepository.syncInterviewee()
+            placeRepository.syncProfilPictures()
+            //SYNC collected SURVEY DATA
+            surveyRepository.syncCompletedSurveys()
+            surveyRepository.syncAnswers()
+            surveyRepository.syncAnswerImages(applicationContext)
             Result.success()
         } catch (e: Exception) {
             val crashlytics = FirebaseCrashlytics.getInstance()

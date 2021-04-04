@@ -10,13 +10,26 @@ import androidx.room.PrimaryKey
             entity = CompletedSurvey::class,
             parentColumns = arrayOf("id"),
             childColumns = arrayOf("completedSurveyId")
+        ),
+        ForeignKey(
+            entity = QuestionOption::class,
+            parentColumns = arrayOf("id"),
+            childColumns = arrayOf("questionOptionId")
+        ),
+        ForeignKey(
+            entity = Question::class,
+            parentColumns = arrayOf("id"),
+            childColumns = arrayOf("questionId")
         )
     ]
 )
 data class Answer(
     @PrimaryKey val id: String,
     val answerText: String?,
-    val answerYn: Boolean?,
-    val questionOptionId: Int,//TODO ADD FK!!
-    var completedSurveyId: String?
+    val questionOptionId: Int?,
+    val questionId: Int,
+    var completedSurveyId: String? = null,
+    var imagePath: String?,
+    var submitted: Boolean = false,
+    var imageSynced: Boolean = false
 )

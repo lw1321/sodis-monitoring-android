@@ -22,6 +22,7 @@ interface VillageDao {
     @Query("SELECT * FROM Village WHERE id=:villageId")
     fun getById(villageId: Int):Village
 
-    @Query("SELECT name FROM Village WHERE id=:id")
+    @Query("SELECT name  FROM Village WHERE id=:id")
     fun getNameById(id: Int): String
+
 }

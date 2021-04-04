@@ -24,7 +24,7 @@ data class CompletedSurvey(
     @PrimaryKey val id: String,
     val intervieweeId: String,
     val surveyHeaderId: Int,
-    val timeStamp: String,
+    val creationDate: String,
     var submitted: Boolean = false,
     val latitude: Double? = null,
     val longitude: Double? = null

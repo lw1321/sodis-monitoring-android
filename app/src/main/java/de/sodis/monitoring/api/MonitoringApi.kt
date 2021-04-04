@@ -2,14 +2,9 @@ package de.sodis.monitoring.api
 
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import de.sodis.monitoring.Config
-import de.sodis.monitoring.api.model.CompletedSurveyJson
-import de.sodis.monitoring.api.model.IntervieweeJson
-import de.sodis.monitoring.api.model.SurveyHeaderJson
-import de.sodis.monitoring.api.model.TaskJson
-import de.sodis.monitoring.db.entity.Interviewee
-import de.sodis.monitoring.db.entity.Stats
-import de.sodis.monitoring.db.entity.User
-import de.sodis.monitoring.db.entity.Village
+import de.sodis.monitoring.api.models.*
+import de.sodis.monitoring.apiCompletedSurveyJson.MonitoringApiInterface
+import de.sodis.monitoring.db.entity.*
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
@@ -28,7 +23,7 @@ class MonitoringApi {
             .build()
 
         val retrofit = Retrofit.Builder()
-            .baseUrl(Config.MONITORING_API_TEST)
+            .baseUrl(Config.MONITORING_API_DEV)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(CoroutineCallAdapterFactory())
             .client(okHttpClient)
@@ -36,43 +31,49 @@ class MonitoringApi {
         monitoringApi = retrofit.create(MonitoringApiInterface::class.java)
     }
 
-    suspend fun getSurveys(): List<SurveyHeaderJson> {
+    suspend fun getSurveys(): List<SurveyJson> {
         return monitoringApi.getAllSurveys()
+    }
+
+    suspend fun getSections(): List<SectionJson> {
+        return monitoringApi.getAllSections()
+    }
+
+    suspend fun getOptionChoices(): List<OptionChoice> {
+        return monitoringApi.getAllOptionChoices()
+    }
+
+    suspend fun getInputTypes(): List<InputType> {
+        return monitoringApi.getAllInputTypes()
     }
 
     suspend fun getInterviewees(): List<IntervieweeJson> {
         return monitoringApi.getAllInterviewees()
     }
 
-    suspend fun getTasks(): List<TaskJson> {
-        return monitoringApi.getAllTasks()
-    }
-
-    suspend fun updateTask(task: TaskJson): TaskJson {
-        return monitoringApi.updateTask(task.id, task)
-    }
-
-    suspend fun createTask(task: TaskJson): TaskJson {
-        return monitoringApi.createTask(task)
-    }
-
     suspend fun registerUser(user: User): User {
         return monitoringApi.registerUser(user)
     }
 
-    suspend fun getAllUsers(): List<User> {
-        return monitoringApi.getAllUsers()
+    suspend fun postCompletedSurveys(completedSurvey: CompletedSurvey): CompletedSurvey {
+        return monitoringApi.postCompletedSurveys(
+            CompletedSurveyJson(
+                id = completedSurvey.id,
+                longitude = completedSurvey.longitude,
+                latitude = completedSurvey.latitude,
+                creationDate = completedSurvey.creationDate,
+                surveyHeader = CompletedSurveyJson.SurveyHeader(
+                    id = completedSurvey.surveyHeaderId
+                ),
+                submitted = completedSurvey.submitted,
+                interviewee = CompletedSurveyJson.Interviewee(
+                    id = completedSurvey.intervieweeId
+                )
+            )
+        )
     }
 
-    suspend fun getMyself(): User {
-        return monitoringApi.getMyself()
-    }
-
-    suspend fun postCompletedSurveys(completedSurveyJsonList: List<CompletedSurveyJson>): List<CompletedSurveyJson> {
-        return monitoringApi.postCompletedSurveys(completedSurveyJsonList)
-    }
-
-    suspend fun getQuestionImages(): List<SurveyHeaderJson.SurveySectionJson.QuestionJson.QuestionImageJson> {
+    suspend fun getQuestionImages(): List<QuestionImage> {
         return monitoringApi.getAllQuestionImages()
     }
 
@@ -80,7 +81,7 @@ class MonitoringApi {
         return monitoringApi.getStats()
     }
 
-    suspend fun postIntervieweImage(imagePath: String?, intervieweeId: String): IntervieweeJson {
+    suspend fun postIntervieweImage(imagePath: String?, intervieweeId: String): Interviewee {
         val file = File(imagePath)
         val requestFile: RequestBody =
             RequestBody.create(MediaType.parse("multipart/form-data"), file)
@@ -94,7 +95,46 @@ class MonitoringApi {
         return monitoringApi.getAllVillages()
     }
 
-    suspend fun postInterviewee(interviewee: Interviewee): Interviewee {
+    suspend fun getAllProjects(): List<Project> {
+        return monitoringApi.getAllProjects()
+    }
+
+    suspend fun postInterviewee(interviewee: IntervieweeJson): IntervieweeJson {
         return monitoringApi.postInterviewee(interviewee)
+    }
+
+    suspend fun postAnswerImage(id: String, file: File): Answer {
+
+        val requestFile: RequestBody =
+            RequestBody.create(MediaType.parse("multipart/form-data"), file)
+        val body =
+            MultipartBody.Part.createFormData("image", file.name, requestFile)
+        return monitoringApi.postAnswerImage(body, id)
+    }
+
+    suspend fun postAnswers(answer: Answer) {
+        var answerJson = AnswerJson(
+            id = answer.id,
+            completedSurvey = AnswerJson.CompletedSurvey(
+                id = answer.completedSurveyId!!
+            ),
+            answerText = answer.answerText,
+            question = AnswerJson.Question(
+                answer.questionId
+            )
+        )
+        if (answer.questionOptionId != null) {
+            answerJson.questionOption = AnswerJson.QuestionOption(
+                id = answer.questionOptionId
+            )
+        }
+        monitoringApi.postAnswer(
+            answerJson
+        )
+
+    }
+
+    suspend fun getAllQuestions(): List<QuestionJson> {
+        return monitoringApi.getAllQuestions()
     }
 }

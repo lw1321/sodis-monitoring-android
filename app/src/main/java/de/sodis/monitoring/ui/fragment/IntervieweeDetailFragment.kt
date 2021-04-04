@@ -1,15 +1,9 @@
 package de.sodis.monitoring.ui.fragment
 
-import android.annotation.SuppressLint
-import android.app.AlertDialog
-import android.content.DialogInterface
-import android.graphics.Color
 import android.app.Activity.RESULT_OK
-import android.content.Context
-import android.content.ContextWrapper
+import android.content.DialogInterface
 import android.content.Intent
-import android.graphics.*
-import android.graphics.Shader.TileMode
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -17,259 +11,238 @@ import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import androidx.core.content.res.ResourcesCompat
-import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.core.view.isGone
-import androidx.core.widget.addTextChangedListener
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import coil.api.load
+import de.sodis.monitoring.R
+import de.sodis.monitoring.default
+import de.sodis.monitoring.picture
+import de.sodis.monitoring.technology
 import com.google.android.material.snackbar.Snackbar
 import de.sodis.monitoring.*
 import de.sodis.monitoring.db.entity.QuestionImage
 import de.sodis.monitoring.db.entity.SurveyHeader
 import de.sodis.monitoring.todolist.TodoDialog
-import de.sodis.monitoring.viewmodel.IntervieweeModel
-import de.sodis.monitoring.viewmodel.MonitoringOverviewModel
-import de.sodis.monitoring.viewmodel.MyViewModelFactory
+import de.sodis.monitoring.viewmodel.*
 import kotlinx.android.synthetic.main.continuable_list.view.*
-
-import kotlinx.android.synthetic.main.view_holder_header.*
-import kotlinx.android.synthetic.main.view_holder_key_value.view.*
+import kotlinx.android.synthetic.main.todo_dialog_layout.*
 import kotlinx.android.synthetic.main.view_holder_picture.view.*
+import kotlinx.android.synthetic.main.view_holder_question.view.*
 import kotlinx.android.synthetic.main.view_holder_technology.view.*
-import java.io.*
+import java.io.File
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
 
-@Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 class IntervieweeDetailFragment : BaseListFragment() {
 
-    private val intervieweeModel: IntervieweeModel by lazy {
+    private val placeViewModel: PlaceViewModel by lazy {
         ViewModelProviders.of(this, MyViewModelFactory(activity!!.application, emptyList()))
-            .get(IntervieweeModel::class.java)
+                .get(PlaceViewModel::class.java)
     }
-
-    private val monitoringOverviewModel: MonitoringOverviewModel by lazy {
+    private val surveyViewModel: SurveyViewModel by lazy {
         ViewModelProviders.of(this, MyViewModelFactory(activity!!.application, emptyList()))
-            .get(MonitoringOverviewModel::class.java)
+                .get(SurveyViewModel::class.java)
     }
-
+    private val todoViewModel: TodoPointModel by lazy {
+        ViewModelProviders.of(this, MyViewModelFactory(activity!!.application, emptyList()))
+                .get(TodoPointModel::class.java)
+    }
     val args: IntervieweeDetailFragmentArgs by navArgs()
-    var intervieweeId: String = "0"
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        intervieweeId = args.intervieweeId
-        intervieweeModel.setInterviewee(intervieweeId)
 
-        intervieweeModel.intervieweeDetail.observe(this, Observer { intervieweeD ->
-            (activity as MainActivity).supportActionBar!!.title = intervieweeD.interviewee.name
-            recyclerView.withModels {
-                picture {
-                    id("pictureHeader${intervieweeId}")
-                    onClick { _ ->
-                        dispatchTakePictureIntent()
-                    }
-                    onBind { model, view, position ->
-                        if (intervieweeD.interviewee.imagePath != null) {
-                            val bo : BitmapFactory.Options = BitmapFactory.Options()
-                            bo.inSampleSize = 8
-                            BitmapFactory.decodeFile(intervieweeD.interviewee.imagePath, bo)
-                                ?.also { bitmap ->
-                                    view.dataBinding.root.imageView.setImageBitmap(bitmap)
-
+    override fun onCreateView(
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
+    ): View? {
+        val view = super.onCreateView(inflater, container, savedInstanceState)
+        placeViewModel.familyList.observe(viewLifecycleOwner, Observer { familyList ->
+            surveyViewModel.surveyList.observe(viewLifecycleOwner, Observer { surveyList ->
+                todoViewModel.todoPointList.observe(viewLifecycleOwner, Observer { todoList ->
+                    recyclerView.withModels {
+                        familyList.filter { it.id == args.intervieweeId }.forEach {
+                            picture {
+                                id(it.id)
+                                name(it.name)
+                                village(it.villageName)
+                                onClick { clicked ->
+                                    dispatchTakePictureIntent()
                                 }
-                        } else {
-                            view.dataBinding.root.imageView.setImageResource(R.drawable.ic_person_black_24dp)//TODO add C for Carlos etc
-                        }
-
-                    }
-                }
-                keyValue {
-                    id("keyValueName")
-                    key("Persona")
-                    value(intervieweeD.interviewee.name)
-                    onBind { model, view, position ->
-                        view.dataBinding.root.imageView2.setImageResource(R.drawable.ic_person_black_24dp)
-                    }
-                }
-
-                keyValue {
-                    id("keyValueVillage")
-                    key(getString(R.string.village))
-                    value(intervieweeD.village.name)
-                    onBind { model, view, position ->
-                        view.dataBinding.root.imageView2.setImageResource(R.drawable.ic_village)
-                    }
-                }
-                keyValue {
-                    id("keyValueGeneral")
-                    key("Miembros de la familia")
-                    value(
-                        (intervieweeD.interviewee.boysCount
-                                + intervieweeD.interviewee.girlsCount
-                                + intervieweeD.interviewee.youngMenCount
-                                + intervieweeD.interviewee.youngWomenCount
-                                + intervieweeD.interviewee.womenCount
-                                + intervieweeD.interviewee.menCount
-                                + intervieweeD.interviewee.oldWomenCount
-                                + intervieweeD.interviewee.oldMenCount).toString()
-                    )
-                    onBind { model, view, position ->
-                        view.dataBinding.root.imageView2.setImageResource(R.drawable.ic_family_silhouette_svgrepo_com)
-                        view.dataBinding.root.imageEditable.visibility = View.VISIBLE
-                        view.dataBinding.root.imageEditable.setOnClickListener {
-                            val action =
-                                IntervieweeDetailFragmentDirections.actionIntervieweeDetailFragmentToMonitoringOverviewFragment(
-                                    6,// technology id of datos generales TODO replace hardcoded id
-                                    args.intervieweeId
-                                )
-                            findNavController().navigate(action)
-                        }
-                    }
-                }
-
-                intervieweeD.todoPoints?.forEach {
-                    todoPoint ->
-                    task {
-                        id(todoPoint.id.toString()+"td")
-                        text(todoPoint.text)
-                        checked(todoPoint.done)
-                        date(SimpleDateFormat("dd.MM.yyyy").format(todoPoint.duedate!!.time))
-                        onClickedCheckbox { _ -> Thread(Runnable{
-                            intervieweeModel.checkChangeTodoPoint(todoPoint = todoPoint)
-                        }).start()
-                        }
-                    }
-                }
-                centeredButton {
-                    id("addtodobutton")
-                    text("Añadir una tarea")
-                    onClick { _ ->
-                        Thread(Runnable {
-                            val dialog = TodoDialog(
-                                intervieweeModel.getByID(intervieweeId),
-                                null,
-                                context!!,
-                                null
-                            )
-                            activity!!.runOnUiThread {
-                                dialog.show(childFragmentManager, "todo_in_survey")
+                                onBind { model, view, position ->
+                                    if (it.imagePath != null) {
+                                        view.dataBinding.root.imageView.load(File(it.imagePath))
+                                    }
+                                }
                             }
-
-                        }).start()
-
-                    }
-                }
-
-                intervieweeD.intervieweeTechnologies.forEach { techno ->
-                    //are there open tasks for this technology?
-
-
-                    technology {
-                        id("technology${techno.id}")
-                        state(techno.stateTechnology.toString())
-                        knowledgeState(techno.stateKnowledge.toString())
-                        name(techno.name)
-                        taskName("")//TODO
-                        onClickTechnology { _ ->
-                            Thread(Runnable {
-                                val technologyList: List<SurveyHeader> = monitoringOverviewModel.getSurveyHeaderListByTechnologyIDSynchronous(techno.technologyId)
-                                val item = technologyList.single { surveyHeader ->  surveyHeader.surveyName.toLowerCase().contains("infraestructura") || surveyHeader.surveyName.toLowerCase().contains("infraestructura")}
-                                if(item!=null) {
-                                    val action =
-                                        IntervieweeDetailFragmentDirections.actionIntervieweeDetailFragmentToQuestionFragment(
-                                            item.id,
-                                            intervieweeId
-                                        )
-                                    (activity as MainActivity).runOnUiThread {
-                                        findNavController().navigate(action)
-                                    }
-                                }
-
-                            }).start()
                         }
-                        onClickPerson { _ ->
-                            Thread(Runnable {
-                                val technologyList: List<SurveyHeader> = monitoringOverviewModel.getSurveyHeaderListByTechnologyIDSynchronous(techno.technologyId)
-                                val item = technologyList.single { surveyHeader ->  surveyHeader.surveyName.toLowerCase().contains("practicas") || surveyHeader.surveyName.toLowerCase().contains("practicas")}
-                                if(item!=null) {
-
-                                    val action =
-                                        IntervieweeDetailFragmentDirections.actionIntervieweeDetailFragmentToQuestionFragment(
-                                            item.id,
-                                            intervieweeId
-                                        )
-                                    (activity as MainActivity).runOnUiThread {
-                                        findNavController().navigate(action)
-                                    }
+                        todoList.filter { it.family == args.intervieweeId }.forEach { todoPoint ->
+                            task {
+                                id(todoPoint.id.toString() + "td")
+                                text(todoPoint.text)
+                                checked(todoPoint.done)
+                                date(SimpleDateFormat("dd.MM.yyyy").format(todoPoint.duedate!!.time))
+                                onClickedCheckbox { _ ->
+                                    Thread(Runnable {
+                                        //todo intervieweeModel.checkChangeTodoPoint(todoPoint = todoPoint)
+                                    }).start()
                                 }
-                            }).start()
-
+                            }
                         }
-                        onBind { model, view, position ->
-                            val bo = BitmapFactory.Options()
-                            bo.inMutable = true
-                            val b = BitmapFactory.decodeResource(
-                                resources,
-                                when (techno.name) {
-                                    "Cocina Ecologica" -> R.drawable.ofen_kreis_basic
-                                    "Lavado de Manos" -> R.drawable.handwaschstation_icon
-                                    "Baño" -> R.drawable.toilette_icon
-                                    "Tecnología para Agua Segura (Filtro)" -> R.drawable.wasserfilter_icon
 
-                                    else -> R.drawable.sodis_logo
-                                },
-                                bo
-                            )
-                            view.dataBinding.root.technolgyImage.setImageBitmap(b)
-
-                            view.dataBinding.root.technolgyImage.setColorFilter(
-                                when (techno.stateTechnology) {
-                                    0 -> Color.GRAY
-                                    1 -> Color.RED
-                                    2 -> ResourcesCompat.getColor(
-                                        resources,
-                                        R.color.colorPrimary,
-                                        null
+                        centeredButton {
+                            id("addtodobutton")
+                            text("Añadir una tarea")
+                            onClick { _ ->
+                                Thread(Runnable {
+                                    /*
+                                    val dialog = TodoDialog(
+                                            intervieweeModel.getByID(intervieweeId),
+                                            null,
+                                            context!!,
+                                            null
                                     )
-                                    else -> Color.GRAY
-                                }
-                            ) //bild braucht onClickListener
+                                    activity!!.runOnUiThread {
+                                        dialog.show(childFragmentManager, "todo_in_survey")
+                                    }*/
 
+                                }).start()
+                            }
+                        }
 
-                            view.dataBinding.root.technologyKnowledgeImage.setColorFilter(
-                                when (techno.stateKnowledge) {
-                                    0 -> Color.GRAY
-                                    1 -> Color.RED
-                                    2 -> ResourcesCompat.getColor(
-                                        resources,
-                                        R.color.colorPrimary,
-                                        null
-                                    )
-                                    else -> Color.GRAY
-                                }
-                            )
-                            view.dataBinding.root.technologyTaskImage.setColorFilter(Color.YELLOW)
-                            view.dataBinding.root.technologyTaskImage.visibility =
-                                View.GONE//TODO task
+                        technology {
+                            id("Nutricion")
+                            survey1OnClick { clicked ->
+                                //Agriculture
+                                openSurvey(surveyList.first { it.surveyName == "Agricultura / disponibilidad de agua" }.surveyId)
+
+                            }
+                            survey2OnClick { clicked ->
+                                //Nutricion
+                                openSurvey(surveyList.first { it.surveyName == "Nutrición" }.surveyId)
+                            }
+                            onBind { model, view, position ->
+                                view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_agriculture)//TODO icons einfügen
+                                view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_vegetables)
+                                view.dataBinding.root.survey1Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorGreen700))
+                                view.dataBinding.root.survey2Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorGrey700))
+                            }
+                        }
+                        technology {
+                            id("QuariWarmi")
+                            survey1OnClick { clicked ->
+                                //Empresa
+                                openSurvey(surveyList.first { it.surveyName == "empresa" }.surveyId)
+                            }
+                            survey2OnClick { clicked ->
+                                //Tara
+                                openSurvey(surveyList.first { it.surveyName == "Tara" }.surveyId)
+                            }
+                            onBind { model, view, position ->
+                                view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_iconunternehmertum)//TODO icons einfügen
+                                view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_icontaraplant)//TODO einfärben nach status
+                                view.dataBinding.root.survey1Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorYellow700))
+                                view.dataBinding.root.survey2Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorGreen700))
+
+                            }
+                        }
+                        //cocina
+                        technology {
+                            id("Cocina Ecologica")
+                            survey1OnClick { clicked ->
+                                openSurvey(surveyList.first { it.surveyName == "Cocinas Ecológicas" }.surveyId)
+                            }
+                            survey2OnClick { clicked ->
+                                openSurvey(surveyList.first { it.surveyName == "Uso Cocinas Ecológicas" }.surveyId)
+                            }
+                            onBind { model, view, position ->
+                                view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_iconcocina)//TODO icons einfügen
+                                view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_iconusotechnologia)//TODO einfärben nach status
+                                view.dataBinding.root.survey1Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorGrey700))
+                                view.dataBinding.root.survey2Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorRed700))
+                            }
+                        }
+                        //cocina
+                        technology {
+                            id("filtro")
+                            survey1OnClick { clicked ->
+                                openSurvey(surveyList.first { it.surveyName == "Filtro de Agua" }.surveyId)
+                            }
+                            survey2OnClick { clicked ->
+                                openSurvey(surveyList.first { it.surveyName == "Uso Filtro de Agua" }.surveyId)
+                            }
+                            onBind { model, view, position ->
+                                view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_iconfiltro)//TODO icons einfügen
+                                view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_iconusotechnologia)//TODO einfärben nach status
+                                view.dataBinding.root.survey1Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorGreen700))
+                                view.dataBinding.root.survey2Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorGrey700))
+                            }
+                        }
+                        //cocina
+                        technology {
+                            id("toilet")
+                            survey1OnClick { clicked ->
+                                openSurvey(surveyList.first { it.surveyName == "Baños" }.surveyId)
+                            }
+                            survey2OnClick { clicked ->
+                                openSurvey(surveyList.first { it.surveyName == "Uso Baños" }.surveyId)
+                            }
+                            onBind { model, view, position ->
+                                view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_iconba_o)//TODO icons einfügen
+                                view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_iconusotechnologia)//TODO einfärben nach status
+                                view.dataBinding.root.survey1Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorRed700))
+                                view.dataBinding.root.survey2Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorYellow700))
+                            }
+                        }
+                        //cocina
+                        technology {
+                            id("wash")
+                            survey1OnClick { clicked ->
+                                openSurvey(surveyList.first { it.surveyName == "Lavado de manos" }.surveyId)
+                            }
+                            survey2OnClick { clicked ->
+                                openSurvey(surveyList.first { it.surveyName == "Uso Lavado de manos " }.surveyId)
+                            }
+                            onBind { model, view, position ->
+                                view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_iconwash)//TODO icons einfügen
+                                view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_iconusotechnologia)//TODO einfärben nach status
+                                view.dataBinding.root.survey1Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorGreen700))
+                                view.dataBinding.root.survey2Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, R.color.colorGrey700))
+                            }
                         }
                     }
-                }
-
-            }
-            recyclerView.recycledViewPool.clear()
+                })
+            })
         })
+        view?.navigation_forward_button_1?.isGone = true
+        view?.navigation_forward_button_left?.isGone = true
+        view?.navigation_cancel_button?.isGone = true
+        return view
     }
 
+    private fun openSurvey(surveyId: Int) {
+        surveyViewModel.surveyId = surveyId
+        val action =
+                IntervieweeDetailFragmentDirections.actionIntervieweeDetailFragmentToQuestionFragment(
+                        intervieweeId = args.intervieweeId,
+                        surveyId = surveyId
+                )
+        findNavController().navigate(action)
+    }
+
+
+    /**
+     * TAKE AND SAVE Image
+     */
 
     val REQUEST_TAKE_PHOTO = 1
+    lateinit var currentPhotoPath: String
 
     private fun dispatchTakePictureIntent() {
         Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
@@ -285,9 +258,9 @@ class IntervieweeDetailFragment : BaseListFragment() {
                 // Continue only if the File was successfully created
                 photoFile?.also {
                     val photoURI: Uri = FileProvider.getUriForFile(
-                        activity!!,
-                        "com.example.android.fileprovider",
-                        it
+                            activity!!,
+                            "com.example.android.fileprovider",
+                            it
                     )
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
                     startActivityForResult(takePictureIntent, REQUEST_TAKE_PHOTO)
@@ -296,18 +269,15 @@ class IntervieweeDetailFragment : BaseListFragment() {
         }
     }
 
-
-    lateinit var currentPhotoPath: String
-
     @Throws(IOException::class)
     private fun createImageFile(): File {
         // Create an image file name
         val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-        val storageDir: File = activity!!.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        val storageDir: File? = activity!!.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
         return File.createTempFile(
-            "JPEG_${timeStamp}_", /* prefix */
-            ".jpg", /* suffix */
-            storageDir /* directory */
+                "JPEG_${timeStamp}_", /* prefix */
+                ".jpg", /* suffix */
+                storageDir /* directory */
         ).apply {
             // Save a file: path for use with ACTION_VIEW intents
             currentPhotoPath = absolutePath
@@ -316,27 +286,11 @@ class IntervieweeDetailFragment : BaseListFragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_TAKE_PHOTO && resultCode == RESULT_OK) {
-            //save the image path in our database..
-            //set image to iamgeview
-            if (currentPhotoPath != null) {//todo show image immediately
-                //store the file
-                intervieweeModel.storeImagePath(currentPhotoPath)
-                BitmapFactory.decodeFile(currentPhotoPath)?.also { bitmap ->
-                    view!!.imageView.setImageBitmap(bitmap)
-                }
-            }
+            // Store image path (currentPhotoPath) in database. data also includes thumbnail and full size image to set
+            // it manually to the UI, better use Livedata observe on the imagePath to set the image automatically
+            // if the imagePath in the database has changed. (See Line 60-72 IntervieweeDetailFragment)
+            // Store Image path with the family(intervieweeId)
+            placeViewModel.storeImagePath(currentPhotoPath, args.intervieweeId)
         }
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        val view = super.onCreateView(inflater, container, savedInstanceState)
-        view?.navigation_forward_button_1?.isGone = true
-        view?.navigation_forward_button_left?.isGone = true
-        view?.navigation_cancel_button?.isGone = true
-        return view
     }
 }

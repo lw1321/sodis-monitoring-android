@@ -1,28 +1,11 @@
 package de.sodis.monitoring.viewmodel
 
 import android.app.Application
-import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
-import androidx.lifecycle.viewModelScope
-import de.sodis.monitoring.api.MonitoringApi
-import de.sodis.monitoring.db.MonitoringDatabase
-import de.sodis.monitoring.db.entity.Interviewee
-import de.sodis.monitoring.db.entity.IntervieweeTechnology
-import de.sodis.monitoring.db.entity.TodoPoint
-import de.sodis.monitoring.db.entity.Village
-import de.sodis.monitoring.db.response.IntervieweeDetail
-import de.sodis.monitoring.repository.IntervieweeRepository
-import de.sodis.monitoring.repository.TodoPointRepository
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import java.util.*
 
 
 class IntervieweeModel(application: Application) : AndroidViewModel(application) {
-
+/*
     lateinit var familyCount: MutableLiveData<Int>
     var intervieweeList: LiveData<List<Interviewee>>
     var villageList: LiveData<List<Village>>
@@ -33,16 +16,6 @@ class IntervieweeModel(application: Application) : AndroidViewModel(application)
     var villageName: MutableLiveData<String>
 
     private val monitoringDatabase = MonitoringDatabase.getDatabase(application.applicationContext)
-    private val intervieweeRepository =
-        IntervieweeRepository(
-            intervieweeDao = monitoringDatabase.intervieweeDao(),
-            villageDao = monitoringDatabase.villageDao(),
-            userDao = monitoringDatabase.userDao(),
-            intervieweeTechnologyDao = monitoringDatabase.intervieweeTechnologyDao(),
-            technologyDao = monitoringDatabase.technologyDao(),
-            todoPointDao = monitoringDatabase.todoPointDao(),
-            monitoringApi = MonitoringApi()
-        )
 
     private val todoPointRepository = TodoPointRepository(monitoringDatabase.todoPointDao(), MonitoringApi())
 
@@ -144,5 +117,5 @@ class IntervieweeModel(application: Application) : AndroidViewModel(application)
         viewModelScope.launch(Dispatchers.IO) {
             intervieweeRepository.createInterviewee(name, village)
         }
-    }
+    }*/
 }

@@ -1,5 +1,4 @@
 package de.sodis.monitoring.db.entity
-
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
@@ -23,17 +22,8 @@ data class Interviewee(
     val id: String,
     val name: String,
     val villageId: Int,
-    val girlsCount: Int,
-    val boysCount: Int,
-    val youngMenCount: Int,
-    val youngWomenCount: Int,
-    val oldMenCount: Int,
-    val oldWomenCount: Int,
-    var menCount: Int,
-    val womenCount: Int,
-    val userId: Int?,
+    val userId: Int?=null,
     var imagePath: String?=null,
     var imageUrl: String?=null,
-    var synced: Boolean?=true
-
+    var synced: Boolean?=false
 )

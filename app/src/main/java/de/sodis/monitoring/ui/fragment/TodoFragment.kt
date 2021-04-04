@@ -6,9 +6,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.Switch
-import android.widget.Toast
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,15 +13,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.button.MaterialButtonToggleGroup
 import de.sodis.monitoring.R
 import de.sodis.monitoring.api.MonitoringApi
-import de.sodis.monitoring.db.MonitoringDatabase
 import de.sodis.monitoring.db.entity.TodoPoint
 import de.sodis.monitoring.repository.TodoPointRepository
 import de.sodis.monitoring.todolist.*
-import de.sodis.monitoring.viewmodel.IntervieweeModel
+import de.sodis.monitoring.viewmodel.PlaceViewModel
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
 import de.sodis.monitoring.viewmodel.TodoPointModel
-import java.util.*
-import kotlin.concurrent.thread
 
 class TodoPointFragment: Fragment(
 ) {
@@ -34,9 +28,9 @@ class TodoPointFragment: Fragment(
             .get(TodoPointModel::class.java)
     }
 
-    private val intervieweeModel: IntervieweeModel by lazy {
+    private val placeViewModel: PlaceViewModel by lazy {
         ViewModelProviders.of(this, MyViewModelFactory(activity!!.application, emptyList()))
-            .get(IntervieweeModel::class.java)
+            .get(PlaceViewModel::class.java)
     }
 
     lateinit var todoPoints: MutableList<TodoPoint>
@@ -131,7 +125,7 @@ class TodoPointFragment: Fragment(
                 )
             }
         }
-        this.todoListAdapter = TodoListAdapter(activity!!, todoPoints, context, todoPointModel, intervieweeModel)
+        this.todoListAdapter = TodoListAdapter(activity!!, todoPoints, context, todoPointModel, placeViewModel)
         this.recyclerView.adapter = this.todoListAdapter
         todoPointModel.undoneTodoPointsByDueDate.observe(viewLifecycleOwner, androidx.lifecycle.Observer {
             todoListAdapter.setDataSet(it)

@@ -1,49 +1,34 @@
-package de.sodis.monitoring.api
+package de.sodis.monitoring.apiCompletedSurveyJson
 
-import de.sodis.monitoring.api.model.*
-import de.sodis.monitoring.db.entity.Interviewee
-import de.sodis.monitoring.db.entity.Stats
-import de.sodis.monitoring.db.entity.User
-import de.sodis.monitoring.db.entity.Village
+import de.sodis.monitoring.api.models.*
+import de.sodis.monitoring.db.entity.*
 import okhttp3.MultipartBody
-import retrofit2.Response
 import retrofit2.http.*
 
 interface MonitoringApiInterface {
     @GET("surveys")
-    suspend fun getAllSurveys(): List<SurveyHeaderJson>
+    suspend fun getAllSurveys(): List<SurveyJson>
+
+    @GET("survey-sections")
+    suspend fun getAllSections(): List<SectionJson>
+
+    @GET("questions")
+    suspend fun getAllQuestions(): List<QuestionJson>
+
+    @GET("option-choices")
+    suspend fun getAllOptionChoices(): List<OptionChoice>
 
     @GET("interviewees")
     suspend fun getAllInterviewees(): List<IntervieweeJson>
 
-    @GET("tasks")
-    suspend fun getAllTasks(): List<TaskJson>
-
-    @PUT("tasks/{taskId}")
-    suspend fun updateTask(
-        @Path(
-            value = "taskId",
-            encoded = false
-        ) taskId: Int, @Body task: TaskJson
-    ): TaskJson
-
-    @POST("tasks")
-    suspend fun createTask(@Body task: TaskJson): TaskJson
-
     @POST("users/register")
     suspend fun registerUser(@Body user: User): User
 
-    @GET("myself")
-    suspend fun getMyself(): User
-
-    @GET("users")
-    suspend fun getAllUsers(): List<User>
-
     @POST("completed-surveys")
-    suspend fun postCompletedSurveys(@Body completedSurveyJson: List<CompletedSurveyJson>): List<CompletedSurveyJson>
+    suspend fun postCompletedSurveys(@Body completedSurvey: CompletedSurveyJson): CompletedSurvey
 
     @GET("question-images")
-    suspend fun getAllQuestionImages(): List<SurveyHeaderJson.SurveySectionJson.QuestionJson.QuestionImageJson>
+    suspend fun getAllQuestionImages(): List<QuestionImage>
 
     @GET("stats")
     suspend fun getStats(): Stats
@@ -51,16 +36,37 @@ interface MonitoringApiInterface {
     @Multipart
     @POST("interviewees/{intervieweeId}/image")
     suspend fun postIntervieweeImage(
-        @Part
-        image: MultipartBody.Part, @Path(
-            value = "intervieweeId",
-            encoded = false
-        ) intervieweeId: String
-    ): IntervieweeJson
+            @Part
+            image: MultipartBody.Part, @Path(
+                    value = "intervieweeId",
+                    encoded = false
+            ) intervieweeId: String
+    ): Interviewee
+
+    @GET("projects")
+    suspend fun getAllProjects(): List<Project>
 
     @GET("villages")
     suspend fun getAllVillages(): List<Village>
 
-    @POST
-    suspend fun postInterviewee(@Body interviewee: Interviewee): Interviewee
+    @POST("interviewees")
+    suspend fun postInterviewee(@Body interviewee: IntervieweeJson): IntervieweeJson
+
+    @POST("answers/")
+    suspend fun postAnswer(@Body answerList: AnswerJson): Answer
+
+    @Multipart
+    @POST("answers/{answerId}/images")
+    suspend fun postAnswerImage(
+            @Part
+            image: MultipartBody.Part, @Path(
+                    value = "answerId",
+                    encoded = false
+            ) answerId: String
+    ): Answer
+
+    @GET("questions/input-types/")
+    suspend fun getAllInputTypes(): List<InputType>
+
+
 }

@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 
 class RegisterViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val userRepository = UserRepository(monitoringApi = MonitoringApi(), userDao = MonitoringDatabase.getDatabase(application.applicationContext).userDao())
+    private val userRepository = UserRepository(monitoringApi = MonitoringApi())
 
     //TODO first save local in case there is no internet, then upload via upload worker
     fun register(firstName: String, lastName: String, type: Int) {

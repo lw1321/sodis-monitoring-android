@@ -9,20 +9,16 @@ import android.view.View
 import android.view.View.GONE
 import android.view.ViewGroup
 import android.widget.CheckBox
-import android.widget.RadioButton
 import androidx.annotation.NonNull
-import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import de.sodis.monitoring.R
 import de.sodis.monitoring.db.entity.TodoPoint
-import de.sodis.monitoring.repository.TodoPointRepository
-import de.sodis.monitoring.viewmodel.IntervieweeModel
+import de.sodis.monitoring.viewmodel.PlaceViewModel
 import de.sodis.monitoring.viewmodel.TodoPointModel
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.concurrent.thread
 
-class TodoListAdapter(val activity: Activity, @NonNull todoPointS: List<TodoPoint>, @NonNull context: Context?, @NonNull todoPointModel: TodoPointModel, val intervieweeModel: IntervieweeModel): RecyclerView.Adapter<TodoListViewHolder>() {
+class TodoListAdapter(val activity: Activity, @NonNull todoPointS: List<TodoPoint>, @NonNull context: Context?, @NonNull todoPointModel: TodoPointModel, val placeViewModel: PlaceViewModel): RecyclerView.Adapter<TodoListViewHolder>() {
     var context: Context?
     var todoPoints: List<TodoPoint>
     val todoPointModel: TodoPointModel
@@ -91,7 +87,7 @@ class TodoListAdapter(val activity: Activity, @NonNull todoPointS: List<TodoPoin
         holder.dueField.text = simpleDateFormat.format(todoPoints[position].duedate?.time)
         if(todoPoints[position].family!=null) {
             Thread(Runnable {
-                var ts = intervieweeModel.getByID(todoPoints[position].family!!).name
+                var ts = placeViewModel.getByID(todoPoints[position].family!!)
                 activity.runOnUiThread(Runnable {
                     holder.familyField.text = ts
                 })
@@ -119,7 +115,7 @@ class TodoListAdapter(val activity: Activity, @NonNull todoPointS: List<TodoPoin
 
         if(todoPoints[position].village!=null) {
             Thread(Runnable{
-                val ts = intervieweeModel.getVillageByID(todoPoints[position].village!!).name
+                val ts = placeViewModel.getVillageByID(todoPoints[position].village!!)
                 activity.runOnUiThread(Runnable {
                     holder.villageField.text = ts
                 })

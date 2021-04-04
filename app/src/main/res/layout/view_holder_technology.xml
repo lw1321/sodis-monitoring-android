@@ -5,31 +5,17 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
-        <variable
-            name="state"
-            type="String" />
-
-        <variable
-            name="knowledgeState"
-            type="String" />
-
         <variable
             name="name"
             type="String" />
 
         <variable
-            name="taskName"
-            type="String" />
+            name="survey1OnClick"
+            type="android.view.View.OnClickListener" />
 
         <variable
-            name="onClickTechnology"
-            type="android.view.View.OnClickListener"
-            />
-        <variable
-            name="onClickPerson"
-            type="android.view.View.OnClickListener"
-            />
+            name="survey2OnClick"
+            type="android.view.View.OnClickListener" />
 
     </data>
 
@@ -43,9 +29,8 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/technologView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:foreground="?android:attr/selectableItemBackground"
-
             android:padding="12dp"
             app:cardCornerRadius="5dp"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -54,62 +39,31 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
-                android:id="@+id/technolgyImage"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_marginTop="4dp"
-                android:onClick="@{onClickTechnology}"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/textView5"
-                app:srcCompat="@drawable/sodis_logo" />
-
-            <ImageView
-                android:id="@+id/technologyKnowledgeImage"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:onClick="@{onClickPerson}"
-                app:layout_constraintBottom_toBottomOf="@+id/technolgyImage"
-                app:layout_constraintStart_toEndOf="@+id/technolgyImage"
-                app:layout_constraintTop_toTopOf="@+id/technolgyImage"
-                app:srcCompat="@drawable/ic_emoji_people_24px" />
-
-            <ImageView
-                android:id="@+id/technologyTaskImage"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                app:layout_constraintBottom_toBottomOf="@+id/technolgyImage"
-                app:layout_constraintStart_toEndOf="@+id/technologyKnowledgeImage"
-                app:layout_constraintTop_toTopOf="@+id/technolgyImage"
-                app:layout_constraintVertical_bias="0.0"
-                app:srcCompat="@android:drawable/ic_menu_preferences" />
-
-            <TextView
-                android:id="@+id/textView4"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginLeft="8dp"
-                android:text="@{taskName}"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"
-                app:layout_constraintBottom_toBottomOf="@+id/technologyTaskImage"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@+id/technologyTaskImage"
-                app:layout_constraintTop_toTopOf="@+id/technologyTaskImage"
-                tools:text="Hier steht eine super langes todo, welches über mehrere Zeilen geht" />
-
-            <TextView
-                android:id="@+id/textView5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@{name}"
-                android:textSize="24sp"
+                android:id="@+id/survey1Icon"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginStart="32dp"
+                android:layout_marginLeft="32dp"
+                android:layout_marginTop="16dp"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:onClick="@{survey1OnClick}"
+                app:layout_constraintEnd_toStartOf="@+id/survey2Icon"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                tools:text="TechnologyName" />
+                app:srcCompat="@drawable/ic_iconunternehmertum" />
+
+            <ImageView
+                android:id="@+id/survey2Icon"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_marginStart="72dp"
+                android:layout_marginLeft="72dp"
+                android:layout_marginTop="16dp"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:onClick="@{survey2OnClick}"
+                app:layout_constraintStart_toEndOf="@+id/survey1Icon"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_iconusotechnologia" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>

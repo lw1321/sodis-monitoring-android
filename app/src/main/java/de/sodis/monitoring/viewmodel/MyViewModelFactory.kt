@@ -9,17 +9,16 @@ class MyViewModelFactory(private val mApplication: Application, private val mPar
     ViewModelProvider.NewInstanceFactory() {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         return when {
-            modelClass === MonitoringOverviewModel::class.java -> MonitoringOverviewModel(mApplication) as T
-            modelClass === IntervieweeModel::class.java -> IntervieweeModel(mApplication) as T
+            modelClass === PlaceViewModel::class.java -> PlaceViewModel(mApplication) as T
             modelClass === TodoPointModel::class.java -> TodoPointModel(mApplication) as T
-            modelClass === SurveyHistoryViewModel::class.java -> SurveyHistoryViewModel(mApplication) as T
-            modelClass === SurveyViewModel::class.java -> SurveyViewModel(
-                mApplication,
-                mParams[0] as Int
-            ) as T
+            modelClass === SurveyViewModel::class.java -> SurveyViewModel(mApplication) as T
             modelClass === RegisterViewModel::class.java -> RegisterViewModel(mApplication) as T
             modelClass === RootViewModel::class.java -> RootViewModel(mApplication) as T
             modelClass === VillageModel::class.java -> VillageModel(mApplication) as T
+            modelClass === QuestionViewModel::class.java -> QuestionViewModel(
+                mApplication,
+                mParams[0] as Int
+            ) as T
             else -> super.create(modelClass)
         }
     }

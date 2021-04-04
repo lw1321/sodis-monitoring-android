@@ -3,6 +3,7 @@ package de.sodis.monitoring.db.dao
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import de.sodis.monitoring.db.entity.Interviewee
+import de.sodis.monitoring.db.response.FamilyList
 
 @Dao
 interface IntervieweeDao {
@@ -30,9 +31,13 @@ interface IntervieweeDao {
     @Query("SELECT * FROM Interviewee WHERE synced=0")
     fun getAllNotSynced(): List<Interviewee>
 
-    @Query("SELECT menCount FROM Interviewee WHERE id=:intervieweeId")//TODO refactor family count
-    fun getFamilyCount(intervieweeId: String): LiveData<Int>
-
     @Query("SELECT COUNT(*) FROM Interviewee WHERE id=:id")
     fun exists(id: String): Int
+
+    @Query("SELECT * FROM Interviewee WHERE imagePath IS NOT NULL AND imageUrl IS NULL ")
+    fun getNotsyncedProfilePictures(): List<Interviewee>
+
+    @Query("SELECT i.id, i.name, i.imagePath, v.name as villageName, v.id as villageId FROM Interviewee i JOIN village v ON v.id = i.villageId")
+    fun getFamilyList(): LiveData<List<FamilyList>>
+
 }

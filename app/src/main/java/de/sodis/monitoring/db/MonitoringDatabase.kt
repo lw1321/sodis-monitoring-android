@@ -4,13 +4,12 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
 import de.sodis.monitoring.db.dao.*
 import de.sodis.monitoring.db.entity.*
 
 @Database(
-    entities = [InputType::class, OptionChoice::class, Question::class, QuestionImage::class, QuestionOption::class, SurveyHeader::class, SurveySection::class, Interviewee::class, Answer::class, Village::class, Technology::class, IntervieweeTechnology::class, User::class, CompletedSurvey::class, TodoPoint::class, Stats::class],
-    version = 40
+    entities = [InputType::class, OptionChoice::class, Question::class, QuestionImage::class, QuestionOption::class, SurveyHeader::class, SurveySection::class, Interviewee::class, Answer::class, Village::class, Project::class, User::class, CompletedSurvey::class, TodoPoint::class, Stats::class],
+    version = 61
 )
 abstract class MonitoringDatabase : RoomDatabase() {
     abstract fun inputTypeDao(): InputTypeDao
@@ -24,8 +23,7 @@ abstract class MonitoringDatabase : RoomDatabase() {
     abstract fun answerDao(): AnswerDao
     abstract fun villageDao(): VillageDao
     abstract fun userDao(): UserDao
-    abstract fun technologyDao(): TechnologyDao
-    abstract fun intervieweeTechnologyDao(): IntervieweeTechnologyDao
+    abstract fun projectDao(): ProjectDao
     abstract fun completedSurveyDao(): CompletedSurveyDao
     abstract fun todoPointDao():TodoPointDao
     abstract fun statsDao(): StatsDao

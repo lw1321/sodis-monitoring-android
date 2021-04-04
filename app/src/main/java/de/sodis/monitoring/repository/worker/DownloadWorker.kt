@@ -3,13 +3,12 @@ package de.sodis.monitoring.repository.worker
 import com.google.firebase.crashlytics.FirebaseCrashlytics
 import android.content.Context
 import androidx.work.CoroutineWorker
+import androidx.work.Data
 import androidx.work.WorkerParameters
 import androidx.work.workDataOf
 import de.sodis.monitoring.api.MonitoringApi
 import de.sodis.monitoring.db.MonitoringDatabase
-import de.sodis.monitoring.db.entity.QuestionImage
 import de.sodis.monitoring.repository.*
-import java.util.*
 
 
 class DownloadWorker(appContext: Context, workerParams: WorkerParameters) :
@@ -20,76 +19,69 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) :
     }
 
     override suspend fun doWork(): Result {
-        val monitoringDatabase = MonitoringDatabase.getDatabase(applicationContext)
+        val db = MonitoringDatabase.getDatabase(applicationContext)
         val surveyRepository =
             SurveyRepository(
-                inputTypeDao = monitoringDatabase.inputTypeDao(),
-                optionChoiceDao = monitoringDatabase.optionChoiceDao(),
-                questionDao = monitoringDatabase.questionDao(),
-                questionImageDao = monitoringDatabase.questionImageDao(),
-                questionOptionDao = monitoringDatabase.questionOptionDao(),
-                surveyHeaderDao = monitoringDatabase.surveyHeaderDao(),
-                surveySectionDao = monitoringDatabase.surveySectionDao(),
-                technologyDao = monitoringDatabase.technologyDao(),
+                inputTypeDao = db.inputTypeDao(),
+                optionChoiceDao = db.optionChoiceDao(),
+                questionDao = db.questionDao(),
+                questionOptionDao = db.questionOptionDao(),
+                surveyHeaderDao = db.surveyHeaderDao(),
+                surveySectionDao = db.surveySectionDao(),
+                questionImageDao = db.questionImageDao(),
+                answerDao =  db.answerDao(),
+                completedSurveyDao = db.completedSurveyDao(),
                 monitoringApi = MonitoringApi()
             )
-        val intervieweeRepository =
-            IntervieweeRepository(
-                intervieweeDao = monitoringDatabase.intervieweeDao(),
+
+        val placesRepository =
+            PlaceRepository(
+                intervieweeDao = db.intervieweeDao(),
                 monitoringApi = MonitoringApi(),
-                technologyDao = monitoringDatabase.technologyDao(),
-                intervieweeTechnologyDao = monitoringDatabase.intervieweeTechnologyDao(),
-                villageDao = monitoringDatabase.villageDao(),
-                todoPointDao = monitoringDatabase.todoPointDao(),
-                userDao = monitoringDatabase.userDao()
+                villageDao = db.villageDao(),
+                userDao = db.userDao()
             )
-        val userRepository =
-            UserRepository(
+        val projectRepository =
+            ProjectRepository(
                 monitoringApi = MonitoringApi(),
-                userDao = monitoringDatabase.userDao()
+                projectDao = db.projectDao()
             )
-        val questionImageRepository = QuestionImageRepository(
-            monitoringApi = MonitoringApi(),
-            questionImageDao = monitoringDatabase.questionImageDao()
-        )
 
         val statsRepository = StatsRepository(
             monitoringApi = MonitoringApi(),
-            statsDao = monitoringDatabase.statsDao()
+            statsDao = db.statsDao()
         )
 
         return try {
-            val progressStarting = workDataOf(Progress to 0)
-            val progress20 = workDataOf(Progress to 20)
-            val progress40 = workDataOf(Progress to 40)
-            val progress60 = workDataOf(Progress to 60)
-            val progress80 = workDataOf(Progress to 80)
-            val progressFinished = workDataOf(Progress to 100)
-            setProgress(progressStarting)
+            setProgress(progress(0))
             //check if there are new data
             if (statsRepository.dataUpdateAvailable()) {
                 //ok cool there is new data. Let's sync it!
-                userRepository.loadAllUsers()
-                setProgress(progress20)
-                intervieweeRepository.loadAll()
-                setProgress(progress40)
-                questionImageRepository.downloadMetaData()
-                setProgress(progress60)
-                surveyRepository.loadSurveys()
-                setProgress(progress80)
-                questionImageRepository.downloadQuestionImages(applicationContext)
-                setProgress(progressFinished)
-                //taskRepository.downloadTasks() //just offline tasks for now
+                //LOAD PROJECTS/
+                projectRepository.loadProjects()
+                // LOAD PLACES
+                placesRepository.loadVillages()
+                placesRepository.loadFamilies()
+                //LOAD SURVEYS
+                surveyRepository.syncSurveys()
+                surveyRepository.syncSections()
+                surveyRepository.syncQuestions()
+                surveyRepository.storeImages(applicationContext)
                 statsRepository.updateLastSyncTime()
+                setProgress(progress(100))
                 Result.success()
             }
+            setProgress(progress(100))
             //Local data is already up to date!
-            setProgress(progressFinished)
             Result.success()
         } catch (e: Exception) {
             val crashlytics = FirebaseCrashlytics.getInstance()
             crashlytics.log(e.localizedMessage)
             Result.failure()
         }
+    }
+
+    private fun progress(progressCount: Int): Data {
+        return  workDataOf(Progress to progressCount)
     }
 }

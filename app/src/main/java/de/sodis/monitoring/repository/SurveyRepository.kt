@@ -1,21 +1,16 @@
 package de.sodis.monitoring.repository
 
 import android.content.Context
-import android.content.ContextWrapper
-import android.graphics.Bitmap
-import android.net.Uri
-import androidx.core.graphics.drawable.toBitmap
 import androidx.lifecycle.LiveData
-import coil.Coil
-import coil.api.get
+import de.sodis.monitoring.Utils
 import de.sodis.monitoring.api.MonitoringApi
-import de.sodis.monitoring.api.model.SurveyHeaderJson
 import de.sodis.monitoring.db.dao.*
 import de.sodis.monitoring.db.entity.*
+import de.sodis.monitoring.db.response.QuestionItem
+import de.sodis.monitoring.db.response.SurveyList
+import id.zelory.compressor.Compressor
 import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import java.io.OutputStream
+import java.sql.Timestamp
 import java.util.*
 
 
@@ -24,138 +19,188 @@ class SurveyRepository(
     private val surveySectionDao: SurveySectionDao,
     private val questionDao: QuestionDao,
     private val inputTypeDao: InputTypeDao,
-    private val questionImageDao: QuestionImageDao,
-    private val questionOptionDao: QuestionOptionDao,
     private val optionChoiceDao: OptionChoiceDao,
-    private val technologyDao: TechnologyDao,
+    private val questionOptionDao: QuestionOptionDao,
+    private val questionImageDao: QuestionImageDao,
+    private val answerDao: AnswerDao,
+    private val completedSurveyDao: CompletedSurveyDao,
     private val monitoringApi: MonitoringApi
 ) {
 
-    /**
-     * If internet connection is available, load all surveys and save it in the local database.
-     * Also load and save the associated images in the internal storage.
-     */
-    suspend fun loadSurveys() {
-
-        //TODO save the surveyheaderIds, surveySectionIds and questionIds, afterwards delete all other.
-        val headerIds = mutableListOf<Int>()
-        val sectionIds = mutableListOf<Int>()
-        val questionIds = mutableListOf<Int>()
-
-        val response = monitoringApi.getSurveys()
-        //loop through surveys
-        for (surveyHeaderJson: SurveyHeaderJson in response) {
-            //save survey Header
-            //Save Input Types
-
-            if (technologyDao.count(surveyHeaderJson.technology.id) == 0) {
-                //save input type
-                technologyDao.insert(
-                    Technology(
-                        id = surveyHeaderJson.technology.id,
-                        name = surveyHeaderJson.technology.name
-                    )
+    suspend fun syncSurveys() {
+        val surveys = monitoringApi.getSurveys()
+        surveys.forEach { survey ->
+            surveyHeaderDao.insert(
+                SurveyHeader(
+                    id = survey.id,
+                    projectId = survey.project.id,
+                    surveyName = survey.surveyName
                 )
-            }
-            val header = SurveyHeader(
-                id = surveyHeaderJson.id,
-                surveyName = surveyHeaderJson.surveyName,
-                technologyId = surveyHeaderJson.technology.id
             )
-            if (surveyHeaderDao.exists(surveyHeaderJson.id) == 0) {
-                surveyHeaderDao.insert(header)
-            } else {
-                surveyHeaderDao.update(header)
-            }
+        }
+    }
 
-            //add to temp lits
-            headerIds.add(surveyHeaderJson.id)
-            //loop through sections
-            for (surveySectionJson: SurveyHeaderJson.SurveySectionJson in surveyHeaderJson.surveySection) {
-                //save SurveySections
-                surveySectionDao.insert(
-                    SurveySection(
-                        id = surveySectionJson.id,
-                        sectionName = surveySectionJson.sectionName,
-                        surveyHeaderId = surveyHeaderJson.id
+    suspend fun syncSections() {
+        val sections = monitoringApi.getSections()
+        sections.forEach { surveySection ->
+            surveySectionDao.insert(
+                SurveySection(
+                    id = surveySection.id,
+                    sectionName = surveySection.sectionName,
+                    surveyHeaderId = surveySection.surveyHeader.id
+                )
+            )
+        }
+    }
+
+    suspend fun syncQuestions() {
+        syncInputTypes()
+        syncOptionChoices()
+        syncQuestionImages()
+
+        val questions = monitoringApi.getAllQuestions()
+        questions.forEach { question ->
+            questionDao.insert(
+                Question(
+                    id = question.id,
+                    dependentQuestionId = question.dependentQuestionId,
+                    dependentQuestionOptionId = question.dependentQuestionOptionId,
+                    inputTypeId = question.inputType.id,
+                    questionImageId = question.questionImage?.id,
+                    questionName = question.questionName,
+                    surveySectionId = question.surveySection.id
+                )
+            )
+            question.questionOptions.forEach { questionOption ->
+                questionOptionDao.insert(
+                    QuestionOption(
+                        id = questionOption.id,
+                        questionId = question.id,
+                        optionChoiceId = questionOption.optionChoice.id
                     )
                 )
-                //add to temp lits
-                sectionIds.add(surveySectionJson.id)
-
-                //loop through questions
-                for (questionJson: SurveyHeaderJson.SurveySectionJson.QuestionJson in surveySectionJson.questions) {
-                    //Save Input Types
-                    if (inputTypeDao.exists(questionJson.inputType.id) == 0) {
-                        //save input type
-                        inputTypeDao.insert(
-                            InputType(
-                                id = questionJson.inputType.id,
-                                inputTypeName = questionJson.inputType.inputTypeName
-                            )
-                        )
-                    }
-                    //Save Questions
-                    questionDao.insert(
-                        Question(
-                            id = questionJson.id,
-                            dependentQuestionId = questionJson.dependentQuestionId,
-                            dependentQuestionOptionId = questionJson.dependentQuestionOptionId,
-                            inputTypeId = questionJson.inputType.id,
-                            questionImageId = questionJson.questionImage?.id,
-                            questionName = questionJson.questionName,
-                            surveySectionId = surveySectionJson.id
-                        )
-                    )
-                    //add to temp lits
-                    questionIds.add(questionJson.id)
-
-                    //Loop through question options
-                    for (questionOptionJson: SurveyHeaderJson.SurveySectionJson.QuestionJson.QuestionOptionJson in questionJson.questionOptions) {
-                        //check if option choice exist
-                        if (optionChoiceDao.exists(questionOptionJson.optionChoice.id) == 0) {//TODO
-                            optionChoiceDao.insert(
-                                OptionChoice(
-                                    id = questionOptionJson.optionChoice.id,
-                                    optionChoiceName = questionOptionJson.optionChoice.optionChoiceName
-                                )
-                            )
-                        }
-                        //save question option, many to many relationship between question and OptionCoice.
-                        questionOptionDao.insert(
-                            QuestionOption(
-                                id = questionOptionJson.id,
-                                optionChoiceId = questionOptionJson.optionChoice.id,
-                                questionId = questionJson.id
-                            )
-                        )
-                    }
-                }
             }
+
         }
-        //ok insert done. Now lets delete the outdated data
-        surveyHeaderDao.deleteAllExcluded(headerIds)
-        surveySectionDao.deleteAllExcluded(sectionIds)
-        questionDao.deleteAllExcluded(questionIds)
+    }
+
+    private suspend fun syncInputTypes() {
+        val inputTypes = monitoringApi.getInputTypes()
+        inputTypes.forEach {
+            inputTypeDao.insert(it)
+        }
+    }
+
+    private suspend fun syncOptionChoices() {
+        val optionChoice = monitoringApi.getOptionChoices()
+        optionChoice.forEach {
+            optionChoiceDao.insert(optionChoice = it)
+        }
+    }
+
+    private suspend fun syncQuestionImages() {
+        val questionImages = monitoringApi.getQuestionImages()
+        questionImages.forEach {
+            questionImageDao.insert(questionImage = it)
+        }
+
     }
 
     /**
-     * Provide a list of all in database stored survey headers.
+     * If internet connection is available, load all question images
      */
-    fun getSurveyHeaders(): LiveData<List<SurveyHeader>> {
-        return surveyHeaderDao.getAll()
+    suspend fun storeImages(context: Context) {
+        val allNotDownloadedList = questionImageDao.getAllNotDownloaded()
+        //loop through surveys
+        for (questionImage: QuestionImage in allNotDownloadedList) {
+            //save survey Header
+            //store
+            val absolutePath = Utils.urlToFile(questionImage.url, context)
+            questionImage.path = absolutePath
+            //Save Images
+            questionImageDao.update(
+                questionImage
+            )
+        }
     }
+
 
     /**
-     * Provide a list of all in database stored survey headers.
+     * Save questions in loval database, also try to upload them..Also save if the upload was successfully
      */
-    fun getSurveyHeadersFilteredTechnology(technologyId: Int): LiveData<List<SurveyHeader>> {
-        return surveyHeaderDao.getAllFilteredTechnology(technologyId)
+    fun saveCompletedSurvey(
+        surveyHeaderId: Int,
+        answerMap: MutableMap<Int, Answer>,
+        intervieweeId: String,
+        latitude: Double?,
+        longitude: Double?
+    ) {
+
+        val completedSurveyId = UUID.randomUUID().toString()
+
+        completedSurveyDao.insert(
+            CompletedSurvey(
+                id = completedSurveyId,
+                intervieweeId = intervieweeId,
+                surveyHeaderId = surveyHeaderId,
+                creationDate = Timestamp(System.currentTimeMillis()).toString(),
+                latitude = latitude,
+                longitude = longitude
+            )
+        )
+
+        for ((_, v) in answerMap) {
+            v.completedSurveyId = completedSurveyId
+            answerDao.insert(v)
+        }
     }
 
-    fun getSurveyHeadersFilteredTechnologySynchronous(technologyID: Int):List<SurveyHeader> {
-        return surveyHeaderDao.getAllFilteredTechnologySync(technologyID)
+    suspend fun syncCompletedSurveys() {
+        // TODO implement after server endpoints are adjust
+        val surveysToSync = completedSurveyDao.getAllUnsubmitted()
+        surveysToSync.forEach {
+            monitoringApi.postCompletedSurveys(it)
+            it.submitted = true
+            completedSurveyDao.update(it)
+        }
     }
 
+    suspend fun syncAnswers() {
+        //upload answers
+        val answersToSync = answerDao.getAllNotSubmitted()
+        answersToSync.forEach { answer ->
+            monitoringApi.postAnswers(answer)
+            answer.submitted = true
+            answerDao.update(answer)
+        }
+    }
+
+    suspend fun syncAnswerImages(applicationContext: Context) {
+        //upload images
+        //check for not uploaded images where the answers are already synced.
+        val answerImagesToSync = answerDao.getNotSubmittedImages()
+        //upload the images
+        answerImagesToSync.forEach { answer ->
+            //Compress File
+            //TODO compression before saving the image localy
+            val compressedImageFile =
+                Compressor.compress(applicationContext, File(answer.imagePath!!))
+            monitoringApi.postAnswerImage(answer.id, compressedImageFile)
+            answer.imageSynced = true
+            answerDao.update(answer)
+        }
+    }
+
+    fun getSurveyList(): LiveData<List<SurveyList>> {
+        return surveyHeaderDao.getAllSurveys()
+    }
+
+    fun getQuestionList(surveyId: Int): List<QuestionItem> {
+        return questionDao.getQuestionItems(surveyId)
+    }
+
+    fun getQuestionsDistinct(surveyId: Int): List<Int> {
+        return questionDao.getBySurveyHeader(surveyId)
+    }
 
 }

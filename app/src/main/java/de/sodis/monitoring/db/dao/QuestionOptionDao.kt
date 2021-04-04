@@ -23,4 +23,5 @@ interface QuestionOptionDao {
     @Query("SELECT * FROM QuestionOption WHERE questionId=:id")
     fun getQuestionOptionsByQuestion(id: Int): List<QuestionOption>
 
+
 }

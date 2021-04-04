@@ -5,11 +5,6 @@
 
     <data>
         <variable
-            name="title"
-            type="String" />
-
-
-        <variable
             name="questionText"
             type="String" />
     </data>
@@ -20,42 +15,28 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/question_header"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:text="@{title}"
-            android:textSize="35sp"
-            android:textStyle="bold"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Nulla Ipsum" />
-
         <ImageView
             android:id="@+id/question_image"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:minHeight="200dp"
-            android:maxHeight="300dp"
-            android:layout_marginTop="16dp"
             android:adjustViewBounds="true"
+            android:maxHeight="300dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/question_header"
+            app:layout_constraintTop_toTopOf="parent"
             tools:srcCompat="@android:drawable/gallery_thumb" />
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="8dp"
             android:lines="2"
+            android:text="@{questionText}"
             android:textSize="27sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/question_image"
-            android:text="@{questionText}"
             tools:text="asdfasdfsadf adasd asdd asd asd asdfasdf skjfdghjkfg asdf asdf asfd asdf asfd  " />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

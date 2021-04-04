@@ -11,8 +11,8 @@
         android:label="IntervieweeOverviewFragment">
         <argument
             android:name="villageId"
-            app:argType="integer"
-            android:defaultValue="0" />
+            android:defaultValue="0"
+            app:argType="integer" />
         <action
             android:id="@+id/action_intervieweeOverviewFragment_to_intervieweeDetailFragment"
             app:destination="@id/intervieweeDetailFragment" />
@@ -46,9 +46,6 @@
             android:name="intervieweeId"
             android:defaultValue="0"
             app:argType="string" />
-        <action
-            android:id="@+id/action_intervieweeDetailFragment_to_monitoringOverviewFragment"
-            app:destination="@id/monitoringOverviewFragment" />
         <action
             android:id="@+id/action_intervieweeDetailFragment_to_questionFragment"
             app:destination="@id/questionFragment" />
@@ -114,23 +111,6 @@
             app:destination="@+id/questionHistoryFragment" />
     </fragment>
     <fragment
-        android:id="@+id/monitoringOverviewFragment"
-        android:name="de.sodis.monitoring.ui.fragment.MonitoringOverviewFragment"
-        android:label="MonitoringOverviewFragment">
-
-        <argument
-            android:name="technologyId"
-            android:defaultValue="0"
-            app:argType="integer" />
-        <argument
-            android:name="intervieweeId"
-            android:defaultValue="0"
-            app:argType="string" />
-        <action
-            android:id="@+id/action_monitoringOverviewFragment_to_questionFragment"
-            app:destination="@id/questionFragment" />
-    </fragment>
-    <fragment
         android:id="@+id/questionFragment"
         android:name="de.sodis.monitoring.ui.fragment.QuestionFragment"
         android:label="QuestionFragment">
@@ -142,8 +122,8 @@
             app:destination="@id/questionFragment" />
         <argument
             android:name="intervieweeId"
-            app:argType="string"
-            android:defaultValue="0" />
+            android:defaultValue="0"
+            app:argType="string" />
         <action
             android:id="@+id/action_questionFragment_to_intervieweeDetailFragment"
             app:destination="@id/intervieweeDetailFragment" />
