@@ -16,4 +16,6 @@ interface SurveySectionDao {
     @Query("DELETE FROM SurveySection WHERE id not in (:ids)")
     fun deleteAllExcluded(ids: List<Int>)
 
+    @Query("DELETE FROM SurveySection")
+    fun deleteAll()
 }

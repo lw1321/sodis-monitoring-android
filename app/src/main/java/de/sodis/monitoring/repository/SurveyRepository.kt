@@ -207,4 +207,14 @@ class SurveyRepository(
         return completedSurveyDao.getAll()
     }
 
+    fun deleteAll() {
+        answerDao.deleteAll()
+        completedSurveyDao.deleteAll()
+        questionOptionDao.deleteAll()
+        optionChoiceDao.deleteAll()
+        inputTypeDao.deleteAll()
+        surveySectionDao.deleteAll()
+        surveyHeaderDao.deleteAll()
+    }
+
 }

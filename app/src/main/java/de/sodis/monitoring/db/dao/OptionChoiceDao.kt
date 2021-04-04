@@ -17,4 +17,7 @@ interface OptionChoiceDao {
 
     @Query("SELECT * FROM OptionChoice WHERE id=:id")
     fun getById(id:Int): OptionChoice
+
+    @Query("DELETE FROM OptionChoice")
+    fun deleteAll()
 }

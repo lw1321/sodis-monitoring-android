@@ -53,26 +53,35 @@ class DownloadWorker(appContext: Context, workerParams: WorkerParameters) :
         )
 
         return try {
-            setProgress(progress(0))
             //check if there are new data
             if (statsRepository.dataUpdateAvailable()) {
                 //ok cool there is new data. Let's sync it!
                 //LOAD PROJECTS/
+                setProgress(progress(0))
+                //DELETE LOCAL DATA
+                surveyRepository.deleteAll()
+                setProgress(progress(5))
                 projectRepository.loadProjects()
                 // LOAD PLACES
+                setProgress(progress(15))
                 placesRepository.loadVillages()
+                setProgress(progress(30))
                 placesRepository.loadFamilies()
                 //LOAD SURVEYS
+                setProgress(progress(45))
                 surveyRepository.syncSurveys()
+                setProgress(progress(60))
                 surveyRepository.syncSections()
+                setProgress(progress(70))
                 surveyRepository.syncQuestions()
+                setProgress(progress(85))
                 surveyRepository.storeImages(applicationContext)
                 statsRepository.updateLastSyncTime()
                 setProgress(progress(100))
                 Result.success()
             }
-            setProgress(progress(100))
             //Local data is already up to date!
+            setProgress(progress(100))
             Result.success()
         } catch (e: Exception) {
             val crashlytics = FirebaseCrashlytics.getInstance()

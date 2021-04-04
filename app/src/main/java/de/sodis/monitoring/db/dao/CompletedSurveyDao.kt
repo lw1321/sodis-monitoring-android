@@ -29,5 +29,8 @@ interface CompletedSurveyDao {
     @Query("SELECT Interviewee.name, SurveyHeader.surveyName, CompletedSurvey.id FROM CompletedSurvey JOIN Interviewee ON CompletedSurvey.intervieweeId=Interviewee.id JOIN SurveyHeader ON CompletedSurvey.surveyHeaderId=SurveyHeader.id ORDER BY creationDate DESC")
     fun getAllSorted(): LiveData<List<CompletedSurveyOverview>>
 
+    @Query("DELETE FROM CompletedSurvey")
+    fun deleteAll()
+
 
 }

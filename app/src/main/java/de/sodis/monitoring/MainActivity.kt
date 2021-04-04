@@ -149,7 +149,8 @@ public fun MainActivity.hideProgressBar() {
     this.progress_bar.visibility = View.GONE
 }
 
-public fun MainActivity.showProgressBar(value: Int) {
+public fun MainActivity.
+        showProgressBar(value: Int) {
     this.progress_bar.visibility = View.VISIBLE
     this.progress_bar.progress = value
 }

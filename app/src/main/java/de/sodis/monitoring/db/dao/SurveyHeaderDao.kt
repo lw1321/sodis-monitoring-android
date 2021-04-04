@@ -15,8 +15,8 @@ interface SurveyHeaderDao {
     @Update
     fun update(surveyHeader: SurveyHeader)
 
-    @Delete
-    fun deleteAll(surveyheader: List<SurveyHeader>)
+    @Query("DELETE FROM SurveyHeader")
+    fun deleteAll()
 
     @Query("SELECT * FROM SurveyHeader")
     fun getAll(): LiveData<List<SurveyHeader>>

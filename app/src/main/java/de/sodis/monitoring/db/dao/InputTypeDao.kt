@@ -14,4 +14,7 @@ interface InputTypeDao {
 
     @Query("SELECT COUNT(*) FROM InputType WHERE id=:id")
     fun exists(id: Int): Int
+
+    @Query("DELETE FROM InputType")
+    fun deleteAll()
 }

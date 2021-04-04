@@ -24,6 +24,8 @@ interface AnswerDao {
     @Query("SELECT * FROM Answer WHERE Answer.submitted=0")
     fun getAllNotSubmitted(): List<Answer>
 
+    @Query("DELETE FROM Answer")
+    fun deleteAll()
 
 
 }
