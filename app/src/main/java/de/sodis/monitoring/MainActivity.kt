@@ -36,9 +36,6 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             R.id.dashboard -> {
                 findNavController(R.id.nav_host_fragment).navigate(R.id.villageFragment)
             }
-            R.id.monitoring_history -> {
-                findNavController(R.id.nav_host_fragment).navigate(R.id.monitoringHistoryFragment)
-            }
             R.id.tasks -> {
                 findNavController(R.id.nav_host_fragment).navigate(R.id.todoFragment)
             }
