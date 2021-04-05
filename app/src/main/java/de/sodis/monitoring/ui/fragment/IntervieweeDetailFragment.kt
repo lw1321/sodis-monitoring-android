@@ -112,18 +112,18 @@ class IntervieweeDetailFragment : BaseListFragment() {
                             technology {
                                 id("Nutricion")
                                 survey1OnClick { clicked ->
-                                    //Agriculture
-                                    openSurvey(agricultureSurvey.surveyId)
-                                }
-                                survey2OnClick { clicked ->
                                     //Nutricion
                                     openSurvey(nutricionSurvey.surveyId)
                                 }
+                                survey2OnClick { clicked ->
+                                    //Agriculture
+                                    openSurvey(agricultureSurvey.surveyId)
+                                }
                                 onBind { model, view, position ->
-                                    view.dataBinding.root.survey1Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, if (agricultureSurveyCompleted) R.color.colorGreen700 else R.color.colorGrey700))
-                                    view.dataBinding.root.survey2Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, if (nutricionCompleted) R.color.colorGreen700 else R.color.colorGrey700))
-                                    view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_agriculture)//TODO icons einfügen
-                                    view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_vegetables)
+                                    view.dataBinding.root.survey1Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, if (nutricionCompleted) R.color.colorGreen700 else R.color.colorGrey700))
+                                    view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_vegetables)
+                                    view.dataBinding.root.survey2Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, if (agricultureSurveyCompleted) R.color.colorGreen700 else R.color.colorGrey700))
+                                    view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_agriculture)//TODO icons einfügen
                                 }
                             }
 
@@ -135,18 +135,18 @@ class IntervieweeDetailFragment : BaseListFragment() {
                             technology {
                                 id("QuariWarmi")
                                 survey1OnClick { clicked ->
-                                    //Empresa
-                                    openSurvey(empresaSurvey.surveyId)
-                                }
-                                survey2OnClick { clicked ->
                                     //Tara
                                     openSurvey(taraSurvey.surveyId)
                                 }
+                                survey2OnClick { clicked ->
+                                    //Empresa
+                                    openSurvey(empresaSurvey.surveyId)
+                                }
                                 onBind { model, view, position ->
-                                    view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_iconunternehmertum)//TODO icons einfügen
-                                    view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_icontaraplant)//TODO einfärben nach status
-                                    view.dataBinding.root.survey1Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, if (empresaSurveyCompleted) R.color.colorGreen700 else R.color.colorGrey700))
-                                    view.dataBinding.root.survey2Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, if (taraSurveyCompleted) R.color.colorGreen700 else R.color.colorGrey700))
+                                    view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_icontaraplant)
+                                    view.dataBinding.root.survey1Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, if (taraSurveyCompleted) R.color.colorGreen700 else R.color.colorGrey700))
+                                    view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_iconunternehmertum)
+                                    view.dataBinding.root.survey2Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, if (empresaSurveyCompleted) R.color.colorGreen700 else R.color.colorGrey700))
 
                                 }
                             }
@@ -166,7 +166,7 @@ class IntervieweeDetailFragment : BaseListFragment() {
                                 }
                                 onBind { model, view, position ->
                                     view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_iconcocina)//TODO icons einfügen
-                                    view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_iconusotechnologia)//TODO einfärben nach status
+                                    view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_iconusococina)//TODO einfärben nach status
                                     view.dataBinding.root.survey1Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, if (kitchenSurveyCompleted) R.color.colorGreen700 else R.color.colorGrey700))
                                     view.dataBinding.root.survey2Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, if (kitchenKnowledgeSurveyCompleted) R.color.colorGreen700 else R.color.colorGrey700))
                                 }
@@ -186,8 +186,8 @@ class IntervieweeDetailFragment : BaseListFragment() {
                                     openSurvey(filterKnowledgeSurvey.surveyId)
                                 }
                                 onBind { model, view, position ->
-                                    view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_iconfiltro)//TODO icons einfügen
-                                    view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_iconusotechnologia)//TODO einfärben nach status
+                                    view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_iconfiltro)
+                                    view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_iconusofiltro)
                                     view.dataBinding.root.survey1Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, if (filterSurveyCompleted) R.color.colorGreen700 else R.color.colorGrey700))
                                     view.dataBinding.root.survey2Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, if (filterKnowledgeSurveyCompleted) R.color.colorGreen700 else R.color.colorGrey700))
                                 }
@@ -208,7 +208,7 @@ class IntervieweeDetailFragment : BaseListFragment() {
                                 }
                                 onBind { model, view, position ->
                                     view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_iconba_o)//TODO icons einfügen
-                                    view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_iconusotechnologia)//TODO einfärben nach status
+                                    view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_iconusoba_o)//TODO einfärben nach status
                                     view.dataBinding.root.survey1Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, if (toiletSurveyCompleted) R.color.colorGreen700 else R.color.colorGrey700))
                                     view.dataBinding.root.survey2Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, if (toiletKnowledgeSurveyCompleted) R.color.colorGreen700 else R.color.colorGrey700))
                                 }
@@ -228,8 +228,8 @@ class IntervieweeDetailFragment : BaseListFragment() {
                                     openSurvey(washKnowledgeSurvey.surveyId)
                                 }
                                 onBind { model, view, position ->
-                                    view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_iconwash)//TODO icons einfügen
-                                    view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_iconusotechnologia)//TODO einfärben nach status
+                                    view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_iconwash)
+                                    view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_iconusotechnologia)
                                     view.dataBinding.root.survey1Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, if (washSurveyCompleted) R.color.colorGreen700 else R.color.colorGrey700))
                                     view.dataBinding.root.survey2Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, if (washKnowledgeSurveyCompleted) R.color.colorGreen700 else R.color.colorGrey700))
                                 }
