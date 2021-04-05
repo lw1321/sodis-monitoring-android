@@ -229,7 +229,7 @@ class IntervieweeDetailFragment : BaseListFragment() {
                                 }
                                 onBind { model, view, position ->
                                     view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_iconwash)
-                                    view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_iconusotechnologia)
+                                    view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_iconusolavamanos)
                                     view.dataBinding.root.survey1Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, if (washSurveyCompleted) R.color.colorGreen700 else R.color.colorGrey700))
                                     view.dataBinding.root.survey2Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, if (washKnowledgeSurveyCompleted) R.color.colorGreen700 else R.color.colorGrey700))
                                 }
