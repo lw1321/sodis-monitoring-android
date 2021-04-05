@@ -75,7 +75,8 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
         val view = super.onCreateView(inflater, container, savedInstanceState)
 
         view?.navigation_forward_button_1?.setOnClickListener {
-            if (questionViewModel.isAnswered(currentQuestion.first().id)) {
+            if (questionViewModel.isAnswered(currentQuestion.first().id) || currentQuestion.first().inputTypeId == 2 || currentQuestion.first().inputTypeId == 4) {
+                //on input type single choice answer is required, for text(2) or image(4) it is optional.
                 nextQuestion()
             } else {
                 Snackbar.make(
@@ -89,17 +90,20 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
         view?.navigation_forward_button_left?.isGone = questionViewModel.currentPosition == 0
 
         view?.navigation_forward_button_left?.setOnClickListener {
-            if (questionViewModel.currentPosition != 0) {
-                questionViewModel.previousQuestion()
-                val action = QuestionFragmentDirections.actionQuestionFragmentSelf(
-                        args.surveyId,
-                        intervieweeId = args.intervieweeId
-                )
-                findNavController().navigate(action)
-            }
+            moveQuestionBack()
         }
 
         return view
+    }
+
+    private fun moveQuestionBack() {
+            questionViewModel.previousQuestion()
+            val action = QuestionFragmentDirections.actionQuestionFragmentSelf(
+                    args.surveyId,
+                    intervieweeId = args.intervieweeId
+            )
+            findNavController().navigate(action)
+
     }
 
 
@@ -136,11 +140,8 @@ class QuestionFragment : BaseListFragment(), DialogInterface.OnDismissListener {
             finishDialog.setNegativeButton(
                     "No"
             ) { _, _ ->
-                Snackbar.make(
-                        view!!.rootView.findViewById(R.id.nav_host_fragment),
-                        getString(R.string.message_monitoring_answer_required),
-                        Snackbar.LENGTH_LONG
-                ).show()
+                //Remove last answer
+                moveQuestionBack()
             }
             val alert: AlertDialog = finishDialog.create()
             alert.setCanceledOnTouchOutside(false)
