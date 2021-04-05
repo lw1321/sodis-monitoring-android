@@ -61,7 +61,7 @@ class IntervieweeOverviewFragment : BaseListFragment() {
                 surveyViewModel.completedSurveyList.observe(viewLifecycleOwner, Observer { completedSurveyList ->
                     recyclerView.withModels {
                         familyList.filter { it.villageId == villageId }.forEach { interviewee ->
-                            intervieweeOverview {//TODO USE families view holder
+                            intervieweeOverview {
                                 id(interviewee.id)
                                 text(interviewee.name)
                                 onClick { clicked ->
@@ -72,11 +72,6 @@ class IntervieweeOverviewFragment : BaseListFragment() {
                                     findNavController().navigate(action)
                                 }
                                 onBind { model, view, position ->
-                                    if (interviewee.imagePath != null) {
-                                        view.dataBinding.root.interviewee_overview_image.load(File(interviewee.imagePath))
-                                    }
-
-
                                     val nutricionCompleted = completedSurveyList.any { it.intervieweeId == interviewee.id &&  it.surveyHeaderId == surveyList.first { it.surveyName == "Nutrición" }.surveyId }
                                     val taraSurveyCompleted = completedSurveyList.any { it.intervieweeId == interviewee.id && it.surveyHeaderId == surveyList.first { it.surveyName == "Tara" }.surveyId}
                                     val kitchenSurveyCompleted = completedSurveyList.any { it.intervieweeId == interviewee.id && it.surveyHeaderId == surveyList.first { it.surveyName == "Cocinas Ecológicas" }.surveyId}
@@ -85,12 +80,12 @@ class IntervieweeOverviewFragment : BaseListFragment() {
                                     val washingSurveyCompleted = completedSurveyList.any{it.intervieweeId == interviewee.id && it.surveyHeaderId == surveyList.first{it.surveyName == "Lavado de manos"}.surveyId}
 
 
-                                    view.dataBinding.root.imageViewToilet.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, if (toiletSurveyCompleted) R.color.colorGreen700 else R.color.colorGrey700))
-                                    view.dataBinding.root.imageViewKitchen.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, if (kitchenSurveyCompleted) R.color.colorGreen700 else R.color.colorGrey700))
-                                    view.dataBinding.root.imageViewFilter.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, if (filterSurveyCompleted) R.color.colorGreen700 else R.color.colorGrey700))
-                                    view.dataBinding.root.imageViewWashing.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, if (washingSurveyCompleted) R.color.colorGreen700 else R.color.colorGrey700))
-                                    view.dataBinding.root.imageViewTara.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, if (taraSurveyCompleted) R.color.colorGreen700 else R.color.colorGrey700))
-                                    view.dataBinding.root.imageViewNutricion.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, if (nutricionCompleted) R.color.colorGreen700 else R.color.colorGrey700))
+                                    view.dataBinding.root.imageViewToilet.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, if (toiletSurveyCompleted) R.color.colorGreen500 else R.color.colorGrey500))
+                                    view.dataBinding.root.imageViewKitchen.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, if (kitchenSurveyCompleted) R.color.colorGreen500 else R.color.colorGrey500))
+                                    view.dataBinding.root.imageViewFilter.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, if (filterSurveyCompleted) R.color.colorGreen500 else R.color.colorGrey500))
+                                    view.dataBinding.root.imageViewWashing.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, if (washingSurveyCompleted) R.color.colorGreen500 else R.color.colorGrey500))
+                                    view.dataBinding.root.imageViewTara.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, if (taraSurveyCompleted) R.color.colorGreen500 else R.color.colorGrey500))
+                                    view.dataBinding.root.imageViewNutricion.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, if (nutricionCompleted) R.color.colorGreen500 else R.color.colorGrey500))
 
                                 }
                             }
