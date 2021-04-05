@@ -108,7 +108,6 @@ class IntervieweeDetailFragment : BaseListFragment() {
                             //get count of family members, get status survey done, get survey id
                             singleSurvey {
                                 id("FamilyMemberSurvey")
-                                text("-")
                                 survey1OnClick { _ ->
                                     openSurvey(familyMemberSurvey.surveyId)
                                 }

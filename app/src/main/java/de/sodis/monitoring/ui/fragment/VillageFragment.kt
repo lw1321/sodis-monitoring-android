@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.navigation.fragment.findNavController
 import de.sodis.monitoring.*
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
+import de.sodis.monitoring.viewmodel.PlaceViewModel
 import de.sodis.monitoring.viewmodel.VillageModel
 import kotlinx.android.synthetic.main.continuable_list.view.*
 
@@ -18,14 +19,17 @@ import kotlinx.android.synthetic.main.continuable_list.view.*
 class VillageFragment : BaseListFragment() {
     private val villageModel: VillageModel by lazy {
         ViewModelProviders.of(this, MyViewModelFactory(activity!!.application, emptyList()))
-            .get(VillageModel::class.java)
+                .get(VillageModel::class.java)
+    }
+    private val placeViewModel: PlaceViewModel by lazy {
+        ViewModelProviders.of(this, MyViewModelFactory(activity!!.application, emptyList()))
+                .get(PlaceViewModel::class.java)
     }
 
-
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater,
+            container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View? {
         val view = super.onCreateView(inflater, container, savedInstanceState)
         view?.navigation_forward_button_1?.isGone = true
@@ -37,22 +41,26 @@ class VillageFragment : BaseListFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        villageModel.villageList.observe(viewLifecycleOwner, Observer {
-            recyclerView.withModels {
-                it.forEach {
-                    default {
-                        id(it.id)
-                        text(it.name)
-                        onClick { clicked ->
-                            val action =
-                                VillageFragmentDirections.actionVillageFragmentToIntervieweeOverviewFragment(
-                                    it.id!!
-                                )
-                            findNavController().navigate(action)
+        placeViewModel.intervieweeItem.observe(viewLifecycleOwner, Observer {intervieweeList ->
+            villageModel.villageList.observe(viewLifecycleOwner, Observer {villageList ->
+                recyclerView.withModels {
+                    villageList.forEach {village ->
+                        village {
+                            id(village.id)
+                            text(village.name)
+                            familyCount(intervieweeList.filter { it.villageId == village.id}.size)
+                            onClick { clicked ->
+                                val action =
+                                        VillageFragmentDirections.actionVillageFragmentToIntervieweeOverviewFragment(
+                                                village.id!!
+                                        )
+                                findNavController().navigate(action)
+                            }
                         }
                     }
                 }
-            }
+            })
+
         })
     }
 
