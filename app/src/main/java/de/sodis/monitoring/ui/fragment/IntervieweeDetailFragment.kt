@@ -103,12 +103,24 @@ class IntervieweeDetailFragment : BaseListFragment() {
                                 }
                             }
                             //SURVEYS
-
+                            val familyMemberSurvey = surveyList.first { it.surveyName == "Miembros de la familia" }
+                            val familyMemberSurveyCompleted = completedSurveyList.any { it.intervieweeId == args.intervieweeId && it.surveyHeaderId == familyMemberSurvey.surveyId }
+                            //get count of family members, get status survey done, get survey id
+                            singleSurvey {
+                                id("FamilyMemberSurvey")
+                                text("-")
+                                survey1OnClick { _ ->
+                                    openSurvey(familyMemberSurvey.surveyId)
+                                }
+                                onBind { model, view, position ->
+                                    view.dataBinding.root.survey1Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, if (familyMemberSurveyCompleted) R.color.colorGreen700 else R.color.colorGrey700))
+                                }
+                            }
                             //Nutricion
                             val agricultureSurvey = surveyList.first { it.surveyName == "Agricultura / disponibilidad de agua" }
-                            val agricultureSurveyCompleted = completedSurveyList.filter { it.intervieweeId == args.intervieweeId && it.surveyHeaderId == agricultureSurvey.surveyId }.isNotEmpty()
+                            val agricultureSurveyCompleted = completedSurveyList.any { it.intervieweeId == args.intervieweeId && it.surveyHeaderId == agricultureSurvey.surveyId }
                             val nutricionSurvey = surveyList.first { it.surveyName == "Nutrición" }
-                            val nutricionCompleted = completedSurveyList.filter { it.intervieweeId == args.intervieweeId && it.surveyHeaderId == nutricionSurvey.surveyId }.isNotEmpty()
+                            val nutricionCompleted = completedSurveyList.any { it.intervieweeId == args.intervieweeId && it.surveyHeaderId == nutricionSurvey.surveyId }
                             technology {
                                 id("Nutricion")
                                 survey1OnClick { clicked ->
@@ -129,9 +141,9 @@ class IntervieweeDetailFragment : BaseListFragment() {
 
                             //Quari Wharmi
                             val empresaSurvey = surveyList.first { it.surveyName == "empresa" }
-                            val empresaSurveyCompleted = completedSurveyList.filter { it.intervieweeId == args.intervieweeId && it.surveyHeaderId == empresaSurvey.surveyId }.isNotEmpty()
+                            val empresaSurveyCompleted = completedSurveyList.any { it.intervieweeId == args.intervieweeId && it.surveyHeaderId == empresaSurvey.surveyId }
                             val taraSurvey = surveyList.first { it.surveyName == "Tara" }
-                            val taraSurveyCompleted = completedSurveyList.filter { it.intervieweeId == args.intervieweeId && it.surveyHeaderId == taraSurvey.surveyId }.isNotEmpty()
+                            val taraSurveyCompleted = completedSurveyList.any { it.intervieweeId == args.intervieweeId && it.surveyHeaderId == taraSurvey.surveyId }
                             technology {
                                 id("QuariWarmi")
                                 survey1OnClick { clicked ->
@@ -153,9 +165,9 @@ class IntervieweeDetailFragment : BaseListFragment() {
 
                             //cocina
                             val kitchenSurvey = surveyList.first { it.surveyName == "Cocinas Ecológicas" }
-                            val kitchenSurveyCompleted = completedSurveyList.filter { it.intervieweeId == args.intervieweeId && it.surveyHeaderId == kitchenSurvey.surveyId }.isNotEmpty()
+                            val kitchenSurveyCompleted = completedSurveyList.any { it.intervieweeId == args.intervieweeId && it.surveyHeaderId == kitchenSurvey.surveyId }
                             val kitchenKnowledgeSurvey = surveyList.first { it.surveyName == "Uso Cocinas Ecológicas" }
-                            val kitchenKnowledgeSurveyCompleted = completedSurveyList.filter { it.intervieweeId == args.intervieweeId && it.surveyHeaderId == kitchenKnowledgeSurvey.surveyId }.isNotEmpty()
+                            val kitchenKnowledgeSurveyCompleted = completedSurveyList.any { it.intervieweeId == args.intervieweeId && it.surveyHeaderId == kitchenKnowledgeSurvey.surveyId }
                             technology {
                                 id("Cocina Ecologica")
                                 survey1OnClick { clicked ->
@@ -174,9 +186,9 @@ class IntervieweeDetailFragment : BaseListFragment() {
 
                             //filtro
                             val filterSurvey = surveyList.first { it.surveyName == "Filtro de Agua" }
-                            val filterSurveyCompleted = completedSurveyList.filter { it.intervieweeId == args.intervieweeId && it.surveyHeaderId == filterSurvey.surveyId }.isNotEmpty()
+                            val filterSurveyCompleted = completedSurveyList.any { it.intervieweeId == args.intervieweeId && it.surveyHeaderId == filterSurvey.surveyId }
                             val filterKnowledgeSurvey = surveyList.first { it.surveyName == "Uso Filtro de Agua" }
-                            val filterKnowledgeSurveyCompleted = completedSurveyList.filter { it.intervieweeId == args.intervieweeId && it.surveyHeaderId == filterKnowledgeSurvey.surveyId }.isNotEmpty()
+                            val filterKnowledgeSurveyCompleted = completedSurveyList.any { it.intervieweeId == args.intervieweeId && it.surveyHeaderId == filterKnowledgeSurvey.surveyId }
                             technology {
                                 id("filtro")
                                 survey1OnClick { clicked ->
@@ -195,9 +207,9 @@ class IntervieweeDetailFragment : BaseListFragment() {
 
                             //toilet
                             val toiletSurvey = surveyList.first { it.surveyName == "Baños" }
-                            val toiletSurveyCompleted = completedSurveyList.filter { it.intervieweeId == args.intervieweeId && it.surveyHeaderId == toiletSurvey.surveyId }.isNotEmpty()
+                            val toiletSurveyCompleted = completedSurveyList.any { it.intervieweeId == args.intervieweeId && it.surveyHeaderId == toiletSurvey.surveyId }
                             val toiletKnowledgeSurvey = surveyList.first { it.surveyName == "Uso Baños " }
-                            val toiletKnowledgeSurveyCompleted = completedSurveyList.filter { it.intervieweeId == args.intervieweeId && it.surveyHeaderId == toiletKnowledgeSurvey.surveyId }.isNotEmpty()
+                            val toiletKnowledgeSurveyCompleted = completedSurveyList.any { it.intervieweeId == args.intervieweeId && it.surveyHeaderId == toiletKnowledgeSurvey.surveyId }
                             technology {
                                 id("toilet")
                                 survey1OnClick { clicked ->
@@ -215,9 +227,9 @@ class IntervieweeDetailFragment : BaseListFragment() {
                             }
                             //hand washing
                             val washSurvey = surveyList.first { it.surveyName == "Lavado de manos" }
-                            val washSurveyCompleted = completedSurveyList.filter { it.intervieweeId == args.intervieweeId && it.surveyHeaderId == washSurvey.surveyId }.isNotEmpty()
+                            val washSurveyCompleted = completedSurveyList.any { it.intervieweeId == args.intervieweeId && it.surveyHeaderId == washSurvey.surveyId }
                             val washKnowledgeSurvey = surveyList.first { it.surveyName == "Uso Lavado de manos " }
-                            val washKnowledgeSurveyCompleted = completedSurveyList.filter { it.intervieweeId == args.intervieweeId && it.surveyHeaderId == washKnowledgeSurvey.surveyId }.isNotEmpty()
+                            val washKnowledgeSurveyCompleted = completedSurveyList.any { it.intervieweeId == args.intervieweeId && it.surveyHeaderId == washKnowledgeSurvey.surveyId }
 
                             technology {
                                 id("wash")
