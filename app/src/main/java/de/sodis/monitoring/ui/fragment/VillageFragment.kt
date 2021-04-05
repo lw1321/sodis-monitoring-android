@@ -48,7 +48,7 @@ class VillageFragment : BaseListFragment() {
                         village {
                             id(village.id)
                             text(village.name)
-                            familyCount(intervieweeList.filter { it.villageId == village.id}.size)
+                            familyCount(intervieweeList.filter { it.villageId == village.id}.size.toString())
                             onClick { clicked ->
                                 val action =
                                         VillageFragmentDirections.actionVillageFragmentToIntervieweeOverviewFragment(
