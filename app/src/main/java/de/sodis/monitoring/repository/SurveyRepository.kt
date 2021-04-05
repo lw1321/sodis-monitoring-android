@@ -15,27 +15,27 @@ import java.util.*
 
 
 class SurveyRepository(
-    private val surveyHeaderDao: SurveyHeaderDao,
-    private val surveySectionDao: SurveySectionDao,
-    private val questionDao: QuestionDao,
-    private val inputTypeDao: InputTypeDao,
-    private val optionChoiceDao: OptionChoiceDao,
-    private val questionOptionDao: QuestionOptionDao,
-    private val questionImageDao: QuestionImageDao,
-    private val answerDao: AnswerDao,
-    private val completedSurveyDao: CompletedSurveyDao,
-    private val monitoringApi: MonitoringApi
+        private val surveyHeaderDao: SurveyHeaderDao,
+        private val surveySectionDao: SurveySectionDao,
+        private val questionDao: QuestionDao,
+        private val inputTypeDao: InputTypeDao,
+        private val optionChoiceDao: OptionChoiceDao,
+        private val questionOptionDao: QuestionOptionDao,
+        private val questionImageDao: QuestionImageDao,
+        private val answerDao: AnswerDao,
+        private val completedSurveyDao: CompletedSurveyDao,
+        private val monitoringApi: MonitoringApi
 ) {
 
     suspend fun syncSurveys() {
         val surveys = monitoringApi.getSurveys()
         surveys.forEach { survey ->
             surveyHeaderDao.insert(
-                SurveyHeader(
-                    id = survey.id,
-                    projectId = survey.project.id,
-                    surveyName = survey.surveyName
-                )
+                    SurveyHeader(
+                            id = survey.id,
+                            projectId = survey.project.id,
+                            surveyName = survey.surveyName
+                    )
             )
         }
     }
@@ -44,11 +44,11 @@ class SurveyRepository(
         val sections = monitoringApi.getSections()
         sections.forEach { surveySection ->
             surveySectionDao.insert(
-                SurveySection(
-                    id = surveySection.id,
-                    sectionName = surveySection.sectionName,
-                    surveyHeaderId = surveySection.surveyHeader.id
-                )
+                    SurveySection(
+                            id = surveySection.id,
+                            sectionName = surveySection.sectionName,
+                            surveyHeaderId = surveySection.surveyHeader.id
+                    )
             )
         }
     }
@@ -61,23 +61,23 @@ class SurveyRepository(
         val questions = monitoringApi.getAllQuestions()
         questions.forEach { question ->
             questionDao.insert(
-                Question(
-                    id = question.id,
-                    dependentQuestionId = question.dependentQuestionId,
-                    dependentQuestionOptionId = question.dependentQuestionOptionId,
-                    inputTypeId = question.inputType.id,
-                    questionImageId = question.questionImage?.id,
-                    questionName = question.questionName,
-                    surveySectionId = question.surveySection.id
-                )
+                    Question(
+                            id = question.id,
+                            dependentQuestionId = question.dependentQuestionId,
+                            dependentQuestionOptionId = question.dependentQuestionOptionId,
+                            inputTypeId = question.inputType.id,
+                            questionImageId = question.questionImage?.id,
+                            questionName = question.questionName,
+                            surveySectionId = question.surveySection.id
+                    )
             )
             question.questionOptions.forEach { questionOption ->
                 questionOptionDao.insert(
-                    QuestionOption(
-                        id = questionOption.id,
-                        questionId = question.id,
-                        optionChoiceId = questionOption.optionChoice.id
-                    )
+                        QuestionOption(
+                                id = questionOption.id,
+                                questionId = question.id,
+                                optionChoiceId = questionOption.optionChoice.id
+                        )
                 )
             }
 
@@ -119,7 +119,7 @@ class SurveyRepository(
             questionImage.path = absolutePath
             //Save Images
             questionImageDao.update(
-                questionImage
+                    questionImage
             )
         }
     }
@@ -129,24 +129,24 @@ class SurveyRepository(
      * Save questions in loval database, also try to upload them..Also save if the upload was successfully
      */
     fun saveCompletedSurvey(
-        surveyHeaderId: Int,
-        answerMap: MutableMap<Int, Answer>,
-        intervieweeId: String,
-        latitude: Double?,
-        longitude: Double?
+            surveyHeaderId: Int,
+            answerMap: MutableMap<Int, Answer>,
+            intervieweeId: String,
+            latitude: Double?,
+            longitude: Double?
     ) {
 
         val completedSurveyId = UUID.randomUUID().toString()
 
         completedSurveyDao.insert(
-            CompletedSurvey(
-                id = completedSurveyId,
-                intervieweeId = intervieweeId,
-                surveyHeaderId = surveyHeaderId,
-                creationDate = Timestamp(System.currentTimeMillis()).toString(),
-                latitude = latitude,
-                longitude = longitude
-            )
+                CompletedSurvey(
+                        id = completedSurveyId,
+                        intervieweeId = intervieweeId,
+                        surveyHeaderId = surveyHeaderId,
+                        creationDate = Timestamp(System.currentTimeMillis()).toString(),
+                        latitude = latitude,
+                        longitude = longitude
+                )
         )
 
         for ((_, v) in answerMap) {
@@ -156,12 +156,13 @@ class SurveyRepository(
     }
 
     suspend fun syncCompletedSurveys() {
-        // TODO implement after server endpoints are adjust
         val surveysToSync = completedSurveyDao.getAllUnsubmitted()
         surveysToSync.forEach {
-            monitoringApi.postCompletedSurveys(it)
-            it.submitted = true
-            completedSurveyDao.update(it)
+            val responsePostSurvey = monitoringApi.postCompletedSurveys(it)
+            if (responsePostSurvey.isSuccessful) {
+                it.submitted = true
+                completedSurveyDao.update(it)
+            }
         }
     }
 
@@ -169,9 +170,11 @@ class SurveyRepository(
         //upload answers
         val answersToSync = answerDao.getAllNotSubmitted()
         answersToSync.forEach { answer ->
-            monitoringApi.postAnswers(answer)
-            answer.submitted = true
-            answerDao.update(answer)
+            val responsePostSurvey = monitoringApi.postAnswers(answer)
+            if (responsePostSurvey.isSuccessful) {
+                answer.submitted = true
+                answerDao.update(answer)
+            }
         }
     }
 
@@ -184,10 +187,12 @@ class SurveyRepository(
             //Compress File
             //TODO compression before saving the image localy
             val compressedImageFile =
-                Compressor.compress(applicationContext, File(answer.imagePath!!))
-            monitoringApi.postAnswerImage(answer.id, compressedImageFile)
-            answer.imageSynced = true
-            answerDao.update(answer)
+                    Compressor.compress(applicationContext, File(answer.imagePath!!))
+            val responsePostAnswerImage = monitoringApi.postAnswerImage(answer.id, compressedImageFile)
+            if (responsePostAnswerImage.isSuccessful) {
+                answer.imageSynced = true
+                answerDao.update(answer)
+            }
         }
     }
 
@@ -212,7 +217,9 @@ class SurveyRepository(
         completedSurveyDao.deleteAll()
         questionOptionDao.deleteAll()
         optionChoiceDao.deleteAll()
+        questionDao.deleteAll()
         inputTypeDao.deleteAll()
+        questionImageDao.deleteAll()
         surveySectionDao.deleteAll()
         surveyHeaderDao.deleteAll()
     }

@@ -20,4 +20,7 @@ interface QuestionImageDao {
 
     @Update
     fun update(questionImage: QuestionImage)
+
+    @Query("DELETE FROM QuestionImage")
+    fun deleteAll()
 }

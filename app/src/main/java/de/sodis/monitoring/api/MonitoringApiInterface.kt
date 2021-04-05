@@ -3,6 +3,7 @@ package de.sodis.monitoring.apiCompletedSurveyJson
 import de.sodis.monitoring.api.models.*
 import de.sodis.monitoring.db.entity.*
 import okhttp3.MultipartBody
+import retrofit2.Response
 import retrofit2.http.*
 
 interface MonitoringApiInterface {
@@ -25,7 +26,7 @@ interface MonitoringApiInterface {
     suspend fun registerUser(@Body user: User): User
 
     @POST("completed-surveys")
-    suspend fun postCompletedSurveys(@Body completedSurvey: CompletedSurveyJson): CompletedSurvey
+    suspend fun postCompletedSurveys(@Body completedSurvey: CompletedSurveyJson): Response<CompletedSurvey>
 
     @GET("question-images")
     suspend fun getAllQuestionImages(): List<QuestionImage>
@@ -41,7 +42,7 @@ interface MonitoringApiInterface {
                     value = "intervieweeId",
                     encoded = false
             ) intervieweeId: String
-    ): Interviewee
+    ): Response<Interviewee>
 
     @GET("projects")
     suspend fun getAllProjects(): List<Project>
@@ -50,10 +51,10 @@ interface MonitoringApiInterface {
     suspend fun getAllVillages(): List<Village>
 
     @POST("interviewees")
-    suspend fun postInterviewee(@Body interviewee: IntervieweeJson): IntervieweeJson
+    suspend fun postInterviewee(@Body interviewee: IntervieweeJson): Response<IntervieweeJson>
 
     @POST("answers/")
-    suspend fun postAnswer(@Body answerList: AnswerJson): Answer
+    suspend fun postAnswer(@Body answerList: AnswerJson): Response<Answer>
 
     @Multipart
     @POST("answers/{answerId}/images")
@@ -63,7 +64,7 @@ interface MonitoringApiInterface {
                     value = "answerId",
                     encoded = false
             ) answerId: String
-    ): Answer
+    ): Response<Answer>
 
     @GET("questions/input-types/")
     suspend fun getAllInputTypes(): List<InputType>

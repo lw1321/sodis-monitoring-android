@@ -35,4 +35,7 @@ interface QuestionDao {
     @Query("SELECT sh.id FROM Question q LEFT JOIN SurveySection ss ON ss.id = q.surveySectionId LEFT JOIN SurveyHeader sh ON sh.id = ss.surveyHeaderId WHERE q.id=:id")
     fun findSurveyByQuestion(id: Int): Int
 
+    @Query("DELETE FROM Question")
+    fun deleteAll()
+
 }
