@@ -6,6 +6,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorYellow700</item>
+        <item name="android:textColor">@color/colorTextBlack</item>
     </style>
 
     <style name="NumberPickerText">
