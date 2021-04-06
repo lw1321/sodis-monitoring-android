@@ -45,7 +45,6 @@
                 android:layout_marginTop="8dp"
                 android:text="@{text}"
                 android:textSize="40sp"
-                android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="Unterriexingen" />
