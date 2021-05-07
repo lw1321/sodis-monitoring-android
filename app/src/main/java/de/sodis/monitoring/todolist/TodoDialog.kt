@@ -116,7 +116,7 @@ class TodoDialog(
     lateinit var continueButton: Button
 
     var due: Calendar
-    lateinit var intervieweeChosen: IntervieweeItem
+    var intervieweeChosen: IntervieweeItem? = null
 
     lateinit var intervieweeResults: List<IntervieweeItem>
 
@@ -248,7 +248,7 @@ class TodoDialog(
         searchRecyclerView.layoutManager = LinearLayoutManager(context)
         searchAdapter = SearchAdapter(intervieweeResults, requireContext(), object : CallBackTodo {
             override fun OnIntervieweeChosen(interviewee: IntervieweeItem?) {
-                intervieweeChosen = interviewee!!
+                intervieweeChosen = interviewee
             }
         }, null)
         searchRecyclerView.adapter = searchAdapter
@@ -258,7 +258,10 @@ class TodoDialog(
             searchEditText = view.findViewById(R.id.tododialog_searchview)
             if(intervieweeId != null){
                 intervieweeChosen = intervieweeList.first { intervieweeItem -> intervieweeItem.id == intervieweeId }
-                searchEditText.setText(intervieweeChosen.name)
+                if(intervieweeChosen!=null) {
+                    searchEditText.setText(intervieweeChosen!!.name)
+                }
+
             }
             searchEditText.addTextChangedListener(object : TextWatcher {
                 override fun afterTextChanged(s: Editable?) {
