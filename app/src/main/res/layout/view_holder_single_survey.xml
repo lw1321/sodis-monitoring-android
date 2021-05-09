@@ -9,7 +9,9 @@
         <variable
             name="survey1OnClick"
             type="android.view.View.OnClickListener" />
-
+        <variable
+            name="projectName"
+            type="String" />
 
     </data>
 
@@ -32,6 +34,19 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent">
 
+            <TextView
+                android:id="@+id/textView6"
+                style="@style/TextAppearance.MaterialComponents.Headline4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="8dp"
+                android:text="@{projectName}"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                tools:text="Cocina" />
+
             <ImageView
                 android:id="@+id/survey1Icon"
                 android:layout_width="100dp"
@@ -42,7 +57,7 @@
                 android:foreground="?android:attr/selectableItemBackground"
                 android:onClick="@{survey1OnClick}"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textView6"
                 app:srcCompat="@drawable/ic_family_silhouette_svgrepo_com" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>

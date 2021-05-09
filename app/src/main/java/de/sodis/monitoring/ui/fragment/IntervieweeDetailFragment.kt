@@ -111,6 +111,7 @@ class IntervieweeDetailFragment : BaseListFragment() {
                                 survey1OnClick { _ ->
                                     openSurvey(familyMemberSurvey.surveyId)
                                 }
+                                projectName(familyMemberSurvey.projectName)
                                 onBind { model, view, position ->
                                     view.dataBinding.root.survey1Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, if (familyMemberSurveyCompleted) R.color.colorGreen700 else R.color.colorGrey700))
                                 }
@@ -130,6 +131,7 @@ class IntervieweeDetailFragment : BaseListFragment() {
                                     //Agriculture
                                     openSurvey(agricultureSurvey.surveyId)
                                 }
+                                name(nutricionSurvey.projectName)
                                 onBind { model, view, position ->
                                     view.dataBinding.root.survey1Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, if (nutricionCompleted) R.color.colorGreen700 else R.color.colorGrey700))
                                     view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_vegetables)
@@ -153,6 +155,7 @@ class IntervieweeDetailFragment : BaseListFragment() {
                                     //Empresa
                                     openSurvey(empresaSurvey.surveyId)
                                 }
+                                name(taraSurvey.projectName)
                                 onBind { model, view, position ->
                                     view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_icontaraplant)
                                     view.dataBinding.root.survey1Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, if (taraSurveyCompleted) R.color.colorGreen700 else R.color.colorGrey700))
@@ -175,6 +178,7 @@ class IntervieweeDetailFragment : BaseListFragment() {
                                 survey2OnClick { clicked ->
                                     openSurvey(kitchenKnowledgeSurvey.surveyId)
                                 }
+                                name(kitchenSurvey.projectName)
                                 onBind { model, view, position ->
                                     view.dataBinding.root.survey1Icon.setImageResource(R.drawable.ic_iconcocina)//TODO icons einfügen
                                     view.dataBinding.root.survey2Icon.setImageResource(R.drawable.ic_iconusococina)//TODO einfärben nach status
@@ -211,6 +215,7 @@ class IntervieweeDetailFragment : BaseListFragment() {
                             val toiletKnowledgeSurveyCompleted = completedSurveyList.any { it.intervieweeId == args.intervieweeId && it.surveyHeaderId == toiletKnowledgeSurvey.surveyId }
                             technology {
                                 id("toilet")
+                                name(toiletSurvey.projectName)
                                 survey1OnClick { clicked ->
                                     openSurvey(toiletSurvey.surveyId)
                                 }
@@ -232,6 +237,7 @@ class IntervieweeDetailFragment : BaseListFragment() {
 
                             technology {
                                 id("wash")
+                                name(washSurvey.projectName)
                                 survey1OnClick { clicked ->
                                     openSurvey(washSurvey.surveyId)
                                 }
