@@ -49,6 +49,9 @@ data class TodoPoint(
     @ColumnInfo(name = "text")
     var text: String,
 
+    @ColumnInfo(name="subText")
+    var subText: String?,
+
     @ColumnInfo(name="picturePath")
     var picturePath: String?
 

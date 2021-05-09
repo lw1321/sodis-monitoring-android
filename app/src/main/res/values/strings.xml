@@ -32,5 +32,6 @@
     <string name="due">debido</string>
     <string name="family">Familia</string>
     <string name="title">Título</string>
+    <string name="description">Descripción</string>
     <string name="due_until">debido hasta</string>
 </resources>
