@@ -17,10 +17,12 @@ class TodoListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     lateinit var villageField: TextView
     lateinit var villageDescriptionField: TextView
     lateinit var imageView: ImageView
+    lateinit var subTextField: TextView
 
     init {
         checkBox = itemView.findViewById(R.id.checkbox)
         contentField = itemView.findViewById(R.id.todotext)
+        subTextField = itemView.findViewById(R.id.todosubtext)
         dueField = itemView.findViewById(R.id.dateView)
         familyField = itemView.findViewById(R.id.familyView)
         familyDescriptionField = itemView.findViewById(R.id.familyDescriptionView)

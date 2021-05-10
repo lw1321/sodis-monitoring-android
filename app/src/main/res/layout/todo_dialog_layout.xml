@@ -56,12 +56,32 @@
 
             <EditText
                 android:layout_marginHorizontal="8dp"
-                android:minLines="2"
-                android:maxLines="5"
+                android:minLines="1"
+                android:maxLines="2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:contentDescription="title"
                 android:id="@+id/tododialog_title">
+
+            </EditText>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginBottom="4dp"
+                android:text="@string/description">
+            </TextView>
+
+            <EditText
+                android:layout_marginHorizontal="8dp"
+                android:minLines="1"
+                android:maxLines="8"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:contentDescription="content"
+                android:id="@+id/tododialog_text">
 
             </EditText>
 
@@ -119,7 +139,9 @@
                 <EditText
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:hint="Search"
+                    android:hint="Buscar"
+                    android:imeOptions="actionDone"
+                    android:singleLine="true"
                     android:maxLines="1"
                     android:layout_gravity="fill_vertical"
                     android:pointerIcon="text"

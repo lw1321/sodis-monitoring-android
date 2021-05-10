@@ -109,11 +109,13 @@ class TodoDialog(
     lateinit var searchRecyclerView: RecyclerView
     lateinit var titleText: EditText
     lateinit var dueText: EditText
+    lateinit var descriptionText: EditText
 
     lateinit var imageView: ImageView
 
     lateinit var cancelButton: Button
     lateinit var continueButton: Button
+
 
     var due: Calendar
     var intervieweeChosen: IntervieweeItem? = null
@@ -177,6 +179,7 @@ class TodoDialog(
                 intervieweeidtoset,
                 villageidtoset,
                 titleText.text.toString(),
+                descriptionText.text.toString(),
                 savedPath
         )
         Thread(
@@ -283,7 +286,7 @@ class TodoDialog(
         if (passedText != null) {
             titleText.setText(passedText)
         }
-        //TODO databinding
+        descriptionText = view!!.findViewById(R.id.tododialog_text)
         dueText = view!!.findViewById(R.id.tododialog_due)
         dueText.setText(SimpleDateFormat("dd.MM.yyyy").format(due.time))
         cancelButton = view!!.findViewById(R.id.tododialog_cancel)

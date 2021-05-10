@@ -84,6 +84,7 @@ class TodoListAdapter(val activity: Activity, @NonNull todoPointS: List<TodoPoin
             onRadioButtonClicked(it, position)
         }
         holder.contentField.text = todoPoints[position].text
+        holder.subTextField.text = todoPoints[position].subText
         holder.dueField.text = simpleDateFormat.format(todoPoints[position].duedate?.time)
         if(todoPoints[position].family!=null) {
             Thread(Runnable {
