@@ -194,6 +194,7 @@ class IntervieweeDetailFragment : BaseListFragment() {
                             val filterKnowledgeSurveyCompleted = completedSurveyList.any { it.intervieweeId == args.intervieweeId && it.surveyHeaderId == filterKnowledgeSurvey.surveyId }
                             technology {
                                 id("filtro")
+                                name(filterSurvey.projectName)
                                 survey1OnClick { clicked ->
                                     openSurvey(filterSurvey.surveyId)
                                 }
