@@ -6,6 +6,7 @@ import de.sodis.monitoring.Utils
 import de.sodis.monitoring.api.MonitoringApi
 import de.sodis.monitoring.db.dao.*
 import de.sodis.monitoring.db.entity.*
+import de.sodis.monitoring.db.response.CompletedSurveyItem
 import de.sodis.monitoring.db.response.QuestionItem
 import de.sodis.monitoring.db.response.SurveyList
 import id.zelory.compressor.Compressor
@@ -222,6 +223,18 @@ class SurveyRepository(
         questionImageDao.deleteAll()
         surveySectionDao.deleteAll()
         surveyHeaderDao.deleteAll()
+    }
+
+    fun getUnsyncedSurveyCountLive(): LiveData<Int> {
+        return completedSurveyDao.getUnsubittedCountLive()
+    }
+
+    fun getUnsyncedSurveyCount(): Int {
+        return completedSurveyDao.getUnsubittedCount()
+    }
+
+    fun getCompletedSurveyItem(): LiveData<List<CompletedSurveyItem>> {
+        return completedSurveyDao.getAllSurveyItems()
     }
 
 }

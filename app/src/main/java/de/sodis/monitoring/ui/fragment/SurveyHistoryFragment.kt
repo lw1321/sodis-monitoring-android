@@ -7,17 +7,26 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isGone
+import androidx.lifecycle.ViewModelProviders
 import androidx.work.Constraints
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import de.sodis.monitoring.R
 import de.sodis.monitoring.repository.worker.UploadWorker
+import de.sodis.monitoring.viewmodel.HistoryViewModel
+import de.sodis.monitoring.viewmodel.MyViewModelFactory
+import de.sodis.monitoring.viewmodel.SurveyViewModel
 import kotlinx.android.synthetic.main.continuable_list.view.*
 
 class SurveyHistoryFragment : BaseListFragment() {
 
 
+
+    private val historyViewModel: HistoryViewModel by lazy {
+        ViewModelProviders.of(this, MyViewModelFactory(activity!!.application, emptyList()))
+                .get(HistoryViewModel::class.java)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
