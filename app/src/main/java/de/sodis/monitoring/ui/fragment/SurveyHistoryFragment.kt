@@ -7,12 +7,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isGone
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.work.Constraints
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import de.sodis.monitoring.R
+import de.sodis.monitoring.RegisterEmailPasswordBindingModel_
+import de.sodis.monitoring.picture
 import de.sodis.monitoring.repository.worker.UploadWorker
 import de.sodis.monitoring.viewmodel.HistoryViewModel
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
@@ -41,6 +44,17 @@ class SurveyHistoryFragment : BaseListFragment() {
         val view = super.onCreateView(inflater, container, savedInstanceState)
         view?.navigation_forward_button_1?.isGone = false
         view?.navigation_forward_button_1?.setImageResource(R.drawable.ic_baseline_backup_24)
+
+        historyViewModel.allSurveyItems.observe(viewLifecycleOwner, Observer { completedSurveyList->
+            historyViewModel.notSubmittedSurveyItems.observe(viewLifecycleOwner, Observer { unsubmittedSurveyList->
+                recyclerView.withModels {
+                    completedSurveyList.forEach {
+
+                    }
+                }
+            })
+        })
+
         //view.dataBinding.root.survey1Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, if (nutricionCompleted) R.color.colorGreen700 else R.color.colorGrey700))
         view?.navigation_forward_button_1?.setOnClickListener {
             //sync all completed surveys and show dialog with status and option to cancel the upload

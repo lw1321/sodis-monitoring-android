@@ -31,17 +31,8 @@ class HistoryViewModel(
     private val mApplication: Application
 ) : AndroidViewModel(mApplication) {
 
-    private var notSubmittedSurveyItem: LiveData<List<CompletedSurveyItem>>
     private val db = MonitoringDatabase.getDatabase(mApplication.applicationContext)
-    private val placeRepository =
-            PlaceRepository(
-                    intervieweeDao = db.intervieweeDao(),
-                    villageDao = db.villageDao(),
-                    userDao = db.userDao(),
-                    monitoringApi = MonitoringApi()
-            )
-
-    val surveyRepository =
+    private val surveyRepository =
             SurveyRepository(
                     inputTypeDao = db.inputTypeDao(),
                     optionChoiceDao = db.optionChoiceDao(),
@@ -57,11 +48,15 @@ class HistoryViewModel(
 
 
     var unsyncedSurveyCountLive: LiveData<Int>
-    public var unsyncedSurveyCount : Int
+    var unsyncedSurveyCount : Int
+    var notSubmittedSurveyItems: LiveData<List<CompletedSurveyItem>>
+    var allSurveyItems: LiveData<List<CompletedSurveyItem>>
+
+
     init {
         unsyncedSurveyCountLive = surveyRepository.getUnsyncedSurveyCountLive()
         unsyncedSurveyCount=surveyRepository.getUnsyncedSurveyCount()
-        notSubmittedSurveyItem = surveyRepository.getCompletedSurveyItem()
-
+        allSurveyItems = surveyRepository.getCompletedSurveyItem()
+        notSubmittedSurveyItems = surveyRepository.getAllSurveyItemsUnsubmitted()
     }
 }

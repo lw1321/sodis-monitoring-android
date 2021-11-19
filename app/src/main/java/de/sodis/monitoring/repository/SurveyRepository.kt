@@ -237,4 +237,9 @@ class SurveyRepository(
         return completedSurveyDao.getAllSurveyItems()
     }
 
+    fun getAllSurveyItemsUnsubmitted(): LiveData<List<CompletedSurveyItem>> {
+        return completedSurveyDao.getAllSurveyItemsUnsubmitted()
+    }
+
+
 }
