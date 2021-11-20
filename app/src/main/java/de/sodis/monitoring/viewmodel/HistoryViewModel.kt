@@ -46,17 +46,20 @@ class HistoryViewModel(
                     monitoringApi = MonitoringApi()
             )
 
-
     var unsyncedSurveyCountLive: LiveData<Int>
-    var unsyncedSurveyCount : Int
+    var unsyncedSurveyCount : Int = -1
     var notSubmittedSurveyItems: LiveData<List<CompletedSurveyItem>>
     var allSurveyItems: LiveData<List<CompletedSurveyItem>>
 
 
     init {
         unsyncedSurveyCountLive = surveyRepository.getUnsyncedSurveyCountLive()
-        unsyncedSurveyCount=surveyRepository.getUnsyncedSurveyCount()
         allSurveyItems = surveyRepository.getCompletedSurveyItem()
         notSubmittedSurveyItems = surveyRepository.getAllSurveyItemsUnsubmitted()
+
+        viewModelScope.launch(Dispatchers.IO) {
+            unsyncedSurveyCount=surveyRepository.getUnsyncedSurveyCount()
+        }
+
     }
 }

@@ -6,21 +6,23 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.core.view.isGone
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.fragment.findNavController
 import androidx.work.Constraints
 import androidx.work.NetworkType
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
-import de.sodis.monitoring.R
-import de.sodis.monitoring.RegisterEmailPasswordBindingModel_
-import de.sodis.monitoring.picture
+import de.sodis.monitoring.*
+import de.sodis.monitoring.repository.worker.DownloadWorker
 import de.sodis.monitoring.repository.worker.UploadWorker
 import de.sodis.monitoring.viewmodel.HistoryViewModel
 import de.sodis.monitoring.viewmodel.MyViewModelFactory
-import de.sodis.monitoring.viewmodel.SurveyViewModel
 import kotlinx.android.synthetic.main.continuable_list.view.*
+import kotlinx.android.synthetic.main.view_holder_technology.view.*
+import kotlinx.android.synthetic.main.view_holder_upload_survey.view.*
 
 class SurveyHistoryFragment : BaseListFragment() {
 
@@ -43,55 +45,66 @@ class SurveyHistoryFragment : BaseListFragment() {
     ): View? {
         val view = super.onCreateView(inflater, container, savedInstanceState)
         view?.navigation_forward_button_1?.isGone = false
+        view?.navigation_forward_button_left?.isGone = true
+        view?.navigation_cancel_button?.isGone = true
         view?.navigation_forward_button_1?.setImageResource(R.drawable.ic_baseline_backup_24)
 
-        historyViewModel.allSurveyItems.observe(viewLifecycleOwner, Observer { completedSurveyList->
-            historyViewModel.notSubmittedSurveyItems.observe(viewLifecycleOwner, Observer { unsubmittedSurveyList->
+        historyViewModel.allSurveyItems.observe(viewLifecycleOwner, Observer { completedSurveyList ->
+            historyViewModel.notSubmittedSurveyItems.observe(viewLifecycleOwner, Observer { unsubmittedSurveyList ->
                 recyclerView.withModels {
                     completedSurveyList.forEach {
-
+                        uploadSurvey {
+                            id(it.id)
+                            interviewee(it.interviewee)
+                            village(it.village)
+                            survey(it.surveyName)
+                            date(it.date.split(".").first())
+                            onBind { model, view, position ->
+                                var isSubmitted = unsubmittedSurveyList.none { item -> item.id == it.id }
+                                view.dataBinding.root.iconStatus.setImageResource(if (isSubmitted) R.drawable.ic_check_white_24dp else R.drawable.ic_baseline_backup_24)
+                                view.dataBinding.root.iconStatus.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, if (isSubmitted) R.color.colorGreen700 else R.color.colorGrey700))
+                            }
+                        }
                     }
                 }
             })
         })
 
-        //view.dataBinding.root.survey1Icon.setBackgroundColor(ContextCompat.getColor(activity!!.applicationContext, if (nutricionCompleted) R.color.colorGreen700 else R.color.colorGrey700))
         view?.navigation_forward_button_1?.setOnClickListener {
             //sync all completed surveys and show dialog with status and option to cancel the upload
 
             val uploadWorkRequest = OneTimeWorkRequestBuilder<UploadWorker>().setConstraints(
                     Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
             ).build()
+
             WorkManager.getInstance(activity!!.applicationContext).enqueue(uploadWorkRequest)
 
+            val workInfoByIdLiveData = WorkManager.getInstance(activity!!.applicationContext).getWorkInfoByIdLiveData(uploadWorkRequest.id)
 
-            val builder: AlertDialog.Builder? = activity?.let {
-                AlertDialog.Builder(it)
-            }
-            builder?.setTitle(getString(R.string.upload_data_dialog_title))
-            //builder?.setMessage(getString(R.string.enter_family_name))
-            builder?.setView(inflater.inflate(R.layout.upload_dialog, container, false))
-            //todo observe count of not synced surveys from all surveys
+            workInfoByIdLiveData.observe(viewLifecycleOwner, Observer {
+                if (it != null) {
+                    val progress = it.progress
+                    val value = progress.getInt(UploadWorker.Progress, 0)
+                    print("progress:$value")
+                    (activity as MainActivity).showProgressBar(value)
+                    if (value == 100) {
+                        (activity as MainActivity).hideProgressBar()
+                        //todo workaround cause livedata seems not to refresh correctly
+                        val action =
+                                SurveyHistoryFragmentDirections.actionMonitoringHistoryFragmentSelf()
+                        findNavController().navigate(action)
 
-            /*
-            builder?.setPositiveButton(getString(R.string.save),
-                    DialogInterface.OnClickListener { dialog, whichButton -> //What ever you want to do with the value
-                        //close if upload completed
-                    })*/
+                    }
+                }
+            })
 
-            builder?.setNegativeButton("Cancel",
-                    DialogInterface.OnClickListener { dialog, whichButton ->
-                        // what ever you want to do with No option.
-                        //TODO stop the upload
-                    })
-
-
-// 3. Get the <code><a href="/reference/android/app/AlertDialog.html">AlertDialog</a></code> from <code><a href="/reference/android/app/AlertDialog.Builder.html#create()">create()</a></code>
-            val dialog: AlertDialog? = builder?.create()
-            dialog?.show()
+            /**
+             * status:
+             * - upload running => show loading animation + progress 73/192 (+ cancel option?)
+             * - upload suceeded => show close button
+             * - upload failed => retry button + close button
+             */
         }
-        view?.navigation_forward_button_left?.isGone = true
-        view?.navigation_cancel_button?.isGone = true
         return view
     }
 }

@@ -39,7 +39,7 @@ interface CompletedSurveyDao {
     @Query("SELECT COUNT(*) FROM CompletedSurvey WHERE id IN (SELECT a.completedSurveyId FROM Answer a WHERE a.submitted=0)")
     fun getUnsubittedCount(): Int
 
-    @Query("SELECT cs.id, i.name as 'interviewee', sh.surveyName, cs.creationDate as 'date', v.name as 'village' FROM CompletedSurvey cs LEFT JOIN Interviewee i ON i.id=cs.intervieweeId LEFT JOIN Village v ON v.id=i.villageId LEFT JOIN SurveyHeader sh ON sh.id=cs.surveyHeaderId ")
+    @Query("SELECT cs.id, i.name as 'interviewee', sh.surveyName, cs.creationDate as 'date', v.name as 'village' FROM CompletedSurvey cs LEFT JOIN Interviewee i ON i.id=cs.intervieweeId LEFT JOIN Village v ON v.id=i.villageId LEFT JOIN SurveyHeader sh ON sh.id=cs.surveyHeaderId ORDER BY cs.creationDate DESC")
     fun getAllSurveyItems(): LiveData<List<CompletedSurveyItem>>
 
     @Query("SELECT cs.id, i.name as 'interviewee', sh.surveyName, cs.creationDate as 'date', v.name as 'village' FROM CompletedSurvey cs LEFT JOIN Interviewee i ON i.id=cs.intervieweeId LEFT JOIN Village v ON v.id=i.villageId LEFT JOIN SurveyHeader sh ON sh.id=cs.surveyHeaderId WHERE cs.id IN (SELECT Answer.completedSurveyId FROM Answer WHERE Answer.submitted=0)")
