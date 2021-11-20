@@ -24,7 +24,7 @@ class MonitoringApi {
                 .build()
 
         val retrofit = Retrofit.Builder()
-                .baseUrl(Config.MONITORING_API_LIVE)
+                .baseUrl(Config.MONITORING_API_DEV)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(CoroutineCallAdapterFactory())
                 .client(okHttpClient)
