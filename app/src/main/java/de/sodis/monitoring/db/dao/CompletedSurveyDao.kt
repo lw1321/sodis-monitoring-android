@@ -3,6 +3,7 @@ package de.sodis.monitoring.db.dao
 import androidx.lifecycle.LiveData
 import androidx.room.*
 import de.sodis.monitoring.db.entity.*
+import de.sodis.monitoring.db.response.CompletedSurveyItem
 import de.sodis.monitoring.db.response.CompletedSurveyOverview
 
 @Dao
@@ -32,5 +33,16 @@ interface CompletedSurveyDao {
     @Query("DELETE FROM CompletedSurvey")
     fun deleteAll()
 
+    @Query("SELECT COUNT(*) FROM CompletedSurvey WHERE id IN (SELECT a.completedSurveyId FROM Answer a WHERE a.submitted=0)")
+    fun getUnsubittedCountLive(): LiveData<Int>
+
+    @Query("SELECT COUNT(*) FROM CompletedSurvey WHERE id IN (SELECT a.completedSurveyId FROM Answer a WHERE a.submitted=0)")
+    fun getUnsubittedCount(): Int
+
+    @Query("SELECT cs.id, i.name as 'interviewee', sh.surveyName, cs.creationDate as 'date', v.name as 'village' FROM CompletedSurvey cs LEFT JOIN Interviewee i ON i.id=cs.intervieweeId LEFT JOIN Village v ON v.id=i.villageId LEFT JOIN SurveyHeader sh ON sh.id=cs.surveyHeaderId ORDER BY cs.creationDate DESC")
+    fun getAllSurveyItems(): LiveData<List<CompletedSurveyItem>>
+
+    @Query("SELECT cs.id, i.name as 'interviewee', sh.surveyName, cs.creationDate as 'date', v.name as 'village' FROM CompletedSurvey cs LEFT JOIN Interviewee i ON i.id=cs.intervieweeId LEFT JOIN Village v ON v.id=i.villageId LEFT JOIN SurveyHeader sh ON sh.id=cs.surveyHeaderId WHERE cs.id IN (SELECT Answer.completedSurveyId FROM Answer WHERE Answer.submitted=0)")
+    fun getAllSurveyItemsUnsubmitted(): LiveData<List<CompletedSurveyItem>>
 
 }

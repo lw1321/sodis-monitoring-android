@@ -94,6 +94,9 @@
         <action
             android:id="@+id/action_monitoringHistoryFragment_to_SurveyOverview"
             app:destination="@+id/surveyOverviewFragment" />
+        <action
+            android:id="@+id/action_monitoringHistoryFragment_self"
+            app:destination="@id/monitoringHistoryFragment" />
     </fragment>
     <fragment
         android:id="@+id/todoFragment"

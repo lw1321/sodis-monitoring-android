@@ -12,6 +12,7 @@ class MyViewModelFactory(private val mApplication: Application, private val mPar
             modelClass === PlaceViewModel::class.java -> PlaceViewModel(mApplication) as T
             modelClass === TodoPointModel::class.java -> TodoPointModel(mApplication) as T
             modelClass === SurveyViewModel::class.java -> SurveyViewModel(mApplication) as T
+            modelClass === HistoryViewModel::class.java -> HistoryViewModel(mApplication) as T
             modelClass === RegisterViewModel::class.java -> RegisterViewModel(mApplication) as T
             modelClass === RootViewModel::class.java -> RootViewModel(mApplication) as T
             modelClass === VillageModel::class.java -> VillageModel(mApplication) as T

@@ -34,4 +34,5 @@
     <string name="title">Título</string>
     <string name="description">Descripción</string>
     <string name="due_until">debido hasta</string>
+    <string name="upload_data_dialog_title">Subir datos</string>
 </resources>

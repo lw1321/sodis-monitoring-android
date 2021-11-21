@@ -4,6 +4,10 @@
         android:id="@+id/dashboard"
         android:icon="@drawable/ic_village"
         android:title="@string/village"/>
+    <item
+        android:id="@+id/history"
+        android:icon="@drawable/ic_history_black"
+        android:title="@string/tab_history"/>
 
     <item
         android:id="@+id/tasks"

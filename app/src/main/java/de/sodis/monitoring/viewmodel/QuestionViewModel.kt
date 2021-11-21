@@ -147,12 +147,6 @@ class QuestionViewModel(
                 saveSurvey(intervieweeId)
             }
         }
-        //start worker manager
-        val uploadWorkRequest = OneTimeWorkRequestBuilder<UploadWorker>().setConstraints(
-                Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
-        ).build()
-        WorkManager.getInstance(mApplication.applicationContext).enqueue(uploadWorkRequest)
-
         currentPosition = 0
         listOfAnsweredQuestions = mutableListOf()
     }
